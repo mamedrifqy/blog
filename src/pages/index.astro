@@ -103,7 +103,7 @@ const allTopics = ['All', 'Peatland', 'Mangrove', 'Remote Sensing', 'Machine Lea
 
       <!-- Feature card — first article -->
       {articles[0] && (
-        <a href={`/blog/${articles[0].slug}`} class="feature-card">
+        <a href={`/${articles[0].slug}`} class="feature-card">
           <div class="feature-meta">
             <div class="feature-tags">
               {articles[0].data.tags.map(tag => (
@@ -128,7 +128,7 @@ const allTopics = ['All', 'Peatland', 'Mangrove', 'Remote Sensing', 'Machine Lea
       {articles.length > 1 && (
         <div class="articles-grid">
           {articles.slice(1).map(article => (
-            <a href={`/blog/${article.slug}`} class="article-card">
+            <a href={`/${article.slug}`} class="article-card">
               <div class="card-tags">
                 {article.data.tags.slice(0,2).map(tag => (
                   <span class={`tag ${tagColorMap[tag] ?? ''}`}>{tag}</span>
