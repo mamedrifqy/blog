@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="About" activePage="about">
+  <div class="about-wrap">
+    <div class="about-hero container">
+      <div class="section-label"><span class="label-line"></span><span>About</span></div>
+      <h1>mamed/rifqy</h1>
+      <p class="lead">
+        Geospatial analyst based in Riau Province, Indonesia. S2 candidate in
+        Disaster Management at Universitas Riau. This site documents spatial
+        analysis work spanning peatland fire, mangrove ecosystems, deforestation,
+        and machine learning for disaster risk.
+      </p>
+    </div>
+
+    <div class="about-body container">
+      <div class="about-grid">
+        <div class="about-block">
+          <h3>Research</h3>
+          <ul>
+            <li>ENSO–fire correlation in tropical peatlands</li>
+            <li>Mangrove suitability mapping (Sentinel-1/2 + FABDEM)</li>
+            <li>Peat water table dynamics and fire vulnerability</li>
+            <li>XGBoost + SHAP for peatland fire prediction</li>
+            <li>Bi-temporal SAR flood detection</li>
+          </ul>
+        </div>
+        <div class="about-block">
+          <h3>Stack</h3>
+          <ul>
+            <li>Google Earth Engine (JS + Python API)</li>
+            <li>MODIS/VIIRS FIRMS active fire archive</li>
+            <li>Sentinel-1 GRD SAR + Sentinel-2 optical</li>
+            <li>CHIRPS v2.0 + ERA5-Land climate data</li>
+            <li>GeoPandas · rasterio · geemap · scikit-learn</li>
+          </ul>
+        </div>
+        <div class="about-block">
+          <h3>Study areas</h3>
+          <ul>
+            <li>Bengkalis Regency — 11 kecamatan (fire/ENSO)</li>
+            <li>Kuala Selat, Indragiri Hilir — 349 Ha PRM zone</li>
+            <li>Riau Province — 87,844 km²</li>
+          </ul>
+        </div>
+        <div class="about-block">
+          <h3>This site</h3>
+          <ul>
+            <li>Astro v4 + React + MDX</li>
+            <li>MapLibre GL JS — interactive vector maps</li>
+            <li>Chart.js — statistical visualizations</li>
+            <li>Scrollama — scrollytelling engine</li>
+            <li>Deployed on Vercel / GitHub Pages</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-wrap { padding-top: calc(var(--nav-h) + 4rem); }
+  .about-hero { padding-bottom: 3rem; border-bottom: 1px solid var(--border); }
+  .section-label { display:flex;align-items:center;gap:0.75rem;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:1.5rem; }
+  .label-line { width:24px;height:1px;background:var(--teal); }
+  h1 { margin-bottom: 1rem; }
+  .lead { font-size:1.05rem;color:var(--text-muted);max-width:620px;line-height:1.7;font-weight:300; }
+  .about-body { padding: 3rem 0 5rem; }
+  .about-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5px;border:1px solid var(--border); }
+  .about-block { padding:1.75rem;background:var(--bg-card);border:1px solid var(--border); }
+  .about-block h3 { font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:1rem;font-family:var(--font-sans); }
+  .about-block ul { list-style:none;padding:0; }
+  .about-block li { font-size:0.88rem;color:var(--text-muted);padding:0.35rem 0;border-bottom:1px solid var(--border); }
+  .about-block li:last-child { border-bottom:none; }
+  .about-block li::before { content:'→ ';color:var(--text-dim); }
+</style>

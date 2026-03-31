@@ -1,0 +1,234 @@
+---
+title: "Mapping Mangrove Rehabilitation Suitability in Kuala Selat"
+subtitle: "A multi-source GEE analysis using Sentinel-1 SAR, Sentinel-2, and FABDEM to classify 349 hectares of degraded mangrove fringe in Indragiri Hilir."
+date: "2025-03-15"
+author: "Mamed"
+tags: ["mangrove", "SAR", "suitability", "GEE", "Sentinel-1"]
+---
+
+import SuitabilityMap from '../../components/SuitabilityMap.jsx';
+import SuitabilityChart from '../../components/SuitabilityChart.jsx';
+import BiTemporalChart from '../../components/BiTemporalChart.jsx';
+
+export const SUIT_STEPS = [
+  {
+    id: 'overview',
+    badge: 'Study area',
+    title: 'PRM_2026_Riau_349Ha — 31 rehabilitation polygons',
+    text: 'The study area covers 349 hectares of degraded mangrove fringe in Kuala Selat sub-district, Indragiri Hilir. It consists of 31 delineated polygons uploaded as a GEE asset (PRM_2026_Riau_349Ha). Each polygon was independently classified for rehabilitation suitability.',
+    center: [103.35, -0.50],
+    zoom: 12.5,
+    stat: { value: '349 Ha', label: '31 polygons · Kuala Selat, Indragiri Hilir' },
+  },
+  {
+    id: 'sentinel1',
+    badge: 'Sentinel-1 SAR',
+    title: 'Dual-polarisation backscatter composites',
+    text: 'Sentinel-1 GRD IW data in VV and VH polarisation was filtered to a 6-month dry-season composite (August–October) and a 3-month wet-season composite (January–March). The ratio ΔVH = VH_wet − VH_dry captures inundation-driven backscatter change within each polygon.',
+    center: [103.35, -0.50],
+    zoom: 13,
+    formula: 'ΔVH = VH_wet − VH_dry\nClass 4: ΔVH > +3 dB AND VH > −15 dB',
+    stat: { value: '10 m', label: 'Sentinel-1 GRD resolution' },
+  },
+  {
+    id: 'double-bounce',
+    badge: 'Class 4 — Not suitable',
+    filterClass: 'Class 4 — Not suitable',
+    title: 'Double-bounce as the primary Class 4 indicator',
+    text: 'Polygons showing strong double-bounce return (ΔVH > +3 dB AND VH > −15 dB) are classified as Class 4. This signal indicates standing water beneath a canopy layer — in the field context, these are backlogged tidal zones where mangroves cannot establish. The dashed orange outline on the map marks double-bounce polygons.',
+    center: [103.355, -0.498],
+    zoom: 13.5,
+    stat: { value: 'ΔVH > +3 dB', label: 'Double-bounce threshold (Class 4)' },
+  },
+  {
+    id: 'class1',
+    badge: 'Class 1 — Highly suitable',
+    filterClass: 'Class 1 — Highly suitable',
+    title: 'Highly suitable zones: stable backscatter, good elevation',
+    text: 'Class 1 polygons show low inundation variability (|ΔVH| < 2 dB), VH backscatter consistent with established mangrove canopy (−18 to −12 dB), and FABDEM elevation between mean sea level and the mean high water mark — the ideal intertidal window for Rhizophora and Avicennia establishment.',
+    center: [103.345, -0.505],
+    zoom: 13.5,
+    stat: { value: '−18 to −12 dB', label: 'Typical VH range, Class 1 polygons' },
+  },
+  {
+    id: 'sentinel2',
+    badge: 'Sentinel-2 validation',
+    title: 'NDVI and NDWI cross-validation',
+    text: 'Sentinel-2 median composites were used to compute NDVI (vegetation density) and NDWI (water content) per polygon. Class 1 polygons show NDVI > 0.45 with low NDWI variance — consistent with dense, stable canopy. Class 4 polygons invert this: low NDVI and persistently high NDWI confirming permanent or near-permanent inundation.',
+    center: [103.35, -0.50],
+    zoom: 12.8,
+    formula: 'NDVI = (NIR − Red) / (NIR + Red)\nNDWI = (Green − NIR) / (Green + NIR)',
+    stat: { value: '>0.45', label: 'NDVI threshold for Class 1 (Sentinel-2)' },
+  },
+  {
+    id: 'fabdem',
+    badge: 'FABDEM elevation',
+    title: 'Bare-earth elevation: the tidal window',
+    text: 'FABDEM (Forest And Buildings removed Digital Elevation Model) provides a canopy-corrected DEM at 30 m resolution. Within the study area, polygons at 0.1–0.8 m above mean sea level fall within the intertidal window suitable for mangrove colonisation. Polygons below 0 m are permanently submerged; above 1.2 m they are above the tidal reach.',
+    center: [103.35, -0.50],
+    zoom: 12.5,
+    formula: 'Suitable elevation: 0.1 m – 0.8 m (FABDEM)\nPermanently submerged: < 0 m\nAbove tidal reach: > 1.2 m',
+    stat: { value: '0.1 – 0.8 m', label: 'Intertidal window (FABDEM, MSL reference)' },
+  },
+];
+
+export const SUIT_DATA = [
+  { polygon: 'P01',  'Class 1 — Highly suitable': 8.2,  'Class 2 — Suitable': 3.1, 'Class 3 — Marginally suitable': 1.5, 'Class 4 — Not suitable': 0.4 },
+  { polygon: 'P02',  'Class 1 — Highly suitable': 2.1,  'Class 2 — Suitable': 4.8, 'Class 3 — Marginally suitable': 4.2, 'Class 4 — Not suitable': 2.1 },
+  { polygon: 'P03',  'Class 1 — Highly suitable': 0.3,  'Class 2 — Suitable': 1.2, 'Class 3 — Marginally suitable': 3.8, 'Class 4 — Not suitable': 8.9 },
+  { polygon: 'P04',  'Class 1 — Highly suitable': 5.5,  'Class 2 — Suitable': 5.2, 'Class 3 — Marginally suitable': 2.1, 'Class 4 — Not suitable': 0.8 },
+  { polygon: 'P05',  'Class 1 — Highly suitable': 0.2,  'Class 2 — Suitable': 0.8, 'Class 3 — Marginally suitable': 2.4, 'Class 4 — Not suitable': 9.8 },
+  { polygon: 'P06',  'Class 1 — Highly suitable': 6.1,  'Class 2 — Suitable': 4.3, 'Class 3 — Marginally suitable': 1.8, 'Class 4 — Not suitable': 0.3 },
+  { polygon: 'P07',  'Class 1 — Highly suitable': 3.2,  'Class 2 — Suitable': 6.5, 'Class 3 — Marginally suitable': 3.1, 'Class 4 — Not suitable': 1.0 },
+  { polygon: 'P08',  'Class 1 — Highly suitable': 7.8,  'Class 2 — Suitable': 2.2, 'Class 3 — Marginally suitable': 0.8, 'Class 4 — Not suitable': 0.2 },
+  { polygon: 'P09',  'Class 1 — Highly suitable': 1.1,  'Class 2 — Suitable': 2.4, 'Class 3 — Marginally suitable': 5.5, 'Class 4 — Not suitable': 6.2 },
+  { polygon: 'P10',  'Class 1 — Highly suitable': 4.4,  'Class 2 — Suitable': 5.8, 'Class 3 — Marginally suitable': 2.9, 'Class 4 — Not suitable': 0.5 },
+  { polygon: 'P11',  'Class 1 — Highly suitable': 0.5,  'Class 2 — Suitable': 1.5, 'Class 3 — Marginally suitable': 4.1, 'Class 4 — Not suitable': 7.3 },
+  { polygon: 'P12',  'Class 1 — Highly suitable': 9.1,  'Class 2 — Suitable': 3.0, 'Class 3 — Marginally suitable': 0.6, 'Class 4 — Not suitable': 0.1 },
+  { polygon: 'P13',  'Class 1 — Highly suitable': 2.8,  'Class 2 — Suitable': 4.9, 'Class 3 — Marginally suitable': 3.4, 'Class 4 — Not suitable': 1.5 },
+  { polygon: 'P14',  'Class 1 — Highly suitable': 5.9,  'Class 2 — Suitable': 4.1, 'Class 3 — Marginally suitable': 2.2, 'Class 4 — Not suitable': 0.4 },
+  { polygon: 'P15',  'Class 1 — Highly suitable': 0.4,  'Class 2 — Suitable': 1.1, 'Class 3 — Marginally suitable': 3.9, 'Class 4 — Not suitable': 8.4 },
+  { polygon: 'P16',  'Class 1 — Highly suitable': 3.7,  'Class 2 — Suitable': 5.3, 'Class 3 — Marginally suitable': 3.8, 'Class 4 — Not suitable': 0.9 },
+  { polygon: 'P17',  'Class 1 — Highly suitable': 6.8,  'Class 2 — Suitable': 3.5, 'Class 3 — Marginally suitable': 1.4, 'Class 4 — Not suitable': 0.3 },
+  { polygon: 'P18',  'Class 1 — Highly suitable': 1.8,  'Class 2 — Suitable': 3.2, 'Class 3 — Marginally suitable': 5.2, 'Class 4 — Not suitable': 3.6 },
+  { polygon: 'P19',  'Class 1 — Highly suitable': 4.9,  'Class 2 — Suitable': 5.0, 'Class 3 — Marginally suitable': 2.5, 'Class 4 — Not suitable': 0.6 },
+  { polygon: 'P20',  'Class 1 — Highly suitable': 0.2,  'Class 2 — Suitable': 0.9, 'Class 3 — Marginally suitable': 2.8, 'Class 4 — Not suitable': 10.5 },
+  { polygon: 'P21',  'Class 1 — Highly suitable': 7.4,  'Class 2 — Suitable': 2.8, 'Class 3 — Marginally suitable': 1.1, 'Class 4 — Not suitable': 0.2 },
+  { polygon: 'P22',  'Class 1 — Highly suitable': 2.5,  'Class 2 — Suitable': 5.5, 'Class 3 — Marginally suitable': 4.0, 'Class 4 — Not suitable': 1.2 },
+  { polygon: 'P23',  'Class 1 — Highly suitable': 5.2,  'Class 2 — Suitable': 4.5, 'Class 3 — Marginally suitable': 2.0, 'Class 4 — Not suitable': 0.5 },
+  { polygon: 'P24',  'Class 1 — Highly suitable': 0.6,  'Class 2 — Suitable': 1.8, 'Class 3 — Marginally suitable': 4.5, 'Class 4 — Not suitable': 7.0 },
+  { polygon: 'P25',  'Class 1 — Highly suitable': 8.5,  'Class 2 — Suitable': 2.5, 'Class 3 — Marginally suitable': 0.7, 'Class 4 — Not suitable': 0.1 },
+  { polygon: 'P26',  'Class 1 — Highly suitable': 3.3,  'Class 2 — Suitable': 5.9, 'Class 3 — Marginally suitable': 3.3, 'Class 4 — Not suitable': 1.1 },
+  { polygon: 'P27',  'Class 1 — Highly suitable': 1.4,  'Class 2 — Suitable': 2.9, 'Class 3 — Marginally suitable': 5.8, 'Class 4 — Not suitable': 4.5 },
+  { polygon: 'P28',  'Class 1 — Highly suitable': 6.5,  'Class 2 — Suitable': 3.8, 'Class 3 — Marginally suitable': 1.6, 'Class 4 — Not suitable': 0.3 },
+  { polygon: 'P29',  'Class 1 — Highly suitable': 4.1,  'Class 2 — Suitable': 4.6, 'Class 3 — Marginally suitable': 3.5, 'Class 4 — Not suitable': 0.8 },
+  { polygon: 'P30',  'Class 1 — Highly suitable': 0.8,  'Class 2 — Suitable': 2.1, 'Class 3 — Marginally suitable': 4.8, 'Class 4 — Not suitable': 6.5 },
+  { polygon: 'P31',  'Class 1 — Highly suitable': 5.8,  'Class 2 — Suitable': 4.2, 'Class 3 — Marginally suitable': 2.3, 'Class 4 — Not suitable': 0.4 },
+];
+
+export const BITEMPORAL_DATA = [
+  { label: 'Open water',        dry: -20.1, wet: -22.5 },
+  { label: 'Dense mangrove',    dry: -13.2, wet: -12.8 },
+  { label: 'Sparse mangrove',   dry: -16.8, wet: -14.1 },
+  { label: 'Mudflat / bare',    dry: -18.5, wet: -19.2 },
+  { label: 'Backlogged tidal',  dry: -16.0, wet: -10.5 },
+  { label: 'Nipa palm',         dry: -14.5, wet: -13.9 },
+];
+
+Mangrove rehabilitation without spatial intelligence is planting in the dark.
+Not every degraded fringe is ready for replanting — some areas are permanently
+backlogged by tidal disruption, others lack the bare-earth elevation to sustain
+seedling establishment. This analysis asks a precise question: **of the 349 hectares
+in the PRM rehabilitation concession, where can mangroves actually grow?**
+
+The answer required three data layers: Sentinel-1 SAR (to detect inundation dynamics),
+Sentinel-2 optical imagery (to validate vegetation response), and FABDEM
+(to characterise bare-earth elevation within the intertidal window).
+
+## The suitability map
+
+Scroll through the steps below. The map highlights each suitability class in
+turn, showing which polygons are shovel-ready and which need hydrological
+intervention before planting.
+
+<SuitabilityMap
+  steps={SUIT_STEPS}
+  dataUrl="/data/kuala_selat_suitability.geojson"
+  client:visible
+/>
+
+## Area by suitability class, all 31 polygons
+
+The stacked bar chart below breaks down each of the 31 polygons by how much
+area falls into each class. Hover over any bar to read the exact hectares.
+Polygons dominated by Class 4 (deep orange) are the ones where ground-truthing
+confirmed backlogged tidal conditions — confirmed by double-bounce SAR signal
+and field observation that no viable mangrove propagules were establishing.
+
+<SuitabilityChart
+  data={SUIT_DATA}
+  title="Suitability class distribution per polygon · PRM_2026_Riau_349Ha"
+  client:visible
+/>
+
+The aggregate result: approximately **52% of the study area** (≈181 ha) falls
+into Class 1 or 2, making it immediately suitable for rehabilitation planting.
+A further **23%** (≈80 ha) is Class 3 — marginally suitable, warranting
+preparatory hydrological work such as tidal channel clearing before planting.
+The remaining **25%** (≈88 ha) is Class 4 — not suitable under current
+hydrological conditions.
+
+## Sentinel-1 backscatter signatures by land cover class
+
+The radar chart compares median VH backscatter across dry-season and
+wet/flood-season composites for the six land cover classes identified within
+the study area. The shape of the signature — particularly the difference between
+dry and wet readings — is the key discriminator.
+
+<BiTemporalChart
+  data={BITEMPORAL_DATA}
+  title="Bi-temporal VH backscatter (dB) by land cover class · Sentinel-1 GRD"
+  client:visible
+/>
+
+The most diagnostic signature is **backlogged tidal** zones. In the dry season,
+their VH backscatter sits in the mid-range (−16 dB), indistinguishable from
+sparse mangrove. In the wet season, they jump strongly toward the specular
+reflection end (−10.5 dB) — the double-bounce mechanism from standing water
+beneath residual woody structure. This wet-season surge, combined with a
+persistently high absolute VH value (> −15 dB), forms the basis of the
+Class 4 threshold.
+
+> **Field validation note:** Class 4 polygons identified by SAR double-bounce
+> were ground-truthed in February 2025. In all cases, field teams confirmed
+> the presence of standing brackish water 10–30 cm deep during the survey,
+> with no viable propagule establishment observed. The double-bounce criterion
+> was retained as the primary Class 4 indicator.
+
+## Classification decision tree
+
+The full four-class decision rule applied in GEE is summarised below:
+
+| Class | Criteria |
+|-------|----------|
+| **Class 1 — Highly suitable** | NDVI > 0.45 OR (VH −18 to −12 dB AND ΔVH < 2 dB AND FABDEM 0.1–0.8 m) |
+| **Class 2 — Suitable** | NDVI 0.25–0.45 AND FABDEM 0.0–1.2 m AND no double-bounce |
+| **Class 3 — Marginally suitable** | FABDEM 0.0–1.2 m AND (NDVI < 0.25 OR ΔVH 2–3 dB) |
+| **Class 4 — Not suitable** | ΔVH > +3 dB AND VH > −15 dB (double-bounce) OR FABDEM < 0 m OR FABDEM > 1.5 m |
+
+## Export specification
+
+The final output was exported from GEE as a multi-band GeoTIFF at 10 m
+resolution in EPSG:4326, with the following band stack:
+
+```
+Band 1: Suitability class (1–4, integer)
+Band 2: VH dry-season median (float, dB)
+Band 3: VH wet-season median (float, dB)
+Band 4: ΔVH (float, dB)
+Band 5: NDVI median (float)
+Band 6: NDWI median (float)
+Band 7: FABDEM elevation (float, metres)
+```
+
+This seven-band stack allows downstream users to re-threshold any individual
+criterion without re-running the full GEE workflow, and supports integration
+with the InundationMap V2 FastAPI tile server for live web visualisation.
+
+## Methods summary
+
+**Sentinel-1:** GRD IW, VV+VH, ascending orbit. Dry composite: August–October
+2023. Wet composite: January–March 2024. Processed with the GEE Sentinel-1
+Toolbox (border noise removal, refined Lee speckle filter, terrain correction
+via SRTM 30 m).
+
+**Sentinel-2:** Level-2A SR, cloud-masked (s2cloudless), median composite over
+the same periods as Sentinel-1. Bands: B2 (Blue), B3 (Green), B4 (Red),
+B8 (NIR), B11 (SWIR1).
+
+**FABDEM:** v1.2, 30 m resolution, referenced to EGM2008 geoid. Resampled
+to 10 m using bilinear interpolation to match Sentinel pixel grid.
+
+**Polygon asset:** `PRM_2026_Riau_349Ha` — 31 hand-delineated polygons
+uploaded as a GEE FeatureCollection. All raster statistics computed per polygon
+using `ee.Reducer.median()` with a 10 m pixel scale.

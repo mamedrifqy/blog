@@ -1,0 +1,136 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  activePage?: string;
+}
+
+const {
+  title,
+  description = 'Geospatial storytelling — maps, data, and spatial analysis by mamed/rifqy.',
+  activePage = '',
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title} — medrifmaps</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.css" />
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav class="site-nav">
+    <div class="nav-stripe"></div>
+    <div class="nav-inner">
+
+      <!-- Logo -->
+      <a href="/" class="nav-logo">
+        <div class="nav-logo-mark">
+          <!-- Small crosshair / coordinate pin icon -->
+          <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="9" cy="9" r="2.5"/>
+            <line x1="9" y1="1" x2="9" y2="5.5" stroke="#0d0e0f" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="9" y1="12.5" x2="9" y2="17" stroke="#0d0e0f" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="1" y1="9" x2="5.5" y2="9" stroke="#0d0e0f" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="12.5" y1="9" x2="17" y2="9" stroke="#0d0e0f" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="nav-logo-word">medri<span>f</span>maps</span>
+      </a>
+
+      <div class="nav-divider"></div>
+      <span class="nav-tagline">Geospatial Storytelling</span>
+
+      <!-- Links -->
+      <div class="nav-links">
+        <a href="/"       class={`nav-link ${activePage === 'home'  ? 'active' : ''}`}>Stories</a>
+        <a href="/topics" class={`nav-link ${activePage === 'topics'? 'active' : ''}`}>Topics</a>
+        <a href="/about"  class={`nav-link ${activePage === 'about' ? 'active' : ''}`}>About</a>
+        <a href="https://github.com/mamedrifqy" target="_blank" rel="noopener" class="nav-cta">GitHub ↗</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <slot />
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-logo">medrifmaps</span>
+        <p>Geospatial storytelling from Southeast Asia.<br/>Maps, spatial analysis, and data-driven narratives.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h6>Topics</h6>
+          <a href="/">Peatland Fire</a>
+          <a href="/">Mangrove</a>
+          <a href="/">Remote Sensing</a>
+          <a href="/">Machine Learning</a>
+        </div>
+        <div class="footer-col">
+          <h6>Work</h6>
+          <a href="/about">About</a>
+          <a href="https://github.com/mamedrifqy" target="_blank">GitHub</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 mamed/rifqy · medrifmaps</span>
+      <span>Riau Province, Indonesia</span>
+    </div>
+  </footer>
+
+</body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+
+  .site-footer {
+    margin-top: 6rem;
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem 2rem;
+  }
+  .footer-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: flex;
+    gap: 4rem;
+    flex-wrap: wrap;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .footer-brand { flex: 1; min-width: 200px; }
+  .footer-logo {
+    font-family: var(--font-sans);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    letter-spacing: -0.02em;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+  .footer-brand p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+  .footer-links { display: flex; gap: 3rem; flex-wrap: wrap; }
+  .footer-col { display: flex; flex-direction: column; gap: 0.5rem; }
+  .footer-col h6 {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-dim);
+    font-family: var(--font-sans); margin-bottom: 0.25rem;
+  }
+  .footer-col a { font-size: 0.85rem; color: var(--text-muted); }
+  .footer-col a:hover { color: var(--teal); }
+  .footer-bottom {
+    max-width: var(--max-w); margin: 1.5rem auto 0;
+    display: flex; justify-content: space-between;
+    font-size: 0.75rem; color: var(--text-dim);
+  }
+</style>

@@ -1,0 +1,167 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title: string;
+  subtitle?: string;
+  date: string;
+  author: string;
+  tags?: string[];
+}
+
+const { title, subtitle, date, author, tags = [] } = Astro.props;
+
+const formattedDate = new Date(date).toLocaleDateString('en-GB', {
+  year: 'numeric', month: 'long', day: 'numeric'
+});
+
+const tagColorMap: Record<string, string> = {
+  fire: 'fire', peatland: 'fire', ENSO: 'ml', 'machine-learning': 'ml',
+  SAR: 'sar', 'remote-sensing': 'remote-sensing', mangrove: '',
+  GEE: '', suitability: '', Bengkalis: '', 'Sentinel-1': 'sar',
+};
+---
+
+<BaseLayout title={title}>
+  <!-- Article hero — full-width dark with subtle gradient -->
+  <header class="article-hero">
+    <div class="hero-track">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/">Stories</a>
+        <span>/</span>
+        <span>{tags[0] || 'Analysis'}</span>
+      </div>
+
+      <!-- Tags -->
+      <div class="tag-row">
+        {tags.map(tag => (
+          <span class={`tag ${tagColorMap[tag] ?? ''}`}>{tag}</span>
+        ))}
+      </div>
+
+      <h1>{title}</h1>
+      {subtitle && <p class="hero-subtitle">{subtitle}</p>}
+
+      <div class="hero-meta">
+        <div class="meta-author">
+          <div class="author-avatar">M</div>
+          <div>
+            <div class="author-name">{author} · <span class="author-handle">@mamed/rifqy</span></div>
+            <time class="pub-date">{formattedDate}</time>
+          </div>
+        </div>
+        <div class="meta-read">
+          <span class="tag">GIS Analysis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decorative grid lines -->
+    <div class="hero-grid" aria-hidden="true">
+      {Array.from({length: 6}).map(() => <div class="grid-line"/>)}
+    </div>
+  </header>
+
+  <!-- Article body -->
+  <article class="article-body">
+    <slot />
+  </article>
+</BaseLayout>
+
+<style>
+  .article-hero {
+    position: relative;
+    padding: calc(var(--nav-h) + 5rem) 2rem 4rem;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    background: radial-gradient(ellipse 70% 60% at 10% 80%, rgba(28,200,170,0.05) 0%, transparent 60%);
+  }
+
+  .hero-track {
+    position: relative;
+    z-index: 2;
+    max-width: var(--col-text);
+    margin: 0 auto;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .breadcrumb a { color: var(--text-dim); }
+  .breadcrumb a:hover { color: var(--teal); }
+  .breadcrumb span:last-child { color: var(--text-muted); }
+
+  .tag-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+
+  h1 { margin-bottom: 1rem; }
+
+  .hero-subtitle {
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 600px;
+    margin-bottom: 2rem;
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .meta-author { display: flex; align-items: center; gap: 0.75rem; }
+
+  .author-avatar {
+    width: 36px; height: 36px;
+    background: var(--teal);
+    color: #0d0e0f;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .author-name {
+    font-size: 0.875rem; font-weight: 600;
+    color: var(--text-bright); line-height: 1.2;
+  }
+  .author-handle { color: var(--teal); font-weight: 500; }
+  .pub-date { font-size: 0.78rem; color: var(--text-dim); display: block; margin-top: 0.1rem; }
+
+  /* Decorative background grid lines */
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 1;
+    display: flex; justify-content: space-around;
+    pointer-events: none;
+  }
+  .grid-line {
+    width: 1px;
+    background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.03) 30%, rgba(255,255,255,0.03) 70%, transparent 100%);
+  }
+
+  /* Article body */
+  .article-body { padding: 3.5rem 2rem 2rem; }
+  .article-body :global(p)          { max-width: var(--col-text); margin-left: auto; margin-right: auto; }
+  .article-body :global(h2)         { max-width: var(--col-text); margin-left: auto; margin-right: auto; }
+  .article-body :global(h3)         { max-width: var(--col-text); margin-left: auto; margin-right: auto; }
+  .article-body :global(blockquote) { max-width: var(--col-text); margin-left: auto; margin-right: auto; }
+  .article-body :global(table)      { max-width: var(--col-text); margin-left: auto; margin-right: auto; }
+  .article-body :global(ul), .article-body :global(ol) {
+    max-width: var(--col-text); margin-left: auto; margin-right: auto; padding-left: 1.5rem;
+  }
+  .article-body :global(li) { margin-bottom: 0.35rem; color: var(--text); }
+</style>

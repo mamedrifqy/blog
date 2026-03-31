@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const articles = (await getCollection('articles')).filter(a => !a.data.draft);
+
+const topics = [
+  { name: 'Peatland', color: 'fire',           count: articles.filter(a => a.data.tags.includes('peatland')).length, desc: 'Fire dynamics, carbon, and drought in tropical peat.' },
+  { name: 'Mangrove', color: '',               count: articles.filter(a => a.data.tags.includes('mangrove')).length, desc: 'Coastal rehabilitation and inundation mapping.' },
+  { name: 'ENSO', color: 'ml',                  count: articles.filter(a => a.data.tags.includes('ENSO')).length,    desc: 'El Niño teleconnection and lag-time analysis.' },
+  { name: 'Machine Learning', color: 'ml',      count: articles.filter(a => a.data.tags.includes('machine-learning')).length, desc: 'XGBoost, SHAP, Random Forest for disaster prediction.' },
+  { name: 'Remote Sensing', color: 'sar',       count: articles.filter(a => a.data.tags.includes('remote-sensing')).length, desc: 'Satellite imagery analysis and classification.' },
+  { name: 'Deforestation', color: 'fire',       count: 0, desc: 'Forest cover change and land-use transition monitoring.' },
+];
+---
+<BaseLayout title="Topics" activePage="topics">
+  <div class="topics-wrap container">
+    <div class="topics-hero">
+      <div class="section-label"><span class="label-line"></span><span>Topics</span></div>
+      <h1>All topics</h1>
+      <p class="lead">Browse analyses by theme and methodology.</p>
+    </div>
+    <div class="topics-grid">
+      {topics.map(t => (
+        <div class={`topic-card tag-${t.color || 'default'}`}>
+          <div class="topic-count">{t.count} {t.count === 1 ? 'story' : 'stories'}</div>
+          <h3>{t.name}</h3>
+          <p>{t.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .topics-wrap { padding: calc(var(--nav-h) + 4rem) 0 5rem; }
+  .topics-hero { margin-bottom: 3rem; }
+  .section-label { display:flex;align-items:center;gap:0.75rem;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:1.5rem; }
+  .label-line { width:24px;height:1px;background:var(--teal); }
+  h1 { margin-bottom: 0.5rem; }
+  .lead { font-size:1rem;color:var(--text-muted);font-weight:300; }
+  .topics-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;border:1px solid var(--border); }
+  .topic-card { padding:2rem;background:var(--bg-card);transition:background 0.2s; }
+  .topic-card:hover { background:var(--bg-hover); }
+  .topic-count { font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.5rem; }
+  .topic-card h3 { font-family:var(--font-display);font-size:1.3rem;color:var(--text-bright);margin:0 0 0.5rem; }
+  .topic-card p { font-size:0.85rem;color:var(--text-muted);line-height:1.55;margin:0; }
+  .tag-fire .topic-card h3, .topic-card.tag-fire h3 { color: var(--coral); }
+  .tag-ml h3 { color: var(--gold); }
+  .tag-sar h3 { color: #9b7fff; }
+</style>
