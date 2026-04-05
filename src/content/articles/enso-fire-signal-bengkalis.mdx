@@ -9,7 +9,7 @@ mapData: "/data/bengkalis_kecamatan.geojson"
 
 import BengkalisMap from '../../components/BengkalisMap.jsx';
 import EnsoChart from '../../components/EnsoChart.jsx';
-import SuitabilityChart from '../../components/SuitabilityChart.jsx';
+import LagDecayChart from '../../components/LagDecayChart.jsx';
 
 export const MAP_STEPS = [
   {
@@ -122,7 +122,7 @@ Scroll through the map below. Each step highlights a different facet of the spat
 <BengkalisMap
   steps={MAP_STEPS}
   colorBy="r_oni"
-  dataUrl="/blog/data/bengkalis_kecamatan.geojson"
+  dataUrl="/data/bengkalis_kecamatan.geojson"
   client:visible
 />
 
@@ -158,7 +158,7 @@ This has an important implication for early warning design: **ONI alone is insuf
 
 Perhaps the most operationally significant finding is that different sub-districts respond to ONI anomalies at different time delays. The chart below shows the Spearman correlation between ONI and monthly hotspot count at lags 0–3 months for each sub-district.
 
-<SuitabilityChart
+<LagDecayChart
   data={LAG_DECAY_DATA}
   title="ONI–Hotspot Lag-Decay per Sub-District (Spearman ρ, Lag 0–3 months)"
   client:visible
