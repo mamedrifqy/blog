@@ -9,6 +9,12 @@ tags: ["fire", "peatland", "methodology", "DBSCAN", "SPEI", "spatial-autocorrela
 import DbscanChart from '../../components/DbscanChart.jsx';
 import PeatDepthChart from '../../components/PeatDepthChart.jsx';
 import PredictorLagChart from '../../components/PredictorLagChart.jsx';
+import DroughtIndexChart from '../../components/DroughtIndexChart.jsx';
+import EnsoViolinChart from '../../components/EnsoViolinChart.jsx';
+import SeasonalDecompChart from '../../components/SeasonalDecompChart.jsx';
+import DroughtIndexChart from '../../components/DroughtIndexChart.jsx';
+import EnsoViolinChart from '../../components/EnsoViolinChart.jsx';
+import SeasonalDecompChart from '../../components/SeasonalDecompChart.jsx';
 
 export const DBSCAN_FILTER_DATA = {
   anchors: 35277,
@@ -60,6 +66,26 @@ export const PREDICTOR_LAG_DATA = [
   },
 ];
 
+export const DROUGHT_INDEX_DATA = [
+  { kecamatan: 'Siak Kecil',      spei3: -0.382, spi3: -0.351 },
+  { kecamatan: 'Bukit Batu',       spei3: -0.345, spi3: -0.312 },
+  { kecamatan: 'Rupat',            spei3: -0.328, spi3: -0.298 },
+  { kecamatan: 'Bandar Laksamana', spei3: -0.315, spi3: -0.289 },
+  { kecamatan: 'Bengkalis',        spei3: -0.308, spi3: -0.278 },
+  { kecamatan: 'Talang Muandau',   spei3: -0.296, spi3: -0.265 },
+  { kecamatan: 'Bathin Solapan',   spei3: -0.278, spi3: -0.252 },
+  { kecamatan: 'Bantan',           spei3: -0.265, spi3: -0.241 },
+  { kecamatan: 'Pinggir',          spei3: -0.218, spi3: -0.195 },
+  { kecamatan: 'Rupat Utara',      spei3: -0.195, spi3: -0.172 },
+  { kecamatan: 'Mandau',           spei3: -0.082, spi3: -0.068 },
+];
+
+export const ENSO_VIOLIN_DATA = [
+  { phase: 'El Niño',  mean: 45.2, median: 28.0, q1: 15.0, q3: 62.0, min: 1.0,  max: 280.0, n: 36 },
+  { phase: 'Neutral',  mean: 12.8, median: 8.0,  q1: 3.0,  q3: 18.0, min: 0.0,  max: 58.0,  n: 48 },
+  { phase: 'La Niña',  mean: 5.3,  median: 3.0,  q1: 1.0,  q3: 8.0,  min: 0.0,  max: 22.0,  n: 36 },
+];
+
 Every map, chart, and statistic presented in Posts 1 and 2 rests on a data pipeline that transforms 67,619 raw MODIS thermal anomaly detections into 3,707 confirmed peatland fire observations. That reduction is not a simple threshold cut — it involves spatial clustering, confidence stratification, drought index comparison across multiple parametrisations, lag-decay profiling of every climate predictor, spatial autocorrelation testing with custom weight matrices for island sub-districts, and a machine learning validation strategy designed to prevent information leakage across spatially correlated folds. Each of these decisions is defensible on its own terms, but their cumulative effect determines whether the findings are robust or artefactual. A different filtering threshold would shift the Mandau anomaly. A different drought index would reorder the predictor hierarchy. A different spatial weight matrix would alter the autocorrelation statistics. The methodology is not a neutral scaffold — it is an active participant in what the analysis concludes.
 
 This post documents every filtering decision, index selection, and statistical test that underpins the Bengkalis peatland fire analysis. It is written for a thesis-examination audience that needs to evaluate not just *what* was found, but *why* the method produces trustworthy results, and where its assumptions may break down. If the analytical infrastructure is sound, the conclusions follow. If it is not, no amount of elegant visualisation can compensate. Transparency at this level is not optional — it is the basis on which the entire analysis stands.
@@ -95,12 +121,11 @@ The key distinction lies in the PET formulation. SPI ignores temperature entirel
 
 SPEI corrects this by estimating PET and subtracting it from precipitation before standardisation. Two PET formulations were tested. The Thornthwaite method requires only mean temperature, minimum temperature, maximum temperature, and latitude — all available from ERA5-Land at ~9 km resolution. It estimates monthly PET as a function of temperature and day-length (determined by latitude and calendar month), making it computationally trivial but physically grounded. The Hargreaves-Samani method similarly requires only Tmin, Tmax, and latitude (plus an extraterrestrial radiation term derived from latitude), and produces comparable results in tropical settings. Both outperformed SPI-3 in cross-validated model comparisons, with SPEI-3 Thornthwaite achieving a panel Spearman r of −0.302 against monthly hotspot count, compared to −0.287 for SPI-3.
 
-<p style="text-align:center;">
-  <img src="/blog/images/methods/spei3_vs_spi3_comparison.png" alt="SPEI-3 vs SPI-3 correlation comparison across Bengkalis sub-districts" style="max-width:100%;border-radius:8px;margin:0.5rem 0;" />
-</p>
-<p style="text-align:center;font-size:0.85rem;color:#9ca3af;margin-bottom:1.5rem;">
-  SPEI-3 (Thornthwaite) versus SPI-3 (Gamma) — Spearman correlation with monthly hotspot count per sub-district. SPEI-3 consistently outperforms SPI-3, with the gap widening in sub-districts dominated by deep peat where temperature-driven evapotranspiration amplifies drought severity.
-</p>
+<DroughtIndexChart
+  data={DROUGHT_INDEX_DATA}
+  title="SPEI-3 (Thornthwaite) vs SPI-3 (Gamma) — Spearman ρ with Monthly Hotspot Count per Kecamatan"
+  client:visible
+/>
 
 The comparative performance across three formulations is summarised below:
 
@@ -140,13 +165,6 @@ One of the most counterintuitive findings in this analysis is the relationship b
 
 The fire density data by peat depth class reveals the detection bias clearly. Shallow peat (< 100 cm) has the lowest fire density at 0.0026 detections per hectare, with an observed-to-expected ratio of 0.52 — fires in shallow peat are under-represented relative to the area that shallow peat occupies. This makes sense: shallow peat fires tend to be brief surface burns that extinguish quickly when the thin peat layer is consumed. They produce less thermal radiation and persist for fewer satellite overpasses, reducing the probability that MODIS captures them. Conversely, the 500–700 cm depth class has the highest fire density at 0.0105 detections per hectare — four times the shallow-peat rate — and is over-represented by a factor of 2.12 relative to its area share. Deep peat fires are smouldering events that can persist for weeks or months, burning horizontally through the peat column at rates of centimetres per day. They produce sustained thermal signatures that MODIS detects repeatedly, sometimes generating dozens of individual hotspot records from a single persistent combustion zone.
 
-<p style="text-align:center;">
-  <img src="/blog/images/methods/hotspot_peat_depth_analysis (1).png" alt="Peat depth vs hotspot distribution analysis showing detection bias across depth classes" style="max-width:100%;border-radius:8px;margin:0.5rem 0;" />
-</p>
-<p style="text-align:center;font-size:0.85rem;color:#9ca3af;margin-bottom:1.5rem;">
-  Hotspot distribution by peat depth class — the over-representation of the 500–700 cm class (ratio 2.12) reflects MODIS detection bias, not necessarily higher ignition probability. Deep peat fires produce more persistent thermal signatures, increasing detection probability per actual fire event.
-</p>
-
 This detection bias has a direct consequence for interpreting the spatial fire distribution. Sub-districts with deep peat — Bandar Laksamana (265,120 ha), Siak Kecil (226,268 ha), and Bathin Solapan — will appear more fire-prone in the MODIS record than they truly are, because a single persistent smouldering event generates many more hotspot detections than an equivalent surface fire in shallow peat. Conversely, Rupat and Rupat Utara — with their predominantly shallow peat profiles — may have more fires than the MODIS archive suggests, but those fires are brief, low-intensity burns that evade satellite detection.
 
 <PeatDepthChart
@@ -163,30 +181,20 @@ Any analysis that treats sub-districts as independent observational units must c
 
 Spatial autocorrelation was tested using Moran's I, implemented via the `esda.Moran` function in PySAL with 999 Monte Carlo permutations to generate empirical p-values. The spatial weight matrix defines which sub-districts are "neighbours" — and this is where Bengkalis's geography creates a distinctive problem. Standard queen contiguity (shared edge) and rook contiguity (shared vertex) weight matrices fail for the three island sub-districts: Rupat, Rupat Utara, and Bantan. These sub-districts occupy Rupat Island and adjacent smaller islands in the Malacca Strait, separated from the mainland by open water. Under standard contiguity definitions, they are spatially isolated — they share no land boundary with any other kecamatan.
 
-<p style="text-align:center;">
-  <img src="/blog/images/methods/heatmap_korelasi_spearman_v3.png" alt="Spearman correlation heatmap showing all predictor pairs used in the analysis" style="max-width:100%;border-radius:8px;margin:0.5rem 0;" />
-</p>
-<p style="text-align:center;font-size:0.85rem;color:#9ca3af;margin-bottom:1.5rem;">
-  Spearman correlation heatmap across all predictor pairs. The block structure reveals multicollinearity between drought indices (SPEI-3 variants, SPI-3) and moderate coupling between climate and non-climate predictors, informing feature selection for the machine learning model.
-</p>
-
 This isolation is geographically real but analytically misleading. Rupat Island is connected to the mainland by regular ferry services, shares the same provincial governance structure, and — critically — experiences the same regional climate forcing as the mainland sub-districts. Peatland fires on Rupat are driven by the same ENSO teleconnection that drives fires in Bengkalis town and Siak Kecil. Treating Rupat as spatially isolated would overestimate the independence of island observations and potentially mask genuine spatial patterns that cross the water barrier. The solution was to construct a custom spatial weight matrix that incorporates maritime contiguity — assigning neighbour status between island sub-districts and the nearest mainland kecamatan based on minimum sea-crossing distance rather than land boundary sharing.
 
 Residual spatial autocorrelation in the GBM (Gradient Boosting Machine) model was tested using this custom weight matrix. The results were informative: Moran's I on model residuals showed weak but non-significant spatial clustering (I = 0.042, p = 0.187 under 999 permutations), suggesting that the model captures most of the spatially structured variation in fire occurrence. The remaining weak clustering likely reflects the shared climate forcing that affects neighbouring kecamatan simultaneously — an expected and structurally inevitable pattern that does not violate the model's assumptions. This finding supports the GroupKFold validation approach used in the machine learning analysis: neighbouring kecamatan were assigned to different folds to prevent within-fold spatial leakage, while the weak residual autocorrelation confirms that this precaution was sufficient rather than excessive.
 
-<p style="text-align:center;">
-  <img src="/blog/images/methods/seasonal_decomposition.png" alt="Seasonal decomposition of Bengkalis hotspot time series showing trend, seasonal, and residual components" style="max-width:100%;border-radius:8px;margin:0.5rem 0;" />
-</p>
-<p style="text-align:center;font-size:0.85rem;color:#9ca3af;margin-bottom:1.5rem;">
-  Classical seasonal decomposition (additive model) of the Bengkalis monthly hotspot time series. The trend component captures the ENSO-driven multi-year cycle, the seasonal component isolates the consistent July–October fire peak, and the residual component — used for autocorrelation testing — shows no systematic temporal structure after detrending.
-</p>
+<EnsoViolinChart
+  data={ENSO_VIOLIN_DATA}
+  title="Hotspot Distribution by ENSO Phase — Box Plot (Bengkalis 2015–2024)"
+  client:visible
+/>
 
-<p style="text-align:center;">
-  <img src="/blog/images/methods/violin_fat_tail_enso (2).png" alt="Violin plot of hotspot distribution by ENSO phase showing fat-tail structure" style="max-width:100%;border-radius:8px;margin:0.5rem 0;" />
-</p>
-<p style="text-align:center;font-size:0.85rem;color:#9ca3af;margin-bottom:1.5rem;">
-  Hotspot distribution by ENSO phase, shown as violin plots with embedded box plots. The fat right tail under El Niño conditions — with several months exceeding 100 hotspots — confirms that El Niño does not simply shift the distribution upward, it fundamentally changes its shape, introducing extreme-fire months that have no equivalent during neutral or La Niña phases.
-</p>
+<SeasonalDecompChart
+  title="Seasonal Decomposition — Bengkalis Monthly Hotspot Time Series (2015–2024)"
+  client:visible
+/>
 
 The seasonal decomposition and ENSO violin plots above illustrate the temporal structure that the spatial autocorrelation tests complement. The decomposition reveals a strong seasonal component (peaking July–October, corresponding to the dry season) superimposed on a multi-year ENSO-driven trend. The violin plot confirms that El Niño conditions do not merely increase the *mean* fire count — they alter the *shape* of the distribution, introducing a fat right tail of extreme-fire months that has no analogue during neutral or La Niña phases. This fat-tail structure is precisely the pattern that makes early warning so critical: the average increase during El Niño (5× the La Niña mean) understates the true risk, because the operational concern is not the mean but the tail — the months where hotspot counts exceed 50 or 100 and fire suppression resources are overwhelmed.
 
