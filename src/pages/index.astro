@@ -103,7 +103,7 @@ const allTopics = ['All', 'Peatland', 'Mangrove', 'Remote Sensing', 'Machine Lea
 
       <!-- Feature card — first article -->
       {articles[0] && (
-        <a href={`/${articles[0].slug}`} class="feature-card">
+        <a href={`/blog/${articles[0].slug}`} class="feature-card">
           <div class="feature-meta">
             <div class="feature-tags">
               {articles[0].data.tags.map(tag => (
