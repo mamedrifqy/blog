@@ -1,0 +1,234 @@
+---
+title: "Behind the Maps: Data Pipeline, Quality Control, and Statistical Methods for Bengkalis Fire Analysis"
+subtitle: "From 67,619 raw MODIS detections to 3,707 confirmed peatland fires — a transparent account of DBSCAN filtering, drought index selection, spatial autocorrelation testing, and the machine learning decisions that shaped every finding."
+date: "2026-04-05"
+author: "Mamed"
+tags: ["fire", "peatland", "methodology", "DBSCAN", "SPEI", "spatial-autocorrelation", "Bengkalis"]
+---
+
+import DbscanChart from '../../components/DbscanChart.jsx';
+import PeatDepthChart from '../../components/PeatDepthChart.jsx';
+import PredictorLagChart from '../../components/PredictorLagChart.jsx';
+
+export const DBSCAN_FILTER_DATA = {
+  anchors: 35277,
+  rescued: 15808,
+  discarded: 16534,
+};
+
+export const PEAT_DEPTH_DATA = [
+  { depth_label: '< 100 cm', n_hotspots: 3219, area_ha: 1243561, area_pct: 14.8, fire_density: 0.00259, ratio: 0.52, status: 'Under-represented' },
+  { depth_label: '100–200 cm', n_hotspots: 5404, area_ha: 1889638, area_pct: 22.5, fire_density: 0.00286, ratio: 0.57, status: 'Under-represented' },
+  { depth_label: '200–300 cm', n_hotspots: 7693, area_ha: 1649535, area_pct: 19.6, fire_density: 0.00466, ratio: 0.94, status: 'Proportional' },
+  { depth_label: '300–500 cm', n_hotspots: 10908, area_ha: 1924090, area_pct: 22.9, fire_density: 0.00567, ratio: 1.14, status: 'Proportional' },
+  { depth_label: '500–700 cm', n_hotspots: 11688, area_ha: 1109416, area_pct: 13.2, fire_density: 0.01054, ratio: 2.12, status: 'Over-represented' },
+  { depth_label: '> 700 cm', n_hotspots: 2875, area_ha: 585508, area_pct: 7.0, fire_density: 0.00491, ratio: 0.99, status: 'Proportional' },
+];
+
+export const PREDICTOR_LAG_DATA = [
+  {
+    predictor: 'Rainfall (CHIRPS)',
+    color: '#378add',
+    points: [
+      { lag: 0, r: -0.334 }, { lag: 1, r: -0.294 }, { lag: 2, r: -0.145 },
+      { lag: 3, r: -0.037 }, { lag: 4, r: -0.033 }, { lag: 5, r: -0.102 }, { lag: 6, r: -0.170 },
+    ],
+  },
+  {
+    predictor: 'SPEI-3 Thornthwaite',
+    color: '#e05c28',
+    points: [
+      { lag: 0, r: -0.302 }, { lag: 1, r: -0.244 }, { lag: 2, r: -0.214 },
+      { lag: 3, r: -0.223 }, { lag: 4, r: -0.228 }, { lag: 5, r: -0.174 }, { lag: 6, r: -0.177 },
+    ],
+  },
+  {
+    predictor: 'ONI (ENSO)',
+    color: '#3ab06e',
+    points: [
+      { lag: 0, r: 0.246 }, { lag: 1, r: 0.265 }, { lag: 2, r: 0.272 },
+      { lag: 3, r: 0.276 }, { lag: 4, r: 0.269 }, { lag: 5, r: 0.258 }, { lag: 6, r: 0.241 },
+    ],
+  },
+  {
+    predictor: 'Temperature (ERA5)',
+    color: '#f4a023',
+    points: [
+      { lag: 0, r: 0.221 }, { lag: 1, r: 0.061 }, { lag: 2, r: -0.034 },
+      { lag: 3, r: -0.069 }, { lag: 4, r: -0.088 }, { lag: 5, r: -0.094 }, { lag: 6, r: -0.098 },
+    ],
+  },
+];
+
+Every map, chart, and statistic presented in Posts 1 and 2 rests on a data pipeline that transforms 67,619 raw MODIS thermal anomaly detections into 3,707 confirmed peatland fire observations. That reduction is not a simple threshold cut — it involves spatial clustering, confidence stratification, drought index comparison across multiple parametrisations, lag-decay profiling of every climate predictor, spatial autocorrelation testing with custom weight matrices for island sub-districts, and a machine learning validation strategy designed to prevent information leakage across spatially correlated folds. Each of these decisions is defensible on its own terms, but their cumulative effect determines whether the findings are robust or artefactual. A different filtering threshold would shift the Mandau anomaly. A different drought index would reorder the predictor hierarchy. A different spatial weight matrix would alter the autocorrelation statistics. The methodology is not a neutral scaffold — it is an active participant in what the analysis concludes.
+
+This post documents every filtering decision, index selection, and statistical test that underpins the Bengkalis peatland fire analysis. It is written for a thesis-examination audience that needs to evaluate not just *what* was found, but *why* the method produces trustworthy results, and where its assumptions may break down. If the analytical infrastructure is sound, the conclusions follow. If it is not, no amount of elegant visualisation can compensate. Transparency at this level is not optional — it is the basis on which the entire analysis stands.
+
+## From 67,619 to 3,707: the DBSCAN filtering pipeline
+
+The raw FIRMS (Fire Information for Resource Management System) archive for Bengkalis Regency contains 67,619 MODIS Collection 6.1 thermal anomaly detections spanning January 2015 through December 2024. These detections are produced by the MODIS instruments aboard Terra and Aqua, which scan the entire Earth's surface every 1–2 days and flag pixels where the 4-µm and 11-µm brightness temperatures deviate from background in a pattern consistent with active combustion. The algorithm is effective but indiscriminate: it detects any thermal source above the confidence threshold, including gas flares, industrial furnaces, brick kilns, and — critically for Bengkalis — the petroleum extraction infrastructure in the Duri oil field of Mandau sub-district.
+
+MODIS assigns a confidence score from 0 to 100 to each detection. Following the C6.1 documentation, detections with confidence ≥ 70% are classified as "nominal" high-confidence fires, while those scoring 50–69% are "tentative" — potentially real fires at the edge of the sensor's detection capability, but equally likely to be small industrial heat sources or ambiguous thermal signatures. The naive approach would be to retain only the ≥ 70% class and discard the rest, but this would systematically remove genuine small fires that MODIS detects with marginal confidence, particularly agricultural burns and peat smouldering events that lack the thermal intensity of standing-flame combustion.
+
+The filtering strategy instead applies a two-stage DBSCAN (Density-Based Spatial Clustering of Applications with Noise) approach. In the first stage, all ≥ 70% confidence detections are designated as "anchors" — the 35,277 high-confidence points that form the skeleton of the fire dataset. In the second stage, medium-confidence detections (50–69%) are evaluated for spatial proximity to these anchors: if a medium-confidence point falls within 1.5 km of an existing anchor cluster, it is "rescued" and included as a genuine fire detection. The parameters are conservative: eps = 1.5 km is the maximum distance at which two simultaneous thermal sources can reasonably be considered part of the same fire event, and min_samples = 2 ensures that isolated noise points do not form spurious clusters. This procedure rescued an additional 15,808 detections, bringing the total clean dataset to 51,085 hotspots — a 75.5% retention rate from the raw archive.
+
+The remaining 16,534 discarded detections were classified as false positives. The majority of these are concentrated in Mandau sub-district, where the Duri oil field's extensive gas flare infrastructure generates persistent thermal signatures that MODIS interprets as fire. Isolated single-pixel detections in other sub-districts — likely small industrial heat sources, localized biomass burns below the detection reliability threshold, or sensor artefacts — account for the remainder. The clean dataset was then aggregated to a monthly-kecamatan panel structure, producing 3,707 fire-positive month-kecamatan observations (cells where at least one confirmed hotspot was recorded) from a total of 1,320 possible month-kecamatan cells (11 sub-districts × 120 months).
+
+<DbscanChart
+  data={DBSCAN_FILTER_DATA}
+  title="DBSCAN Hotspot Filtering Pipeline · Bengkalis 2015–2024"
+  client:visible
+/>
+
+<div style="background:#1a1a2e;border-left:4px solid #22c55e;padding:1rem 1.25rem;margin:1.5rem 0;border-radius:0 8px 8px 0;">
+  <p style="margin:0 0 0.5rem 0;font-weight:700;color:#22c55e;font-size:0.9rem;">⚠ The Duri gas flare problem</p>
+  <p style="margin:0;color:#d1d5db;font-size:0.9rem;line-height:1.6;">
+    The Duri oil field in Mandau sub-district is one of the oldest and most active petroleum extraction zones in Riau Province. Its gas flare stacks produce continuous thermal emissions that MODIS registers as repeated hotspot detections, often with medium confidence (50–69%). Without spatial filtering, these industrial signatures inflate Mandau's fire count and corrupt the ENSO correlation analysis — gas flares operate on production schedules, not climate cycles. The DBSCAN pipeline with a 1.5 km rescue radius effectively isolates these industrial clusters: because gas flares produce dense spatial clusters of repeated detections, the medium-confidence points cluster around the anchor flares and are retained as a coherent industrial group. The critical filtering step is the subsequent removal of these industrial clusters during the peatland intersection — points that do not overlap with the peatland mask (derived from the Indonesian Peatland Restoration Agency, BRG, 1:250,000 peat depth map) are discarded regardless of confidence level. This dual filter (spatial clustering + land-cover masking) is what produces the near-zero ONI correlation that identifies Mandau as a structural anomaly.
+  </p>
+</div>
+
+## SPEI-3 vs SPI-3: why Thornthwaite wins in equatorial climates
+
+The choice of drought index is one of the most consequential methodological decisions in this analysis. Drought indices compress complex hydrometeorological information — precipitation, evapotranspiration, soil moisture, runoff — into a single time-varying number that can be correlated with fire occurrence. Two families dominate the fire science literature: the Standardised Precipitation Index (SPI), which uses only rainfall, and the Standardised Precipitation Evapotranspiration Index (SPEI), which incorporates a water balance term (precipitation minus potential evapotranspiration, PET). Both are standardised using theoretical probability distributions — SPI typically fitted to a two-parameter Gamma distribution, SPEI to a three-parameter log-logistic (Fisk) distribution — producing dimensionless values where negative numbers indicate drier-than-normal conditions and positive numbers indicate wetter-than-normal.
+
+The key distinction lies in the PET formulation. SPI ignores temperature entirely: it assumes that drought is purely a precipitation deficit phenomenon. This assumption is reasonable in temperate climates, where inter-annual temperature variability is modest relative to precipitation variability. In equatorial Bengkalis, however, it fails. During El Niño years, Bengkalis experiences not only reduced rainfall but also elevated temperatures — the same weakened Walker Circulation that suppresses convection also allows clear-sky solar heating to raise surface temperatures by 1–2°C. These warmer conditions increase evapotranspiration, accelerating moisture loss from both vegetation surfaces and the peat matrix. SPI, blind to temperature, underestimates the severity of El Niño droughts because it captures only the precipitation side of the water balance equation.
+
+SPEI corrects this by estimating PET and subtracting it from precipitation before standardisation. Two PET formulations were tested. The Thornthwaite method requires only mean temperature, minimum temperature, maximum temperature, and latitude — all available from ERA5-Land at ~9 km resolution. It estimates monthly PET as a function of temperature and day-length (determined by latitude and calendar month), making it computationally trivial but physically grounded. The Hargreaves-Samani method similarly requires only Tmin, Tmax, and latitude (plus an extraterrestrial radiation term derived from latitude), and produces comparable results in tropical settings. Both outperformed SPI-3 in cross-validated model comparisons, with SPEI-3 Thornthwaite achieving a panel Spearman r of −0.302 against monthly hotspot count, compared to −0.287 for SPI-3.
+
+<p style="text-align:center;">
+  <img src="/images/methods/spei3_vs_spi3_comparison.png" alt="SPEI-3 vs SPI-3 correlation comparison across Bengkalis sub-districts" style="max-width:100%;border-radius:8px;margin:0.5rem 0;" />
+</p>
+<p style="text-align:center;font-size:0.85rem;color:#9ca3af;margin-bottom:1.5rem;">
+  SPEI-3 (Thornthwaite) versus SPI-3 (Gamma) — Spearman correlation with monthly hotspot count per sub-district. SPEI-3 consistently outperforms SPI-3, with the gap widening in sub-districts dominated by deep peat where temperature-driven evapotranspiration amplifies drought severity.
+</p>
+
+The comparative performance across three formulations is summarised below:
+
+| Metric | SPEI-3 Thornthwaite | SPEI-3 Hargreaves | SPI-3 Gamma |
+|---|---|---|---|
+| Panel r with hotspot | −0.302 | −0.298 | −0.287 |
+| SHAP importance rank | 1 | — | 2 |
+| Data requirements | P, Tmean, Tmin, Tmax | P, Tmin, Tmax, lat | P only |
+| Seasonal stability | High (PET adapts to T) | High | Moderate (Gamma edge effects) |
+| Equatorial suitability | Preferred | Good | Adequate |
+
+The "seasonal stability" row captures a subtlety that matters for operational deployment. Bengkalis has a weak bimodal rainfall pattern (two wet seasons separated by brief dry interludes), which means the Gamma distribution fitted to monthly precipitation data encounters edge effects — very low rainfall months in dry seasons produce poorly constrained shape parameters. SPI-3 values during these edge months are less reliable. SPEI-3's inclusion of PET partially compensates because evapotranspiration remains well-defined even when precipitation approaches zero. The practical consequence: SPEI-3 produces smoother, more physically interpretable drought trajectories during the critical transition months (June–August) when fire risk escalates, making it a better input for the early warning system.
+
+## Predictor lag structure: why rainfall fades but drought persists
+
+One of the most important findings for operational early warning design is that different climate predictors carry information over fundamentally different time horizons. This is not a modelling artefact — it reflects the underlying physics of how each variable influences peat flammability. The chart below plots the Spearman correlation between four key predictors and the monthly hotspot count at temporal lags from 0 to 6 months. The shapes of these decay curves tell a clear story about which monitoring system is needed for which decision window.
+
+Rainfall (CHIRPS) shows the steepest and most rapid decay of any predictor. At lag 0 (same month), the correlation reaches r = −0.334 — the strongest single-predictor correlation in the entire analysis. A heavy rainfall event suppresses fire risk that month through direct wetting of the peat surface, elevated humidity, and reduced fuel availability. But by lag 2, the correlation has already dropped to r = −0.145, and by lag 3 it is essentially zero (r = −0.037). Rainfall has no hydrological memory beyond the month in which it falls. This makes physical sense: in Bengkalis's flat, poorly drained peat landscape, excess water either runs off rapidly or evaporates within weeks. There is no deep aquifer recharge that would carry a wet month's influence forward — the peat water table responds to the *current* moisture balance, not to past rainfall events. The implication is straightforward: rainfall monitoring provides an *immediate-response* signal. If CHIRPS indicates below-average rainfall this month, fire risk is elevated *this month*. But rainfall tells you nothing about fire risk three months from now.
+
+SPEI-3 (Thornthwaite) tells a different story. Its lag-0 correlation (r = −0.302) is slightly weaker than rainfall's, reflecting the smoothing inherent in a 3-month accumulation window. But the decay is far more gradual: at lag 3 the correlation is still r = −0.223, at lag 4 it holds at r = −0.228, and at lag 6 it remains r = −0.177. This persistence is the entire reason SPEI exists as a separate index. By accumulating the water balance (P − PET) over a 3-month window, SPEI captures the *trajectory* of moisture deficit — not just whether this month is dry, but whether the last three months have been systematically drier than the climatology demands. In Bengkalis, this matters enormously. The 2019 fire season demonstrated that a sequence of modestly dry months can be more dangerous than a single extremely dry month, because progressive water table depletion removes the hydrological buffer that protects deep peat. SPEI-3 retains this accumulated signal across multiple months, making it the appropriate index for *sustained risk* monitoring and for capturing the antecedent moisture deficit that precedes major fire events.
+
+ONI shows the broadest temporal footprint of any predictor. Its correlation is positive (higher ONI = more fire) and nearly flat across lags 1 through 4, hovering around r ≈ 0.27. This plateau structure reflects the slow-moving nature of ENSO itself: an El Niño event typically develops over months, persists for 6–12 months, and decays gradually. The oceanic heat content that drives ENSO evolves on seasonal timescales, not monthly ones. For Bengkalis, this means that ONI provides *seasonal outlook* information — if an El Niño is developing now, fire risk will be elevated for the next several months regardless of short-term rainfall fluctuations. The operational implication is that ONI monitoring supports *pre-positioning* decisions: when NOAA's ENSO forecast indicates El Niño development, BPBD Bengkalis has a 2–4 month lead time to mobilise resources, coordinate with plantation companies, and activate community-level fire patrols.
+
+Temperature (ERA5) behaves differently from the other three predictors. Its lag-0 correlation is moderately positive (r = 0.221) — warmer months tend to have more fires — but it decays to near-zero by lag 2 and actually turns slightly negative at longer lags (r = −0.098 at lag 6). The negative long-lag correlation is likely an indirect effect: months following warm, dry periods tend to be followed by rainfall recovery, suppressing fire. Temperature's primary value is as a contemporaneous indicator — it captures the immediate thermal stress that accelerates peat drying during drought conditions. It does not carry predictive information beyond the current month and is best understood as a modulator of drought severity rather than an independent predictor.
+
+<PredictorLagChart
+  data={PREDICTOR_LAG_DATA}
+  title="Predictor Lag-Decay: Spearman r vs Monthly Hotspot Count (Lag 0–6)"
+  client:visible
+/>
+
+The convergence of these three temporal signatures explains why the early warning system needs all three monitoring streams operating simultaneously. Rainfall provides the immediate tactical signal (what is happening this month), SPEI-3 provides the strategic drought signal (what has been happening over recent months), and ONI provides the seasonal planning signal (what the climate system is likely to do over the coming months). No single predictor can substitute for the others, and the lag-decay structure shows precisely why.
+
+## Peat depth determines severity, not ignition
+
+One of the most counterintuitive findings in this analysis is the relationship between peat depth and fire detection. Conventional ecological reasoning suggests that deeper peat should burn more readily — more fuel means more fire. The data shows the opposite. The Spearman correlation between mean peat depth per sub-district and total hotspot count is ρ = 0.007 (p = 0.787) — effectively zero. Peat depth does not predict where fires ignite. But peat depth *does* predict how severe fires become once they start, and more importantly, it predicts whether MODIS will detect them.
+
+The fire density data by peat depth class reveals the detection bias clearly. Shallow peat (< 100 cm) has the lowest fire density at 0.0026 detections per hectare, with an observed-to-expected ratio of 0.52 — fires in shallow peat are under-represented relative to the area that shallow peat occupies. This makes sense: shallow peat fires tend to be brief surface burns that extinguish quickly when the thin peat layer is consumed. They produce less thermal radiation and persist for fewer satellite overpasses, reducing the probability that MODIS captures them. Conversely, the 500–700 cm depth class has the highest fire density at 0.0105 detections per hectare — four times the shallow-peat rate — and is over-represented by a factor of 2.12 relative to its area share. Deep peat fires are smouldering events that can persist for weeks or months, burning horizontally through the peat column at rates of centimetres per day. They produce sustained thermal signatures that MODIS detects repeatedly, sometimes generating dozens of individual hotspot records from a single persistent combustion zone.
+
+<p style="text-align:center;">
+  <img src="/images/methods/hotspot_peat_depth_analysis (1).png" alt="Peat depth vs hotspot distribution analysis showing detection bias across depth classes" style="max-width:100%;border-radius:8px;margin:0.5rem 0;" />
+</p>
+<p style="text-align:center;font-size:0.85rem;color:#9ca3af;margin-bottom:1.5rem;">
+  Hotspot distribution by peat depth class — the over-representation of the 500–700 cm class (ratio 2.12) reflects MODIS detection bias, not necessarily higher ignition probability. Deep peat fires produce more persistent thermal signatures, increasing detection probability per actual fire event.
+</p>
+
+This detection bias has a direct consequence for interpreting the spatial fire distribution. Sub-districts with deep peat — Bandar Laksamana (265,120 ha), Siak Kecil (226,268 ha), and Bathin Solapan — will appear more fire-prone in the MODIS record than they truly are, because a single persistent smouldering event generates many more hotspot detections than an equivalent surface fire in shallow peat. Conversely, Rupat and Rupat Utara — with their predominantly shallow peat profiles — may have more fires than the MODIS archive suggests, but those fires are brief, low-intensity burns that evade satellite detection.
+
+<PeatDepthChart
+  data={PEAT_DEPTH_DATA}
+  title="Fire Density vs Peat Depth Class · Detection Bias in MODIS Archive"
+  client:visible
+/>
+
+The practical implication for fire management is twofold. First, the > 700 cm depth class shows a ratio of 0.99 — almost exactly proportional representation — despite having the deepest peat. This apparent return to proportionality is likely a statistical artefact of the small sample (n = 2,875 hotspots over a small area of 585,508 ha, representing just 7.0% of the peatland area). The very deepest peat tends to be in remote, undeveloped areas with fewer ignition sources (roads, canals, agricultural frontiers), which partially offsets the detection advantage. Second, the 300–500 cm class (ratio 1.14, the largest area share at 22.9%) represents the highest-risk zone in terms of the intersection of ignition likelihood and detection probability — these are accessible, moderately developed peatlands where fires ignite frequently and burn long enough to be reliably detected.
+
+## Spatial autocorrelation and the island kecamatan problem
+
+Any analysis that treats sub-districts as independent observational units must confront spatial autocorrelation — the tendency for geographically proximate locations to exhibit similar values not because of a causal relationship, but because they share unmeasured environmental drivers. In the Bengkalis context, neighbouring sub-districts share the same regional climate forcing (ENSO, monsoon circulation), similar land-use histories (oil palm expansion, canal drainage), and in some cases contiguous peat domes that respond hydrologically as a single system. If residual spatial autocorrelation exists in the model's errors, it inflates effective sample size and produces standard errors that are too narrow, leading to spurious significance claims.
+
+Spatial autocorrelation was tested using Moran's I, implemented via the `esda.Moran` function in PySAL with 999 Monte Carlo permutations to generate empirical p-values. The spatial weight matrix defines which sub-districts are "neighbours" — and this is where Bengkalis's geography creates a distinctive problem. Standard queen contiguity (shared edge) and rook contiguity (shared vertex) weight matrices fail for the three island sub-districts: Rupat, Rupat Utara, and Bantan. These sub-districts occupy Rupat Island and adjacent smaller islands in the Malacca Strait, separated from the mainland by open water. Under standard contiguity definitions, they are spatially isolated — they share no land boundary with any other kecamatan.
+
+<p style="text-align:center;">
+  <img src="/images/methods/heatmap_korelasi_spearman_v3.png" alt="Spearman correlation heatmap showing all predictor pairs used in the analysis" style="max-width:100%;border-radius:8px;margin:0.5rem 0;" />
+</p>
+<p style="text-align:center;font-size:0.85rem;color:#9ca3af;margin-bottom:1.5rem;">
+  Spearman correlation heatmap across all predictor pairs. The block structure reveals multicollinearity between drought indices (SPEI-3 variants, SPI-3) and moderate coupling between climate and non-climate predictors, informing feature selection for the machine learning model.
+</p>
+
+This isolation is geographically real but analytically misleading. Rupat Island is connected to the mainland by regular ferry services, shares the same provincial governance structure, and — critically — experiences the same regional climate forcing as the mainland sub-districts. Peatland fires on Rupat are driven by the same ENSO teleconnection that drives fires in Bengkalis town and Siak Kecil. Treating Rupat as spatially isolated would overestimate the independence of island observations and potentially mask genuine spatial patterns that cross the water barrier. The solution was to construct a custom spatial weight matrix that incorporates maritime contiguity — assigning neighbour status between island sub-districts and the nearest mainland kecamatan based on minimum sea-crossing distance rather than land boundary sharing.
+
+Residual spatial autocorrelation in the GBM (Gradient Boosting Machine) model was tested using this custom weight matrix. The results were informative: Moran's I on model residuals showed weak but non-significant spatial clustering (I = 0.042, p = 0.187 under 999 permutations), suggesting that the model captures most of the spatially structured variation in fire occurrence. The remaining weak clustering likely reflects the shared climate forcing that affects neighbouring kecamatan simultaneously — an expected and structurally inevitable pattern that does not violate the model's assumptions. This finding supports the GroupKFold validation approach used in the machine learning analysis: neighbouring kecamatan were assigned to different folds to prevent within-fold spatial leakage, while the weak residual autocorrelation confirms that this precaution was sufficient rather than excessive.
+
+<p style="text-align:center;">
+  <img src="/images/methods/seasonal_decomposition.png" alt="Seasonal decomposition of Bengkalis hotspot time series showing trend, seasonal, and residual components" style="max-width:100%;border-radius:8px;margin:0.5rem 0;" />
+</p>
+<p style="text-align:center;font-size:0.85rem;color:#9ca3af;margin-bottom:1.5rem;">
+  Classical seasonal decomposition (additive model) of the Bengkalis monthly hotspot time series. The trend component captures the ENSO-driven multi-year cycle, the seasonal component isolates the consistent July–October fire peak, and the residual component — used for autocorrelation testing — shows no systematic temporal structure after detrending.
+</p>
+
+<p style="text-align:center;">
+  <img src="/images/methods/violin_fat_tail_enso (2).png" alt="Violin plot of hotspot distribution by ENSO phase showing fat-tail structure" style="max-width:100%;border-radius:8px;margin:0.5rem 0;" />
+</p>
+<p style="text-align:center;font-size:0.85rem;color:#9ca3af;margin-bottom:1.5rem;">
+  Hotspot distribution by ENSO phase, shown as violin plots with embedded box plots. The fat right tail under El Niño conditions — with several months exceeding 100 hotspots — confirms that El Niño does not simply shift the distribution upward, it fundamentally changes its shape, introducing extreme-fire months that have no equivalent during neutral or La Niña phases.
+</p>
+
+The seasonal decomposition and ENSO violin plots above illustrate the temporal structure that the spatial autocorrelation tests complement. The decomposition reveals a strong seasonal component (peaking July–October, corresponding to the dry season) superimposed on a multi-year ENSO-driven trend. The violin plot confirms that El Niño conditions do not merely increase the *mean* fire count — they alter the *shape* of the distribution, introducing a fat right tail of extreme-fire months that has no analogue during neutral or La Niña phases. This fat-tail structure is precisely the pattern that makes early warning so critical: the average increase during El Niño (5× the La Niña mean) understates the true risk, because the operational concern is not the mean but the tail — the months where hotspot counts exceed 50 or 100 and fire suppression resources are overwhelmed.
+
+## Limitations and caveats
+
+No analysis is complete without a transparent accounting of its limitations. The findings presented in Posts 1 and 2 are robust within the boundaries described below, but extrapolation beyond those boundaries — whether spatially, temporally, or methodologically — requires caution. Five primary limitations structure the uncertainty in this work.
+
+**Climate data resolution and the BMKG station gap.** Precipitation data come from CHIRPS v2.0 at ~5.5 km resolution, and temperature data from ERA5-Land at ~9 km. These are state-of-the-art gridded products, but they are interpolated estimates — not direct station measurements. The nearest BMKG (Indonesian Meteorological Agency) weather station with reliable long-term records is in Karimun, roughly 120 km across the Malacca Strait. No BMKG station operates within Bengkalis Regency itself. The implication is that the climate variables used in this analysis capture the *regional* atmospheric signal with good fidelity, but cannot resolve local microclimate variations — the differences in rainfall between a recently drained peat dome and an intact one, or between an oil palm canopy and a secondary forest, are below the detection threshold of both CHIRPS and ERA5-Land. Sub-district-level climate variables are extracted at the geometric centroid of each kecamatan, which is a reasonable first approximation but introduces spatial mismatch in irregularly shaped sub-districts like Bantan (which spans mainland and island areas with genuinely different microclimates).
+
+**Study period and ENSO sampling.** The analysis covers 2015–2024, a decade that captures only two major El Niño events (2015–2016 super El Niño and the weaker 2018–2019 event) and three La Niña episodes. This is a small sample for characterising the full range of ENSO–fire coupling. The 2015 event, in particular, was extreme — ONI peaked at +2.75°C, placing it among the three strongest El Niño events since 1950. Regression models fitted to data dominated by this single extreme event may overestimate the sensitivity of fire to moderate El Niño conditions. A 20-year extension using ERA5 backfill (available from 1940) is planned for future work, which would add at least three additional El Niño cycles and substantially improve the statistical power for distinguishing between El Niño intensity levels.
+
+**Non-climate variables are cross-sectional, not panel.** Six non-climate predictors were extracted from GEE-derived geospatial layers: oil palm fraction, deforestation rate (2015–2024), water occurrence, population density, fire-prone land cover, and NDVI trend. These are time-invariant at the kecamatan level — each sub-district receives a single value for each variable, repeated across all 120 months. This is not ideal. Deforestation, population, and NDVI all change over a decade, and treating them as static implicitly assumes that intra-kecamatan variation over time is negligible relative to inter-kecamatan variation. The panel structure (1,320 observations) mechanically inflates the apparent sample size for these variables, because the same 11 unique values are repeated 120 times each. The reported Spearman correlations for non-climate variables should be interpreted as *spatial* correlations (between kecamatan characteristics and fire counts), not as *panel* correlations with time-series degrees of freedom. All non-climate effects are reported at the aggregate level to reflect this limitation.
+
+**MODIS detection bias.** The MODIS instruments have known limitations for peatland fire detection. Smouldering peat fires — which produce less radiant heat than flaming combustion — are detected with lower confidence, and the DBSCAN filtering pipeline may remove some genuine low-confidence peat fires that are spatially isolated. Agricultural burns, particularly the small, short-duration fires used for land clearing in oil palm and rubber plantations, are systematically undercounted because they often fall below MODIS's detection threshold and, when detected, receive marginal confidence scores. The consequence is that the MODIS fire record is biased toward large, persistent, high-intensity fires — precisely the deep-peat smouldering events discussed in Section 4. This detection bias does not invalidate the climate analysis (the ENSO signal is robust across all detection confidence levels), but it means that absolute fire counts are underestimates, and that the spatial distribution of fires reflects both true fire incidence and differential detection probability across land-cover and peat-depth classes.
+
+**No ground-truth validation.** This is a satellite-only analysis. No field verification of hotspot locations, burn scar extents, or fire severity was conducted. The MODIS fire detections are treated as the observed ground truth, with all the caveats that entails. Planned field verification campaigns — including drone-based thermal imaging of active smouldering sites and post-fire peat depth measurements — would substantially strengthen the analysis by enabling direct comparison of satellite-detected fire counts with actual fire events. Until such validation is conducted, all quantitative findings should be understood as characterising the *MODIS fire record* rather than the *true fire regime* of Bengkalis.
+
+<div style="background:#1a1a2e;border-left:4px solid #f59e0b;padding:1rem 1.25rem;margin:1.5rem 0;border-radius:0 8px 8px 0;">
+  <p style="margin:0 0 0.5rem 0;font-weight:700;color:#f59e0b;font-size:0.9rem;">📋 Planned extensions</p>
+  <p style="margin:0;color:#d1d5db;font-size:0.9rem;line-height:1.6;">
+    A 20-year backfill using ERA5 (1940–present) is in progress, which will add three additional El Niño cycles and enable robust intensity-stratified analysis. Sentinel-2 near-real-time fire detection will be integrated for the 2025 dry season to cross-validate MODIS detections at 10 m resolution. Field campaigns are planned in collaboration with BRG (Peatland Restoration Agency) for drone-based thermal verification and post-fire peat depth profiling across the six depth classes described in Section 4.
+  </p>
+</div>
+
+## Methods reference
+
+**Hotspot data:** MODIS Active Fire Product (Collection 6.1), FIRMS archive, January 2015–December 2024. DBSCAN spatial quality control: anchor threshold ≥ 70% confidence; rescue radius eps = 1.5 km for 50–69% confidence detections; min_samples = 2. Peatland intersection via BRG 1:250,000 peat depth map. Final clean dataset: 51,085 hotspots (75.5% retention from 67,619 raw), aggregated to 3,707 fire-positive month-kecamatan observations in an 11 × 120 panel.
+
+**Climate data:** CHIRPS v2.0 (~5.5 km, monthly precipitation) extracted at kecamatan centroids via Google Earth Engine. ERA5-Land (~9 km, temperature: Tmin, Tmax, Tmean) extracted at kecamatan centroids. Replaces NASA POWER (~55 km) used in earlier notebook versions.
+
+**Drought indices:** SPEI-3 Thornthwaite (PET from Tmean and day-length), SPEI-3 Hargreaves-Samani (PET from Tmin, Tmax, and extraterrestrial radiation), SPI-3 Gamma (2-parameter Gamma fit to monthly precipitation). Water balance (P − PET) aggregated over 3-month windows, standardised using log-logistic distribution. SPEI-3 Thornthwaite selected as primary drought index based on panel correlation and SHAP importance.
+
+**ENSO index:** NOAA CPC Oceanic Niño Index (ONI) — 3-month running mean of ERSST.v5 SST anomalies in the Niño 3.4 region (5°N–5°S, 170°W–120°W). El Niño/La Niña classification per CPC criterion: ONI ≥ +0.5°C or ≤ −0.5°C sustained over 5 consecutive overlapping 3-month seasons.
+
+**Lag analysis:** Spearman ρ computed between predictor at lag k and monthly hotspot count at lag 0, for k = 0, 1, 2, 3, 4, 5, 6. Panel-level (all kecamatan pooled) and kecamatan-level correlations reported. Significance assessed via two-tailed test; Bonferroni correction applied for multi-lag confirmatory claims.
+
+**Peat depth analysis:** Peat depth map from BRG (Badan Restorasi Gambut) at 1:250,000 scale, reclassified into six depth classes (< 100 cm, 100–200 cm, 200–300 cm, 300–500 cm, 500–700 cm, > 700 cm). Fire density computed as hotspots per hectare per depth class. Observed-to-expected ratio computed as (observed area fraction)/(expected area fraction) to identify over- and under-representation.
+
+**Spatial autocorrelation:** Moran's I via PySAL `esda.Moran`, custom spatial weight matrix with maritime contiguity for island sub-districts (Rupat, Rupat Utara, Bantan), row-standardised, 999 Monte Carlo permutations.
+
+**Machine learning:** XGBoost (Chen & Guestrin, 2016), 13 features, GroupKFold validation by kecamatan to prevent spatial leakage. SHAP attribution via TreeExplainer (Lundberg & Lee, 2017). CV-AUC = 0.818 ± 0.016.
+
+**Non-climate factors:** Six GEE-derived layers — oil palm fraction (ESA WorldCover), deforestation 2015–2024 (Hansen GFC v1.11), water occurrence (JRC GSW v1.4), population density (WorldPop 2020), fire-prone land cover, NDVI trend (Landsat 8 Collection 2 SR). All cross-sectional (single value per kecamatan).
+
+> This analysis constitutes the methodological backbone of an S2 thesis in Disaster Management at Universitas Riau (UNRI). All notebooks, processed datasets, GEE scripts, and DBSCAN filtering code are documented in the project repository.
