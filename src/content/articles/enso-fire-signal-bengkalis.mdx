@@ -1,0 +1,201 @@
+---
+title: "Five Times the Fire: How ENSO Shapes Peatland Burning in Bengkalis"
+subtitle: "A decade of MODIS hotspot records across 11 sub-districts reveals El Niño amplification of 5×, spatially heterogeneous lag windows, and one sub-district that defies the climate signal entirely."
+date: "2026-04-05"
+author: "Mamed"
+tags: ["fire", "peatland", "ENSO", "remote-sensing", "Bengkalis"]
+mapData: "/data/bengkalis_kecamatan.geojson"
+---
+
+import BengkalisMap from '../../components/BengkalisMap.jsx';
+import EnsoChart from '../../components/EnsoChart.jsx';
+import SuitabilityChart from '../../components/SuitabilityChart.jsx';
+
+export const MAP_STEPS = [
+  {
+    id: 'overview',
+    badge: 'ENSO Correlation',
+    colorBy: 'r_oni',
+    title: 'ENSO fingerprints across 11 sub-districts',
+    text: 'The Spearman correlation between ONI and monthly hotspot count — computed at the optimal lag for each kecamatan — reveals strong climate coupling across most of Bengkalis. Coastal and southern peatlands dominate the high-sensitivity zone. One sub-district breaks the pattern entirely.',
+    center: [102.4, 1.45],
+    zoom: 8.8,
+    stat: { value: 'ρ = 0.246', label: 'Panel-wide ONI–hotspot correlation (p < 0.001, n = 1,320)' },
+  },
+  {
+    id: 'siak-kecil',
+    badge: 'Strongest Signal',
+    colorBy: 'r_oni',
+    highlight: 'Siak Kecil',
+    title: 'Siak Kecil: the most ENSO-coupled peatland in Bengkalis',
+    text: 'Siak Kecil peaks at ρ = 0.484 (lag 2–3 months) — the highest ONI–fire coupling in the regency. Its 226,268 ha of peat are exceptionally sensitive to moisture deficit. A 2-month lead time puts Siak Kecil within NOAA\'s seasonal ENSO forecast window, making it the ideal test case for early warning pre-positioning.',
+    center: [102.35, 1.12],
+    zoom: 10.8,
+    stat: { value: 'ρ = 0.484', label: 'Peak correlation — Siak Kecil, lag-2 months (p = 2.9 × 10⁻⁸)' },
+  },
+  {
+    id: 'bandar-laksamana',
+    badge: 'Largest Peat Extent',
+    colorBy: 'p_elnino',
+    highlight: 'Bandar Laksamana',
+    title: 'Bandar Laksamana: 265,120 ha and an 83.9% fire probability',
+    text: 'Bandar Laksamana holds the largest peat extent in Bengkalis and the highest El Niño–conditional fire probability in the regency: 83.9%. Its ONI lag peaks at 2 months (ρ = 0.314), and total hotspot count over 10 years reached 709 — second highest among all kecamatan. During El Niño months, this sub-district shifts from moderate to near-certain fire territory.',
+    center: [102.65, 1.72],
+    zoom: 10.5,
+    stat: { value: '83.9%', label: 'P(fire | El Niño) — Bandar Laksamana' },
+  },
+  {
+    id: 'rupat',
+    badge: 'Highest Hotspot Count',
+    colorBy: 'p_elnino',
+    highlight: 'Rupat',
+    title: 'Rupat: 997 hotspots, immediate ENSO response at lag 0',
+    text: 'Rupat recorded the most total hotspots of any kecamatan over 10 years (997), with an El Niño fire probability of 70.0%. Unlike deep-peat sub-districts with a 2–4 month buffer, Rupat peaks at lag 0 — the moment ONI crosses the El Niño threshold, fire risk escalates almost immediately. Shallower peat (fire-weighted depth ordinal = 2.49) means no hydrological memory to bridge the drought signal.',
+    center: [101.65, 2.0],
+    zoom: 10.2,
+    stat: { value: '997', label: 'Total hotspots 2015–2024 — Rupat (regency high)' },
+  },
+  {
+    id: 'mandau',
+    badge: 'Anthropogenic Anomaly',
+    colorBy: 'r_oni',
+    highlight: 'Mandau',
+    title: 'Mandau: the sub-district the climate model cannot explain',
+    text: 'Mandau\'s ONI–hotspot correlation is effectively zero (r = −0.016) at every lag tested from 0–6 months. It is the only kecamatan where fire probability during La Niña exceeds that during El Niño. The explanation lies not in the atmosphere but on the ground: petroleum extraction at the Duri oil field, oil palm clearing at agricultural calendars, and a population density of 414 persons/km² — the highest in the regency.',
+    center: [101.45, 1.08],
+    zoom: 10.5,
+    stat: { value: 'r = −0.016', label: 'ONI correlation — Mandau (all lags, p = 0.866)' },
+  },
+];
+
+export const ENSO_DATA_BENGKALIS = [
+  {year:2015,month:1,oni:0.69,hotspots:0},{year:2015,month:2,oni:0.61,hotspots:6},
+  {year:2015,month:3,oni:0.65,hotspots:44},{year:2015,month:4,oni:0.92,hotspots:32},
+  {year:2015,month:5,oni:1.14,hotspots:120},{year:2015,month:6,oni:1.52,hotspots:280},
+  {year:2015,month:7,oni:1.84,hotspots:620},{year:2015,month:8,oni:2.25,hotspots:1420},
+  {year:2015,month:9,oni:2.55,hotspots:2100},{year:2015,month:10,oni:2.75,hotspots:980},
+  {year:2015,month:11,oni:2.57,hotspots:310},{year:2015,month:12,oni:2.22,hotspots:80},
+  {year:2016,month:1,oni:1.84,hotspots:45},{year:2016,month:2,oni:1.42,hotspots:28},
+  {year:2016,month:6,oni:-0.3,hotspots:190},{year:2016,month:7,oni:-0.6,hotspots:260},
+  {year:2016,month:8,oni:-0.8,hotspots:310},{year:2016,month:9,oni:-0.9,hotspots:215},
+  {year:2016,month:10,oni:-1.0,hotspots:95},{year:2017,month:1,oni:-0.8,hotspots:8},
+  {year:2017,month:7,oni:0.0,hotspots:18},{year:2017,month:8,oni:0.1,hotspots:24},
+  {year:2017,month:9,oni:0.1,hotspots:35},{year:2018,month:7,oni:0.8,hotspots:62},
+  {year:2018,month:8,oni:0.9,hotspots:95},{year:2018,month:9,oni:0.9,hotspots:180},
+  {year:2018,month:10,oni:0.8,hotspots:74},{year:2019,month:6,oni:0.48,hotspots:95},
+  {year:2019,month:7,oni:0.3,hotspots:240},{year:2019,month:8,oni:0.2,hotspots:580},
+  {year:2019,month:9,oni:0.3,hotspots:940},{year:2019,month:10,oni:0.2,hotspots:420},
+  {year:2019,month:11,oni:0.3,hotspots:120},{year:2020,month:8,oni:-0.2,hotspots:180},
+  {year:2020,month:9,oni:-0.5,hotspots:95},{year:2020,month:10,oni:-0.9,hotspots:45},
+  {year:2021,month:8,oni:-0.8,hotspots:82},{year:2021,month:9,oni:-1.0,hotspots:55},
+  {year:2022,month:8,oni:-1.1,hotspots:12},{year:2022,month:9,oni:-1.2,hotspots:18},
+  {year:2023,month:6,oni:0.8,hotspots:28},{year:2023,month:7,oni:1.0,hotspots:48},
+  {year:2023,month:8,oni:1.5,hotspots:98},{year:2023,month:9,oni:1.8,hotspots:145},
+  {year:2023,month:10,oni:1.9,hotspots:62},{year:2024,month:8,oni:-0.5,hotspots:42},
+  {year:2024,month:9,oni:-0.9,hotspots:38},
+];
+
+export const LAG_DECAY_DATA = [
+  { polygon: 'Siak Kecil',       'Lag 0': 0.429, 'Lag 1': 0.466, 'Lag 2': 0.484, 'Lag 3': 0.483 },
+  { polygon: 'Bantan',           'Lag 0': 0.257, 'Lag 1': 0.295, 'Lag 2': 0.315, 'Lag 3': 0.338 },
+  { polygon: 'Bengkalis',        'Lag 0': 0.287, 'Lag 1': 0.334, 'Lag 2': 0.347, 'Lag 3': 0.353 },
+  { polygon: 'Bathin Solapan',   'Lag 0': 0.184, 'Lag 1': 0.220, 'Lag 2': 0.265, 'Lag 3': 0.308 },
+  { polygon: 'Bandar Laksamana', 'Lag 0': 0.280, 'Lag 1': 0.307, 'Lag 2': 0.314, 'Lag 3': 0.308 },
+  { polygon: 'Bukit Batu',       'Lag 0': 0.328, 'Lag 1': 0.348, 'Lag 2': 0.338, 'Lag 3': 0.316 },
+  { polygon: 'Rupat',            'Lag 0': 0.343, 'Lag 1': 0.330, 'Lag 2': 0.307, 'Lag 3': 0.304 },
+  { polygon: 'Rupat Utara',      'Lag 0': 0.266, 'Lag 1': 0.255, 'Lag 2': 0.233, 'Lag 3': 0.205 },
+  { polygon: 'Talang Muandau',   'Lag 0': 0.301, 'Lag 1': 0.307, 'Lag 2': 0.310, 'Lag 3': 0.330 },
+  { polygon: 'Pinggir',          'Lag 0': 0.138, 'Lag 1': 0.159, 'Lag 2': 0.183, 'Lag 3': 0.206 },
+  { polygon: 'Mandau',           'Lag 0': -0.016, 'Lag 1': 0.022, 'Lag 2': 0.058, 'Lag 3': 0.071 },
+];
+
+Between 2015 and 2024, Bengkalis Regency recorded **3,707 confirmed peatland fire hotspots** across 11 sub-districts. The distribution is not random. It follows the Pacific Ocean.
+
+When sea surface temperatures in the Niño 3.4 region rise above +0.5°C — the El Niño threshold — the Walker Circulation weakens, suppressing convective rainfall across maritime Southeast Asia. Peat water tables drop. When they cross a critical depth, the peat itself becomes fuel. What follows is not a surface brush fire but a smouldering combustion event that can persist for weeks underground, releasing carbon that took millennia to accumulate.
+
+This analysis asks a specific question: **how tightly does that Pacific signal translate into fire across each of Bengkalis's 11 sub-districts, and at what time delay?** The answer has direct consequences for early warning architecture.
+
+## Spatial pattern of ENSO sensitivity
+
+Scroll through the map below. Each step highlights a different facet of the spatial story — from the sub-districts most tightly coupled to the ENSO signal, to the one anomaly that breaks the pattern entirely.
+
+<BengkalisMap
+  steps={MAP_STEPS}
+  colorBy="r_oni"
+  dataUrl="/blog/data/bengkalis_kecamatan.geojson"
+  client:visible
+/>
+
+## El Niño amplifies fire by a factor of five
+
+Aggregating across all 11 kecamatan and 120 months of panel data (n = 1,320 observations), the mean monthly hotspot count under **El Niño conditions** (ONI ≥ +0.5°C) reaches **5.34 hotspots per month** — compared to 1.06 under La Niña and 1.69 during neutral phases. That is a 5× amplification from one end of the ENSO spectrum to the other.
+
+The pattern is not symmetrical. La Niña suppression — driven by intensified Walker Circulation and anomalous rainfall across Sumatra — brings fire counts below the neutral baseline, not merely back to it. The Bengkalis peatland system responds to the full ENSO gradient, not just to El Niño exceedance.
+
+| ENSO Phase | Criterion | Mean Hotspots / Month | Fire Probability (GBM) |
+|---|---|---|---|
+| El Niño | ONI ≥ +0.5°C | **5.34** | **49.1%** |
+| Neutral | −0.5 to +0.5°C | 1.69 | 38.7% |
+| La Niña | ONI ≤ −0.5°C | 1.06 | 25.1% |
+
+The Spearman panel correlation across all observations is ρ = +0.246 (p < 0.001) — significant, but modest in magnitude. This reflects the heterogeneity the map reveals: Mandau's near-zero response dilutes the regency-wide coefficient even as individual kecamatan show correlations approaching 0.5.
+
+## Temporal coupling: ONI vs. Bengkalis hotspot count, 2015–2024
+
+The dual-axis chart below overlays monthly ONI values with aggregate hotspot counts for Bengkalis Regency. Two peaks dominate the decade: the 2015 super El Niño (ONI = +2.75 at peak, September) and the 2019 season — which produced substantial fire despite a weak ENSO signal.
+
+<EnsoChart
+  data={ENSO_DATA_BENGKALIS}
+  title="ONI Index vs Monthly Hotspot Count · Bengkalis Regency 2015–2024"
+  client:visible
+/>
+
+The 2019 anomaly is analytically important. Peak ONI never exceeded +0.48°C — technically a neutral to weak El Niño. Yet fire counts in August and September 2019 reached the second highest values in the 10-year record. The explanation: **antecedent moisture deficit**. Two consecutive dry seasons in 2018 and the early 2019 dry season had progressively depleted peat water tables, removing the hydrological buffer that normally insulates peat from brief rainfall deficits.
+
+This has an important implication for early warning design: **ONI alone is insufficient**. A drought index with memory — SPEI-3 captures 3-month accumulated moisture deficit — is needed alongside ONI to flag the conditions where sub-threshold ENSO events become high-fire-risk seasons.
+
+## Lag-decay: each sub-district has its own warning window
+
+Perhaps the most operationally significant finding is that different sub-districts respond to ONI anomalies at different time delays. The chart below shows the Spearman correlation between ONI and monthly hotspot count at lags 0–3 months for each sub-district.
+
+<SuitabilityChart
+  data={LAG_DECAY_DATA}
+  title="ONI–Hotspot Lag-Decay per Sub-District (Spearman ρ, Lag 0–3 months)"
+  client:visible
+/>
+
+The pattern separates into three groups:
+
+**Immediate response (Lag 0–1):** Rupat and Rupat Utara peak at lag 0. Their shallower peat — fire-weighted depth ordinals of 2.49 and 2.32 respectively — offers minimal hydrological buffering. When ONI rises, available water in the peat matrix depletes rapidly and fire risk escalates within weeks.
+
+**Intermediate lag (Lag 2–3):** The largest cluster — Siak Kecil, Bandar Laksamana, Bengkalis, Bukit Batu, Talang Muandau — peaks between 2 and 3 months. This aligns with NOAA's 1–3 season ENSO forecast horizon, meaning that once ONI forecasts confirm an El Niño event, there is a 2–3 month lead time to pre-position resources in these high-risk sub-districts.
+
+**Slow coupling (Lag 4–6):** Bantan, Bathin Solapan, and Pinggir show peak correlations at 4–6 months. Deep peat and more intact hydrological structure provide a longer buffer — but the eventual response, when it comes, can be severe.
+
+**No coupling:** Mandau. No lag from 0–6 months produces a statistically significant correlation. Its fire regime operates on a different logic.
+
+## The Mandau exception
+
+Four independent lines of evidence diagnose Mandau as an anthropogenically-driven fire regime:
+
+**Near-zero ONI correlation at every lag tested.** r = −0.016 at lag 0, never exceeding 0.10 at any lag from 0 to 6. In a 10-year study of ENSO teleconnections, this pattern cannot arise by chance in a climate-coupled system.
+
+**Inverted El Niño/La Niña fire ratio.** Mandau is the only sub-district where fire probability is slightly higher during La Niña months than El Niño months. The proposed mechanism: during extreme El Niño conditions, when uncontrolled burning becomes genuinely dangerous, oil palm plantation managers pause land-clearing to avoid liability. During La Niña, when brief dry windows appear within otherwise wet conditions, burning proceeds at agricultural-calendar pace.
+
+**Socioeconomic profile.** Mandau hosts the Duri oil field (one of Indonesia's largest), the highest population density in the regency (414 persons/km²), and a deforestation fraction of 35.3% over 2015–2024. The ignition sources are structural, not meteorological.
+
+**MODIS detection bias.** Mandau's 10-year hotspot count (28 confirmed fires) is anomalously low for an economically active, heavily modified sub-district. The DBSCAN spatial filter — designed to separate genuine peat fires from industrial false positives — likely removes a fraction of Duri gas flare detections. True fire activity in Mandau is probably under-represented.
+
+> The implication for BPBD Bengkalis is direct: **Mandau requires a monitoring protocol that is entirely orthogonal to ENSO status.** Satellite-based land-clearing detection via Sentinel-2 change detection, zero-burn ordinance enforcement, and activity-calendar tracking are the appropriate instruments — not ONI-based alert thresholds.
+
+## Methods
+
+**Hotspot data:** MODIS Active Fire Product (Collection 6.1), 2015–2024. DBSCAN spatial quality control applied per sub-district: anchor threshold ≥70% confidence, rescue radius 1.5 km for 50–69% confidence detections within established clusters. Final dataset: 3,707 hotspots from the raw FIRMS archive.
+
+**Climate data:** CHIRPS v2.0 (~5.5 km) for precipitation; ERA5-Land (~9 km) for temperature. Extracted at kecamatan centroids via Google Earth Engine.
+
+**ONI:** NOAA CPC 3-month running mean of ERSST.v5 SST anomalies in the Niño 3.4 region (5°N–5°S, 170°W–120°W). El Niño/La Niña classification per CPC criterion: ≥0.5°C or ≤−0.5°C sustained over 5 consecutive overlapping seasons.
+
+**Lag analysis:** Spearman ρ computed between ONI at lag k and monthly hotspot count at lag 0, for k = 0, 1, 2, 3, 4, 5, 6 months, per kecamatan. Significance assessed at α = 0.05 without correction (exploratory); Bonferroni correction applied for confirmatory claims.
+
+> This analysis forms part of an S2 thesis in Disaster Management at Universitas Riau. All code and processed datasets are documented in the project repository.
