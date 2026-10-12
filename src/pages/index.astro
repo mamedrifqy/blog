@@ -4,8 +4,9 @@ import { getCollection } from 'astro:content';
 
 const articles = (await getCollection('articles'))
   .filter(a => !a.data.draft)
-  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+  .sort((a, b) => Number(b.data.featured) - Number(a.data.featured) || new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 const tagColorMap: Record<string, string> = {
   fire: 'fire', peatland: 'fire', ENSO: 'ml', 'machine-learning': 'ml',
   SAR: 'sar', 'remote-sensing': 'remote-sensing',
@@ -44,8 +45,8 @@ const allTopics = ['All', 'Peatland', 'Mangrove', 'Remote Sensing', 'Machine Lea
 
       <div class="hero-stats">
         <div class="hstat">
-          <span class="hstat-n">3</span>
-          <span class="hstat-l">Published analyses</span>
+          <span class="hstat-n">{articles.length}</span>
+          <span class="hstat-l">{articles.length === 1 ? "Published analysis" : "Published analyses"}</span>
         </div>
         <div class="hstat-sep"></div>
         <div class="hstat">
@@ -68,11 +69,11 @@ const allTopics = ['All', 'Peatland', 'Mangrove', 'Remote Sensing', 'Machine Lea
     <!-- Scrolling ticker — like a newsroom dateline -->
     <div class="hero-ticker">
       <div class="ticker-track">
-        <span>MODIS/VIIRS · Fire Detection</span>
+        <span>MODIS · Fire Detection</span>
         <span>·</span>
         <span>Sentinel-1 SAR · Mangrove Suitability</span>
         <span>·</span>
-        <span>XGBoost · SHAP Attribution</span>
+        <span>ENSO · SPI-3 · Spearman</span>
         <span>·</span>
         <span>ENSO Teleconnection · Bengkalis</span>
         <span>·</span>
@@ -80,11 +81,11 @@ const allTopics = ['All', 'Peatland', 'Mangrove', 'Remote Sensing', 'Machine Lea
         <span>·</span>
         <span>Riau Province · Indonesia</span>
         <span>·</span>
-        <span>MODIS/VIIRS · Fire Detection</span>
+        <span>MODIS · Fire Detection</span>
         <span>·</span>
         <span>Sentinel-1 SAR · Mangrove Suitability</span>
         <span>·</span>
-        <span>XGBoost · SHAP Attribution</span>
+        <span>ENSO · SPI-3 · Spearman</span>
         <span>·</span>
       </div>
     </div>
@@ -103,7 +104,7 @@ const allTopics = ['All', 'Peatland', 'Mangrove', 'Remote Sensing', 'Machine Lea
 
       <!-- Feature card — first article -->
       {articles[0] && (
-        <a href={`/blog/${articles[0].slug}`} class="feature-card">
+        <a href={`${BASE}/${articles[0].slug}`} class="feature-card">
           <div class="feature-meta">
             <div class="feature-tags">
               {articles[0].data.tags.map(tag => (
@@ -128,7 +129,7 @@ const allTopics = ['All', 'Peatland', 'Mangrove', 'Remote Sensing', 'Machine Lea
       {articles.length > 1 && (
         <div class="articles-grid">
           {articles.slice(1).map(article => (
-            <a href={`/${article.slug}`} class="article-card">
+            <a href={`${BASE}/${article.slug}`} class="article-card">
               <div class="card-tags">
                 {article.data.tags.slice(0,2).map(tag => (
                   <span class={`tag ${tagColorMap[tag] ?? ''}`}>{tag}</span>
@@ -165,12 +166,12 @@ const allTopics = ['All', 'Peatland', 'Mangrove', 'Remote Sensing', 'Machine Lea
           analysis, mangrove rehabilitation mapping, and machine learning for
           disaster risk reduction.
         </p>
-        <a href="/about" class="strip-link">Learn more about the project →</a>
+        <a href={`${BASE}/about`} class="strip-link">Learn more about the project →</a>
       </div>
       <div class="strip-tools">
         <div class="tools-label">Tools & data sources</div>
         <div class="tools-grid">
-          {['Google Earth Engine','MODIS / VIIRS','Sentinel-1 SAR','Sentinel-2','CHIRPS v2.0','ERA5-Land','Hansen GFC','XGBoost / SHAP','MapLibre GL JS'].map(t => (
+          {['Google Earth Engine','DBSCAN','Sentinel-1 SAR','Sentinel-2','CHIRPS v2.0','ERA5-Land','Hansen GFC','NASA FIRMS (MODIS)','MapLibre GL JS'].map(t => (
             <div class="tool-chip">{t}</div>
           ))}
         </div>

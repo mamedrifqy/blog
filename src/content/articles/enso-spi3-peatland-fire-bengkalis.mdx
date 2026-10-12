@@ -1,0 +1,138 @@
+---
+title: "When the Pacific Warms, Bengkalis's Peat Burns, but Not Everywhere"
+subtitle: "A decade of 3,536 satellite hotspots, ENSO phases and a local drought index. Companion to the manuscript on temporal characteristics of peatland fire hotspots in Bengkalis Regency, 2015–2024."
+date: "2026-10-12"
+featured: true
+author: "Muhammad Rifqy"
+tags: ["fire", "peatland", "ENSO", "remote-sensing", "Bengkalis"]
+---
+
+import '../../styles/paper.css';
+import KecMap from '../../components/paper/KecMap.jsx';
+import PhaseTimeline from '../../components/paper/PhaseTimeline.jsx';
+import SeasonProfile from '../../components/paper/SeasonProfile.jsx';
+import PhaseBars from '../../components/paper/PhaseBars.jsx';
+import CorrelationDots from '../../components/paper/CorrelationDots.jsx';
+
+Bengkalis Regency sits on one of the largest peat landscapes in Riau, and in the last decade it has burned in pulses: a catastrophic 2015, a heavy 2019, and long quiet stretches in between. This post walks through what a ten-year record of satellite hotspots can and cannot say about why. It follows the manuscript, adds interactive versions of its figures, and states plainly where the evidence is strong and where it is thin.
+
+<div class="pp-keys">
+  <div><b>3,536</b><span>filtered hotspots, 2015–2024, from 5,603 raw MODIS detections inside the regency</span></div>
+  <div><b>91.4<small>%</small></b><span>fall inside mapped peatland polygons</span></div>
+  <div><b>69<small>%</small></b><span>of hotspots occur in the 43 El Niño months, which are 36% of the record</span></div>
+  <div><b>5.9<small>%</small></b><span>of the variance in monthly counts is explained by ENSO phase (η²), a small effect</span></div>
+</div>
+
+## The short version
+
+- **El Niño months carry most of the fire.** Mean hotspots per kecamatan-month are 0.5 in La Niña, 1.8 in Neutral and 5.2 in El Niño. The median is zero in all three, so the effect lives in the tail: a few extreme months do the damage.
+- **The signal is real but modest.** ENSO phase explains about 6% of the variance. Peat condition, drainage and ignition sources matter too, and this study does not measure them.
+- **A local drought index tracks fire better than the Pacific index.** SPI-3 (3-month standardized precipitation) correlates more strongly with hotspots than ONI does in nearly every kecamatan.
+- **Two kecamatan break the pattern.** Mandau and Pinggir are only weakly tied to climate. Pinggir, with 353 hotspots, is the clearest case.
+
+## Where the data comes from
+
+Hotspots are NASA FIRMS MODIS detections for 2015–2024 inside Bengkalis, 5,603 points in total. Raw satellite fire data contains false alarms (gas flares, refineries, hot ground), so the manuscript filters it in three tiers before any statistics are run.
+
+<div class="pp-funnel">
+  <div class="row"><span>All detections in the boundary</span><div class="track"><div class="fill alt" style="width:100%"></div></div><b>5,603</b></div>
+  <div class="row"><span>High confidence (≥ 70%): anchors</span><div class="track"><div class="fill" style="width:42.6%"></div></div><b>2,388</b></div>
+  <div class="row"><span>Medium (50–69%) within 1.5 km of an anchor: rescued</span><div class="track"><div class="fill" style="width:20.5%"></div></div><b>1,148</b></div>
+  <div class="row"><span>Kept for analysis</span><div class="track"><div class="fill final" style="width:63.1%"></div></div><b>3,536</b></div>
+</div>
+
+Anchors are grouped with DBSCAN (1.5 km radius, haversine distance), giving 137 fire clusters. A medium-confidence point is kept only if it lies within 1.5 km of an anchor cluster, on the reasoning that smouldering peat produces weaker, patchier detections right next to confirmed fire. Everything else, 2,067 points, is discarded.
+
+The filter is a judgement call, and the numbers move with it. Keeping everything with confidence of at least 30% gives 4,981 points; at least 50% gives 3,790; at least 80% gives only 1,725. The anchor-plus-rescue rule sits between the permissive and strict extremes. The conclusions below use the 3,536-point set.
+
+## Where it burns
+
+Explore the map below. Switch between the hotspot count and the two climate correlations, filter by year, and click a kecamatan.
+
+<KecMap client:visible />
+
+Rupat (976) and Bandar Laksamana (641) lead, followed by Bengkalis (402) and Pinggir (353). That ranking tracks peat: Rupat is a low-lying island whose interior is peat dome. In ten of the eleven kecamatan, between 82% and 98% of hotspots fall on mapped peat. The exception is Talang Muandau, where only 100 of 180 (56%) do.
+
+## When it burns
+
+<PhaseTimeline client:visible />
+
+Fire is dominated by a handful of episodes. 2015 alone produced 1,232 hotspots (35% of the decade) and 2015–2016 together produced 51%. The single worst month was July 2015 with 365 hotspots. 2019 is the second wave, with 249 hotspots in March alone. The quietest year was 2022, a La Niña year, with 23.
+
+The calendar view shows a pattern that surprised me.
+
+<SeasonProfile client:visible />
+
+Hotspots peak twice: February to April, and again in July and August. Roughly 55% of all hotspots fall between February and April, mostly in March. Almost two thirds of the hotspots in February and March come from just two years, 2015 and 2019. This is a regency with a bimodal rainfall regime, and the first dry spell of the year matters as much as the better-known mid-year one. A fire-season definition built only on August to October would miss most of what happened here.
+
+## Does ENSO sort the months?
+
+The test is a Kruskal-Wallis comparison of monthly hotspot counts across the three ENSO phases, using the NOAA rule (ONI at or beyond ±0.5 °C for at least five consecutive months). Counts are zero-inflated and heavily skewed, which is why a rank-based test is used instead of ANOVA.
+
+<PhaseBars client:visible />
+
+The overall test is decisive (H = 80.15, p ≈ 4 × 10⁻¹⁸, n = 1,320 kecamatan-months), and the effect size is small (η² = 0.059). The medians do not move. The mean rises almost tenfold from La Niña to El Niño, and the 95th percentile rises from 2 to 30 hotspots per kecamatan-month.
+
+<div class="pp-table">
+<table>
+<caption>Dunn's post-hoc test on pooled ranks with tie correction, Benjamini-Hochberg adjusted.</caption>
+<thead><tr><th>Comparison</th><th>p (raw)</th><th>p (BH-adjusted)</th></tr></thead>
+<tbody>
+<tr><td>La Niña vs Neutral</td><td>3.3 × 10⁻⁶</td><td>3.3 × 10⁻⁶</td></tr>
+<tr><td>La Niña vs El Niño</td><td>4.3 × 10⁻¹⁹</td><td>1.3 × 10⁻¹⁸</td></tr>
+<tr><td>Neutral vs El Niño</td><td>2.2 × 10⁻⁶</td><td>3.3 × 10⁻⁶</td></tr>
+</tbody>
+</table>
+</div>
+
+A technical point worth knowing: 75% of kecamatan-months record zero hotspots, so ranks are heavily tied. Dunn's test has to use the tie-corrected variance, and without it the p-values come out far too large. With the correction, all three phase pairs differ.
+
+Splitting by season changes the story slightly. The ONI-hotspot association holds in both the June–September dry season (ρ = +0.23, η² = 0.034) and the rest of the year (ρ = +0.25, η² = 0.083). ENSO phase explains proportionally more of the variation outside the dry season. A plausible reading is that El Niño works partly by switching off the rainy season's normal suppression of fire, rather than only by deepening the dry season.
+
+## Drought beats the Pacific index
+
+SPI-3 is computed from CHIRPS rainfall for each kecamatan. Hotspots correlate negatively with it (drier means more fire), and the correlation is stronger than the one with ONI in every kecamatan.
+
+<CorrelationDots client:visible />
+
+Pooled across all kecamatan-months, ONI correlates with hotspots at ρ = +0.235 and SPI-3 at ρ = −0.326. Nine of the eleven kecamatan show significant correlations with both indices after false-discovery-rate correction. The regency's total monthly count correlates more strongly with ONI (ρ = +0.36) than any pooled figure suggests, because summing eleven noisy series removes much of the noise.
+
+SPI-3 being the stronger predictor fits the physical picture. ONI describes a remote ocean state, and rainfall over Bengkalis is only one of the things it influences. SPI-3 measures the local deficit that actually dries the peat.
+
+### Mandau and Pinggir
+
+Mandau has few hotspots (23), so its weak ONI correlation (ρ = +0.15, not significant) is partly a power problem. Its SPI-3 link survives correction, so the coupling is dampened rather than absent.
+
+Pinggir is different. With 353 hotspots there is plenty to analyse, yet neither ONI (ρ = +0.14) nor SPI-3 (ρ = −0.18, adjusted p ≈ 0.06) is significant. Its fires look driven by something other than the weather. The manuscript points to land-use conversion and drainage from decades of plantation and oil-field development as candidates, but those factors are not measured here, so this stays a hypothesis.
+
+## What this means for early warning
+
+An ENSO-based alert is useful for Bengkalis, with caveats. ONI forecasts give months of lead time, and El Niño months concentrate the extreme fire events. Because ENSO phase explains so little on its own, it should raise a risk level rather than trigger one, and be combined with local SPI-3 monitoring. Pinggir calls for a different approach: land-use enforcement, canal and drainage management, and ignition history should weigh more than climate forecasts there.
+
+## Caveats
+
+<div class="pp-callout"><div>
+<p><strong>Pooling inflates confidence.</strong> The 1,320 kecamatan-months are not independent. All eleven kecamatan respond to the same ONI value in a given month, so the real number of independent climate samples is closer to the 120 months. Read the p-values as evidence of direction, not as precise error rates.</p>
+<p><strong>Hotspots are not burned area.</strong> A hotspot is a satellite detection of heat at roughly 1 km resolution. It is a good indicator of fire activity and a poor measure of fire size.</p>
+<p><strong>The filter shapes the counts.</strong> The confidence thresholds and the 1.5 km radius were chosen on judgement and were not tuned against ground-truth fire records.</p>
+<p><strong>SPI-3 is relative to this decade.</strong> It is standardized against 2015–2024 itself, not a 30-year climatology, so it tells you how dry a month was compared with the rest of the study period.</p>
+<p><strong>The correlations are bivariate.</strong> No land cover, drainage or population variables are controlled for.</p>
+</div></div>
+
+## Data and reproducibility
+
+Every figure above is drawn from the 3,536 filtered points. Hotspot counts, phase statistics, Kruskal-Wallis, Dunn and the ONI correlations were recomputed from those points for this post. The SPI-3 correlations are taken from the manuscript, because the CHIRPS rainfall series is not part of the public data repository.
+
+<div class="pp-cta">
+  <a class="btn" href="https://mamedrifqy.github.io/riau-peatland-fire/#bengkalis">Open the interactive Bengkalis explorer →</a>
+  <a class="ghost" href="https://github.com/mamedrifqy/riau-peatland-fire">Data and code on GitHub</a>
+</div>
+
+<div class="pp-cite">
+<pre>Rifqy, M. (2026). Temporal Characteristics of Peatland Fire Hotspots in
+Bengkalis Regency Based on ENSO Phases and SPI-3 Drought Index, 2015–2024.
+Manuscript in preparation. Master's Programme in Disaster Management,
+Universitas Riau.</pre>
+</div>
+
+*Hotspot data: NASA FIRMS (MODIS). Rainfall: CHIRPS v2.0. ENSO: NOAA Oceanic Niño Index. Peat polygons: national peatland map. Kecamatan boundaries: TASWIL 2022.*

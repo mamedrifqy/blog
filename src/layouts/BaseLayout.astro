@@ -5,6 +5,7 @@ export interface Props {
   activePage?: string;
 }
 
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 const {
   title,
   description = 'Geospatial storytelling — maps, data, and spatial analysis by mamed/rifqy.',
@@ -18,7 +19,11 @@ const {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
   <title>{title} — medrifmaps</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0d0e0f" />
+  <link rel="icon" type="image/svg+xml" href={`${BASE}/favicon.svg`} />
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.css" />
 </head>
 <body>
@@ -29,7 +34,7 @@ const {
     <div class="nav-inner">
 
       <!-- Logo -->
-      <a href="/" class="nav-logo">
+      <a href={`${BASE}/`} class="nav-logo">
         <div class="nav-logo-mark">
           <!-- Small crosshair / coordinate pin icon -->
           <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
@@ -48,9 +53,9 @@ const {
 
       <!-- Links -->
       <div class="nav-links">
-        <a href="/"       class={`nav-link ${activePage === 'home'  ? 'active' : ''}`}>Stories</a>
-        <a href="/topics" class={`nav-link ${activePage === 'topics'? 'active' : ''}`}>Topics</a>
-        <a href="/about"  class={`nav-link ${activePage === 'about' ? 'active' : ''}`}>About</a>
+        <a href={`${BASE}/`} class={`nav-link ${activePage === 'home'  ? 'active' : ''}`}>Stories</a>
+        <a href={`${BASE}/topics`} class={`nav-link ${activePage === 'topics'? 'active' : ''}`}>Topics</a>
+        <a href={`${BASE}/about`} class={`nav-link ${activePage === 'about' ? 'active' : ''}`}>About</a>
         <a href="https://github.com/mamedrifqy" target="_blank" rel="noopener" class="nav-cta">GitHub ↗</a>
       </div>
     </div>
@@ -70,20 +75,20 @@ const {
       <div class="footer-links">
         <div class="footer-col">
           <h6>Topics</h6>
-          <a href="/">Peatland Fire</a>
-          <a href="/">Mangrove</a>
-          <a href="/">Remote Sensing</a>
-          <a href="/">Machine Learning</a>
+          <a href={`${BASE}/topics`}>Peatland fire</a>
+          <a href={`${BASE}/topics`}>ENSO</a>
+          <a href={`${BASE}/topics`}>Remote sensing</a>
+          <a href={`${BASE}/topics`}>Mangrove</a>
         </div>
         <div class="footer-col">
           <h6>Work</h6>
-          <a href="/about">About</a>
+          <a href={`${BASE}/about`}>About</a>
           <a href="https://github.com/mamedrifqy" target="_blank">GitHub</a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2025 mamed/rifqy · medrifmaps</span>
+      <span>© 2026 mamed/rifqy · medrifmaps</span>
       <span>Riau Province, Indonesia</span>
     </div>
   </footer>

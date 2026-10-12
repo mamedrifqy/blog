@@ -11,6 +11,7 @@ const articles = defineCollection({
     coverImage: z.string().optional(),
     mapData:  z.string().optional(),
     draft:    z.boolean().default(false),
+    featured: z.boolean().default(false),
   }),
 });
 

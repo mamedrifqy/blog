@@ -10,6 +10,7 @@ export interface Props {
 }
 
 const { title, subtitle, date, author, tags = [] } = Astro.props;
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const formattedDate = new Date(date).toLocaleDateString('en-GB', {
   year: 'numeric', month: 'long', day: 'numeric'
@@ -17,18 +18,18 @@ const formattedDate = new Date(date).toLocaleDateString('en-GB', {
 
 const tagColorMap: Record<string, string> = {
   fire: 'fire', peatland: 'fire', ENSO: 'ml', 'machine-learning': 'ml',
-  SAR: 'sar', 'remote-sensing': 'remote-sensing', mangrove: '',
+  SAR: 'sar', 'remote-sensing': 'remote-sensing', methodology: 'ml', mangrove: '',
   GEE: '', suitability: '', Bengkalis: '', 'Sentinel-1': 'sar',
 };
 ---
 
-<BaseLayout title={title}>
+<BaseLayout title={title} description={subtitle}>
   <!-- Article hero — full-width dark with subtle gradient -->
   <header class="article-hero">
     <div class="hero-track">
       <!-- Breadcrumb -->
       <div class="breadcrumb">
-        <a href="/">Stories</a>
+        <a href={`${BASE}/`}>Stories</a>
         <span>/</span>
         <span>{tags[0] || 'Analysis'}</span>
       </div>

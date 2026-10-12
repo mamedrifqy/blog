@@ -1,0 +1,84 @@
+---
+title: "Behind the Numbers: Filtering Hotspots and Checking the Statistics"
+subtitle: "How 205,215 raw MODIS detections became 3,536 analysed fires in Bengkalis, how sensitive the results are to that choice, and the checks that caught two mistakes along the way."
+date: "2026-10-12"
+author: "Muhammad Rifqy"
+tags: ["peatland", "methodology", "remote-sensing", "Bengkalis"]
+---
+
+import '../../styles/paper.css';
+
+A fire count looks like a fact. It is really the output of a chain of choices: which sensor, which confidence cut-off, which boundary, which filter. This post documents the chain used for the Bengkalis study, shows how much the headline number depends on it, and describes the independent re-computation that was run before publishing any of it.
+
+## From file to analysis set
+
+<div class="pp-funnel">
+  <div class="row"><span>Raw MODIS file, all years</span><div class="track"><div class="fill alt" style="width:100%"></div></div><b>205,215</b></div>
+  <div class="row"><span>2015–2024 only</span><div class="track"><div class="fill alt" style="width:16.8%"></div></div><b>34,542</b></div>
+  <div class="row"><span>Inside Bengkalis boundary</span><div class="track"><div class="fill alt" style="width:2.7%"></div></div><b>5,603</b></div>
+  <div class="row"><span>After DBSCAN filter</span><div class="track"><div class="fill final" style="width:1.7%"></div></div><b>3,536</b></div>
+</div>
+
+The detections are MODIS active fires from Terra and Aqua (collections 6.03 and 61.03), downloaded from NASA FIRMS. Each carries a confidence value from 0 to 100. The study keeps points in three tiers: 2,388 at 70% or higher are anchors, 1,402 between 50% and 69% are candidates, and 1,813 below 50% are dropped. Anchors are clustered with DBSCAN (1.5 km radius, minimum one point, haversine distance), producing 137 clusters. Candidates within 1.5 km of a cluster are rescued, which adds 1,148 points.
+
+## How much does the choice matter?
+
+<div class="pp-table">
+<table>
+<caption>Hotspot totals for Bengkalis, 2015–2024, under different rules.</caption>
+<thead><tr><th>Rule</th><th>Points</th><th>Share of raw</th></tr></thead>
+<tbody>
+<tr><td>Everything inside the boundary</td><td>5,603</td><td>100%</td></tr>
+<tr><td>Confidence ≥ 30%</td><td>4,981</td><td>88.9%</td></tr>
+<tr><td>Confidence ≥ 50%</td><td>3,790</td><td>67.6%</td></tr>
+<tr><td>Confidence ≥ 80%</td><td>1,725</td><td>30.8%</td></tr>
+<tr><td><strong>Anchors + DBSCAN rescue (used in the study)</strong></td><td><strong>3,536</strong></td><td><strong>63.1%</strong></td></tr>
+</tbody>
+</table>
+</div>
+
+The same fires can be counted as 1,725 or 5,603 depending on the cut-off. That is why the regional report, which uses a 30% cut-off and reports 4,981 for Bengkalis, and the thesis analysis, which reports 3,536, are not in conflict. They are two filters applied to the same points. Absolute counts depend on the filter, so any comparison should state which one was used.
+
+## The checks
+
+Before anything was written up, the pipeline was re-run independently and compared with the original results.
+
+1. **The filter was reproduced step by step.** Twelve checkpoints, from the raw file size to the final 3,536, matched exactly.
+2. **The regional series was matched to raw points.** Summing raw MODIS detections with confidence of at least 30% month by month reproduces the Riau report in all 120 months and the 30,988 total.
+3. **The statistics were recomputed from the points.** The Kruskal-Wallis result (H = 80.15, η² = 0.059), the Spearman correlations with ONI for each kecamatan, and the seasonal tests all reproduced to the printed precision.
+
+Two things did not survive the check.
+
+### A Dunn test that needed tie correction
+
+The post-hoc comparison of ENSO phases was originally computed with a hand-written pairwise test without a tie correction. With 75% of observations equal to zero, that makes the test strongly conservative. The standard tie-corrected Dunn test, with Benjamini-Hochberg adjustment, finds all three phase pairs different (adjusted p of 3 × 10⁻⁶ or smaller), not only La Niña against El Niño. Any "compact letter" labels derived from the uncorrected version, such as a/ab/b, should be dropped.
+
+### A peat-depth ratio built on the wrong area
+
+The study compares the share of hotspots in each peat-depth class with the share of peat area in that class. The area shares were computed from all 4,070 national peat polygons rather than from the peat inside Bengkalis. Using the right denominator changes the picture:
+
+<div class="pp-table">
+<table>
+<caption>Ratio of hotspot share to peat-area share, by depth class (1.0 means fire in proportion to area).</caption>
+<thead><tr><th>Depth class</th><th>Hotspots</th><th>Original ratio</th><th>Corrected ratio</th></tr></thead>
+<tbody>
+<tr><td>under 100 cm</td><td>132</td><td>0.28</td><td>0.47</td></tr>
+<tr><td>100–200 cm</td><td>758</td><td>1.04</td><td>1.32</td></tr>
+<tr><td>200–300 cm</td><td>219</td><td>0.35</td><td>0.91</td></tr>
+<tr><td>300–500 cm</td><td>684</td><td>0.92</td><td>1.27</td></tr>
+<tr><td>500–700 cm</td><td>1,385</td><td>3.25</td><td>1.35</td></tr>
+<tr><td>over 700 cm</td><td>54</td><td>0.24</td><td>0.10</td></tr>
+</tbody>
+</table>
+</div>
+
+The 500–700 cm class is still over-burned, but by about a third, not by a factor of three. Deep peat is mildly over-represented in fires, and the deepest class (over 700 cm) is strongly under-represented. The fit to "fire in proportion to area" is rejected in both versions (χ² = 765, Cohen's w = 0.49 with the corrected area), so the qualitative conclusion that fire is not spread evenly across peat depth stands. The size of the effect does not.
+
+## What was not checked
+
+Several inputs could not be independently verified. The CHIRPS rainfall behind SPI-3 is not part of the open data repository, so the SPI-3 correlations are reported as printed in the manuscript. The fire probabilities from the machine-learning model are in-sample outputs and were not recomputed. The rainfall and temperature products in the regional report are not named in it.
+
+<div class="pp-cta">
+  <a class="btn" href="https://github.com/mamedrifqy/riau-peatland-fire">Scripts and data on GitHub →</a>
+  <a class="ghost" href="../enso-spi3-peatland-fire-bengkalis/">The Bengkalis study</a>
+</div>

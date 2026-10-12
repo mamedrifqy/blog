@@ -1,0 +1,82 @@
+---
+title: "Riau's Hotspot Decade: 30,988 Detections Across Twelve Regencies"
+subtitle: "Which regencies burn, when, and how much of it lines up with rainfall, land temperature and El Niño. A summary of the regional correlation report, with an interactive explorer."
+date: "2026-10-12"
+author: "Muhammad Rifqy"
+tags: ["fire", "peatland", "ENSO", "remote-sensing"]
+---
+
+import '../../styles/paper.css';
+import RiauYears from '../../components/paper/RiauYears.jsx';
+
+Riau holds most of Sumatra's peat and most of its smoke. This post summarises a regional report that compares monthly hotspots, rainfall, land surface temperature and the Oceanic Niño Index across all twelve regencies and cities from 2015 to 2024. The full interactive version, with a map, per-regency charts and the correlation statistics, is on the companion site.
+
+<div class="pp-cta">
+  <a class="btn" href="https://mamedrifqy.github.io/riau-peatland-fire/">Open the Riau explorer →</a>
+</div>
+
+## The record
+
+<div class="pp-keys">
+  <div><b>30,988</b><span>MODIS hotspots (confidence ≥ 30%), 2015–2024</span></div>
+  <div><b>56<small>%</small></b><span>fell in just two years, 2015 and 2019</span></div>
+  <div><b>4.3<small>M ha</small></b><span>of mapped peat across the twelve regencies</span></div>
+</div>
+
+<RiauYears client:visible />
+
+2015 alone had 9,388 hotspots, 30% of the decade. 2019 followed with 7,935. After 2019 the annual count fell back to between roughly 700 and 1,800, with 2022 the lowest at 688.
+
+## Where
+
+<div class="pp-table">
+<table>
+<caption>Hotspots 2015–2024 by regency or city, MODIS confidence of at least 30%.</caption>
+<thead><tr><th>Regency</th><th>Hotspots</th><th>Share</th></tr></thead>
+<tbody>
+<tr><td>Pelalawan</td><td>6,575</td><td>21.2%</td></tr>
+<tr><td>Bengkalis</td><td>4,981</td><td>16.1%</td></tr>
+<tr><td>Rokan Hilir</td><td>4,140</td><td>13.4%</td></tr>
+<tr><td>Indragiri Hilir</td><td>3,821</td><td>12.3%</td></tr>
+<tr><td>Indragiri Hulu</td><td>3,215</td><td>10.4%</td></tr>
+<tr><td>Siak</td><td>2,570</td><td>8.3%</td></tr>
+<tr><td>Kepulauan Meranti</td><td>1,754</td><td>5.7%</td></tr>
+<tr><td>Dumai</td><td>1,595</td><td>5.1%</td></tr>
+<tr><td>Kampar</td><td>1,013</td><td>3.3%</td></tr>
+<tr><td>Rokan Hulu</td><td>750</td><td>2.4%</td></tr>
+<tr><td>Kuantan Singingi</td><td>529</td><td>1.7%</td></tr>
+<tr><td>Pekanbaru</td><td>45</td><td>0.1%</td></tr>
+</tbody>
+</table>
+</div>
+
+Five regencies hold 73% of all detections. Bengkalis is second, which is why the next posts zoom into it.
+
+## How climate lines up
+
+Pooling the eleven regencies other than Pekanbaru (1,320 regency-months), hotspot counts move with the climate variables in the expected directions:
+
+<div class="pp-table">
+<table>
+<caption>Spearman correlation with monthly hotspot counts, pooled over eleven regencies (n = 1,320). All p-values are below 0.001.</caption>
+<thead><tr><th>Variable</th><th>ρ</th></tr></thead>
+<tbody>
+<tr><td>Rainfall</td><td>−0.48</td></tr>
+<tr><td>SPI proxy (standardized rainfall)</td><td>−0.43</td></tr>
+<tr><td>Land surface temperature</td><td>+0.24</td></tr>
+<tr><td>ONI (El Niño index)</td><td>+0.23</td></tr>
+</tbody>
+</table>
+</div>
+
+Local rainfall is the strongest single correlate, and the ocean index the weakest. The Bengkalis study finds the same thing at finer scale: local drought tracks fire more closely than the ocean index does.
+
+<div class="pp-callout note"><div>
+<p><strong>A note on provenance.</strong> The hotspot series was checked against the raw MODIS detections and matches the report in all 120 months. The rainfall and temperature products used in the report are not named in it, so those two series could not be independently verified.</p>
+</div></div>
+
+## Next
+
+<div class="pp-cta">
+  <a class="ghost" style="margin-left:0" href="../enso-spi3-peatland-fire-bengkalis/">Read the Bengkalis study: ENSO, drought and 3,536 hotspots →</a>
+</div>
