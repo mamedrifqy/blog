@@ -99,3 +99,41 @@
   .pp-seg button { padding: .45rem .6rem; font-size: .74rem; white-space: nowrap; }
   .pp-fig, .pp-keys, .pp-funnel, .pp-table, .pp-callout, .pp-cta, .pp-cite { padding-left: 1.25rem; padding-right: 1.25rem; }
 }
+
+/* DBSCAN explorer */
+.pp-db-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 1.5rem; align-items: start; }
+.pp-db-map { position: relative; background: #101213; border: 1px solid var(--border); }
+.pp-db-map canvas { display: block; cursor: crosshair; touch-action: none; }
+.pp-db-tip { position: absolute; width: 220px; pointer-events: none; background: rgba(13,14,15,.94); border: 1px solid var(--border-md); padding: .45rem .6rem; font-size: .72rem; line-height: 1.45; color: var(--text-bright); }
+.pp-db-zoom { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; margin-top: .6rem; }
+.pp-db-zoom button, .pp-db-reset { font: inherit; font-size: .74rem; color: var(--text-muted); background: transparent; border: 1px solid var(--border-md); border-radius: 3px; padding: .3rem .6rem; cursor: pointer; }
+.pp-db-zoom button[aria-pressed="true"] { background: var(--bg-hover); color: var(--text-bright); }
+.pp-db-zoom span { font-size: .72rem; color: var(--text-muted); margin-left: .5rem; }
+.pp-db-leg { margin-top: .6rem; }
+.pp-db-steps { list-style: none; margin: 0; padding: 0 !important; max-width: none !important; display: flex; flex-direction: column; gap: .25rem; }
+.pp-db-steps li { margin: 0 !important; }
+.pp-db-steps button { width: 100%; text-align: left; font: inherit; font-size: .86rem; color: var(--text-muted); background: transparent; border: 1px solid var(--border); border-radius: 3px; padding: .5rem .7rem; cursor: pointer; display: flex; gap: .7rem; align-items: center; }
+.pp-db-steps button span { display: inline-flex; width: 1.4rem; height: 1.4rem; border-radius: 50%; border: 1px solid var(--border-md); align-items: center; justify-content: center; font-size: .72rem; flex: none; }
+.pp-db-steps button[aria-pressed="true"] { color: #0d0e0f; background: var(--teal); border-color: var(--teal); font-weight: 700; }
+.pp-db-steps button[aria-pressed="true"] span { border-color: #0d0e0f; }
+.pp-db-desc { font-size: .84rem !important; line-height: 1.6 !important; color: var(--text) !important; margin: 1rem 0 !important; padding: 0 !important; min-height: 7.5em; max-width: none !important; }
+.pp-db-desc b { color: var(--text-bright); }
+.pp-db-sliders { border-top: 1px solid var(--border); padding-top: 1rem; display: grid; gap: .9rem; }
+.pp-db-sliders label span { display: flex; justify-content: space-between; font-size: .78rem; color: var(--text-muted); margin-bottom: .25rem; }
+.pp-db-sliders label b { color: var(--text-bright); font-variant-numeric: tabular-nums; }
+.pp-db-sliders input[type=range] { width: 100%; accent-color: var(--teal); }
+.pp-db-reset:disabled { opacity: .4; cursor: default; }
+.pp-db-steps button:focus-visible, .pp-db-zoom button:focus-visible, .pp-db-reset:focus-visible, .pp-db-sliders input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.pp-db-count { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 1px; margin-top: 1.25rem; }
+.pp-db-count > div { background: var(--bg-card); border: 1px solid var(--border); padding: .7rem .9rem; }
+.pp-db-count b { display: block; font-family: var(--font-display); font-size: 1.35rem; font-variant-numeric: tabular-nums; color: var(--text-bright); }
+.pp-db-count span { font-size: .7rem; color: var(--text-muted); letter-spacing: .04em; }
+.pp-db-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+.pp-db-charts h5 { font-size: .78rem; color: var(--text-muted); font-weight: 600; margin: 0 0 .5rem; font-family: var(--font-sans); }
+.pp-db-chart { width: 100%; height: auto; }
+.pp-db-click { cursor: pointer; }
+.pp-db-mark { stroke: #f2ede4; stroke-dasharray: 3 3; stroke-width: 1; }
+@media (max-width: 860px) { .pp-db-grid { grid-template-columns: 1fr; } .pp-db-desc { min-height: 0; } }
+.pp-db-grid > * { min-width: 0; }
+.pp-db-map { width: 100%; overflow: hidden; }
+.pp-db-map canvas { position: absolute; left: 0; top: 0; }

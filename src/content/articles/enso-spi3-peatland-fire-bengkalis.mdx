@@ -13,6 +13,7 @@ import PhaseTimeline from '../../components/paper/PhaseTimeline.jsx';
 import SeasonProfile from '../../components/paper/SeasonProfile.jsx';
 import PhaseBars from '../../components/paper/PhaseBars.jsx';
 import CorrelationDots from '../../components/paper/CorrelationDots.jsx';
+import DbscanExplorer from '../../components/paper/DbscanExplorer.jsx';
 
 Bengkalis Regency sits on one of the largest peat landscapes in Riau, and in the last decade it has burned in pulses: a catastrophic 2015, a heavy 2019, and long quiet stretches in between. This post walks through what a ten-year record of satellite hotspots can and cannot say about why. It follows the manuscript, adds interactive versions of its figures, and states plainly where the evidence is strong and where it is thin.
 
@@ -44,6 +45,18 @@ Hotspots are NASA FIRMS MODIS detections for 2015–2024 inside Bengkalis, 5,603
 Anchors are grouped with DBSCAN (1.5 km radius, haversine distance), giving 137 fire clusters. A medium-confidence point is kept only if it lies within 1.5 km of an anchor cluster, on the reasoning that smouldering peat produces weaker, patchier detections right next to confirmed fire. Everything else, 2,067 points, is discarded.
 
 The filter is a judgement call, and the numbers move with it. Keeping everything with confidence of at least 30% gives 4,981 points; at least 50% gives 3,790; at least 80% gives only 1,725. The anchor-plus-rescue rule sits between the permissive and strict extremes. The conclusions below use the 3,536-point set.
+
+### Try the filter yourself
+
+The explorer below runs the same filter on all 5,603 raw detections. Step through the five stages, then move the two sliders (the confidence threshold for anchors and the radius) and watch what is kept. Zoom in to see how a candidate point gets rescued by an anchor next to it.
+
+<DbscanExplorer client:visible />
+
+Two things stand out when you play with it.
+
+**The result is fairly stable.** Across anchor thresholds from 60% to 90% the kept set ranges from 3,144 to 3,737 points, and across radii from 0.5 km to 5 km it ranges from 3,156 to 3,743. The study's 3,536 sits in the middle of that band, so the choice of 70% and 1.5 km moves the total by about ±10% at most, not by orders of magnitude.
+
+**The clustering itself does not decide what is kept.** With a minimum of one point per cluster, DBSCAN reduces to chaining anchors that are within the radius of each other. The cluster count swings widely (904 clusters at 0.5 km, 31 at 5 km), but the kept set depends only on the confidence tiers and on how far each candidate is from its nearest anchor. The clusters are useful for describing fire events, and the rescue rule is what shapes the dataset.
 
 ## Where it burns
 
