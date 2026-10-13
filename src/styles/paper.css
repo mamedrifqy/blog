@@ -137,3 +137,13 @@
 .pp-db-grid > * { min-width: 0; }
 .pp-db-map { width: 100%; overflow: hidden; }
 .pp-db-map canvas { position: absolute; left: 0; top: 0; }
+
+/* confidence table */
+.pp-cf-note { font-size: .82rem; color: var(--text-muted); margin: .8rem 0 1rem; }
+.pp-cf-row { display: grid; grid-template-columns: 150px minmax(0,1fr) 60px 42px; gap: .7rem; align-items: center; padding: .35rem 0; border-bottom: 1px solid var(--border-md); font-size: .88rem; }
+.pp-cf-bar { height: 10px; background: rgba(255,255,255,.06); border-radius: 2px; overflow: hidden; }
+.pp-cf-bar i { display: block; height: 100%; background: #e8533a; }
+.pp-cf-row b { text-align: right; font-variant-numeric: tabular-nums; }
+.pp-cf-p { text-align: right; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.pp-cf-tot { border-top: 2px solid var(--text-muted); border-bottom: 0; }
+@media (max-width: 560px) { .pp-cf-row { grid-template-columns: 105px minmax(0,1fr) 54px 36px; gap: .5rem; font-size: .8rem; } }

@@ -8,6 +8,7 @@ tags: ["fire", "peatland", "ENSO", "remote-sensing"]
 
 import '../../styles/paper.css';
 import RiauYears from '../../components/paper/RiauYears.jsx';
+import ConfidenceTable from '../../components/paper/ConfidenceTable.jsx';
 
 Riau holds most of Sumatra's peat and most of its smoke. This post summarises a regional report that compares monthly hotspots, rainfall, land surface temperature and the Oceanic Niño Index across all twelve regencies and cities from 2015 to 2024. The full interactive version, with a map, per-regency charts and the correlation statistics, is on the companion site.
 
@@ -29,28 +30,9 @@ Riau holds most of Sumatra's peat and most of its smoke. This post summarises a 
 
 ## Where
 
-<div class="pp-table">
-<table>
-<caption>Hotspots 2015–2024 by regency or city, MODIS confidence of at least 30%.</caption>
-<thead><tr><th>Regency</th><th>Hotspots</th><th>Share</th></tr></thead>
-<tbody>
-<tr><td>Pelalawan</td><td>6,575</td><td>21.2%</td></tr>
-<tr><td>Bengkalis</td><td>4,981</td><td>16.1%</td></tr>
-<tr><td>Rokan Hilir</td><td>4,140</td><td>13.4%</td></tr>
-<tr><td>Indragiri Hilir</td><td>3,821</td><td>12.3%</td></tr>
-<tr><td>Indragiri Hulu</td><td>3,215</td><td>10.4%</td></tr>
-<tr><td>Siak</td><td>2,570</td><td>8.3%</td></tr>
-<tr><td>Kepulauan Meranti</td><td>1,754</td><td>5.7%</td></tr>
-<tr><td>Dumai</td><td>1,595</td><td>5.1%</td></tr>
-<tr><td>Kampar</td><td>1,013</td><td>3.3%</td></tr>
-<tr><td>Rokan Hulu</td><td>750</td><td>2.4%</td></tr>
-<tr><td>Kuantan Singingi</td><td>529</td><td>1.7%</td></tr>
-<tr><td>Pekanbaru</td><td>45</td><td>0.1%</td></tr>
-</tbody>
-</table>
-</div>
+<ConfidenceTable client:visible />
 
-Five regencies hold 73% of all detections. Bengkalis is second, which is why the next posts zoom into it.
+The default view is the report's ≥30% threshold; switch it to see how the picture changes if you keep only higher-confidence detections. Five regencies hold 73% of the ≥30% detections. Bengkalis is second, which is why the next posts zoom into it.
 
 ## How climate lines up
 
