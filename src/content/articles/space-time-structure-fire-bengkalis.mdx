@@ -1,0 +1,120 @@
+---
+title: "Fading, Scattered, Seasonal: The Space-Time Shape of Fire in Bengkalis"
+subtitle: "Trend tests, spatial clusters, fire events and lead times, from the revised thesis notebook."
+date: "2026-10-14"
+author: "Muhammad Rifqy"
+tags: ["fire", "peatland", "ENSO", "spatial-statistics", "ST-DBSCAN", "Bengkalis"]
+---
+
+import '../../styles/paper.css';
+import '../../styles/thesis.css';
+import AnnualBars from '../../components/thesis/AnnualBars.jsx';
+import TrendMap from '../../components/thesis/TrendMap.jsx';
+import EmergingGrid from '../../components/thesis/EmergingGrid.jsx';
+import EventTimeline from '../../components/thesis/EventTimeline.jsx';
+import SimpsonDots from '../../components/thesis/SimpsonDots.jsx';
+
+Earlier posts here mostly ask how each kecamatan's fire record correlates with ENSO. A thesis on *spatiotemporal* fire has to say more: is fire getting better or worse, does it cluster in space, does it burst in identifiable events, and how far ahead can the climate tell you? The revised notebook adds a battery of tests for exactly these questions. This post goes through them, including the ones that returned nothing.
+
+<div class="pp-keys">
+  <div><b>10<small> of 11</small></b><span>kecamatan show a significant decline in monthly hotspots, 2015–2024 (seasonal Mann-Kendall)</span></div>
+  <div><b>138</b><span>distinct fire events found by space-time clustering of 2,388 high-confidence hotspots</span></div>
+  <div><b>8 <small>of 10</small></b><span>of the largest events began between late January and mid-March</span></div>
+  <div><b>0–6</b><span>months: how far ahead ONI best matches fire, depending on the kecamatan</span></div>
+</div>
+
+## The short version
+
+- **Fire declined over the decade, but the decade starts with its worst year.** 35% of all filtered hotspots fall in 2015 alone.
+- **There is no strong spatial clustering to find.** Global Moran's I is not significant, only one kecamatan has a significant local cluster label, and no kecamatan is a persistent, intensifying or diminishing hotspot.
+- **Fire arrives in bursts.** Large events last from days to weeks, and most of the biggest begin in the Feb–Mar dry spell, not at the main June–September peak.
+- **Lead times differ by place.** Rupat and Rupat Utara respond to ONI immediately; Talang Muandau and Mandau at the longest lag tested. Local drought (SPEI-3) is often the tighter and faster signal.
+
+## Is fire fading?
+
+Ten years of annual totals tell the first part of the story.
+
+<AnnualBars client:visible />
+
+2015 holds 35% of the decade's hotspots, 2019 another 24%, and no year after 2020 exceeds 150 (2021: 148; 2022: 23; 2023: 83; 2024: 88). The formal test is a **seasonal Mann-Kendall** trend on each kecamatan's 120 monthly counts, which compares each month with the same calendar month in other years, so the dry-season cycle does not masquerade as a trend. Switch the map below to the trend view.
+
+<TrendMap client:visible />
+
+Ten kecamatan decline significantly, with Kendall's τ between −0.12 (Talang Muandau) and −0.27 (Siak Kecil). Mandau is the exception, with τ = −0.03 (p = 0.35), but it has the fewest hotspots of all (23), so it has the least to decline from.
+
+<div class="pp-callout note"><div>
+<p><strong>Read "fading" with care.</strong> A downward trend that begins at the largest event in the record is partly a statement about 2015. Mann-Kendall also reports a slope per month, which comes out as 0 in every kecamatan here (most months have no hotspots at all), so the test says *that* counts are falling but not by how much. The notebook does not separate the effect of the 2015 outlier from the later years. And 2023–24 was an El Niño period too; fire stayed low. The study does not test why.</p>
+</div></div>
+
+That last point matters for early warning. If ENSO phase alone set the level of fire, 2023–24 should have looked more like 2015. It did not. Whatever changed between those years (land management, rewetting, the weather within the phase) is not in the data this study uses.
+
+## Does fire cluster in space?
+
+The standard tool is Moran's I, which asks whether neighbouring kecamatan have similar fire levels. The answer, for mean monthly hotspots, is **I = −0.38 (p = 0.096)**: if anything a tendency for neighbours to *differ*, but not significantly so. The same test on the strength of each kecamatan's ONI correlation gives I = +0.21 (p = 0.175).
+
+**Local Moran's I (LISA)** classifies each kecamatan as part of a high-high cluster, a low-low cluster, or a spatial outlier. For the whole decade only one is significant: Rupat Utara, labelled low-high (p = 0.001), a quiet kecamatan next to hot Rupat. That result comes with a caveat. In the neighbour structure used here, Rupat and Rupat Utara are each other's *only* neighbours, so the label really means "these two island kecamatan differ a lot", and there is no cluster of hot places around them.
+
+Splitting the months by ENSO phase does not reveal one either. Moran's I is −0.13 in El Niño (43 months, p = 0.48), +0.04 in La Niña (32 months, p = 0.30) and −0.12 in neutral months (45, p = 0.50). The spatial structure of fire does not measurably change with the phase.
+
+### Hotspot or not, period by period
+
+The **emerging hotspot** classification repeats the LISA test in five two-year blocks and looks for a consistent pattern: persistent, intensifying, diminishing, sporadic.
+
+<EmergingGrid client:visible />
+
+Six of 55 kecamatan-periods carry a significant label, and they do not repeat. Ten kecamatan end up as "no pattern"; Bathin Solapan, the only high-high cell (2017–18), is "sporadic". The honest reading is that, with eleven large polygons, the test has little room to detect structure. Fire in Bengkalis is concentrated in a few kecamatan (Rupat alone has 976 of the 3,536 hotspots), but that is a difference in *level*, not a spatial cluster of the kind these statistics find.
+
+## Fire arrives in events
+
+Monthly counts blur what happens on the ground. **ST-DBSCAN** clusters hotspots that are close in both space and time: here within 1.5 km and 30 days of each other, in groups of at least 3. It was run on the 2,388 high-confidence hotspots (confidence ≥ 70%).
+
+It finds **138 events** and puts 90.7% of the hotspots into one. The remaining 222 are singletons. 32 events have 20 or more hotspots. The ten largest are shown here against the ENSO phase of each month.
+
+<EventTimeline client:visible />
+
+Three details stand out:
+
+- **Size and duration are not the same.** Event 5 (67 hotspots) lasted five days in February 2015; event 10, started two weeks later, ran for 55 days. A fire front that moves quickly looks very different on a map from a smouldering peat fire that reignites.
+- **2015 and 2019 dominate**, both in El Niño-phase months, but three of the ten largest come from other years: July–August 2018 (neutral), February–March 2020 (a weak El Niño, ONI around 0.5–0.6) and March 2021 (La Niña).
+- **The season is early.** Eight of the ten began between 31 January and 14 March, in the first dry spell of the year. Only two began in June–July. The MODIS burned-area record points the same way: in 2015 and 2019 it peaks in February–March, and in 2015 again in July. A warning system built only around the June–September dry season would miss the start of eight of the ten largest events.
+
+## How early can the climate warn?
+
+Each kecamatan was correlated with ONI and SPEI-3 at lags of 0 to 6 months. The best lag for each is on the map (switch the view above).
+
+- **ONI** correlations run from ρ = +0.21 (Rupat Utara) to +0.42 (Siak Kecil). Optimal lead times range from 0 months (Rupat, Rupat Utara) through 3 (Bengkalis, Siak Kecil) to 5–6 (Bantan, Bathin Solapan, Pinggir, Talang Muandau, Mandau).
+- **SPEI-3** correlations run from −0.19 (Pinggir) to −0.48 (Siak Kecil). They are stronger than ONI's in 6 of 11 kecamatan, and in 7 of 11 the best lag is zero. Local drought tells you what is happening now; ONI tells you what may be coming.
+
+Two cautions. The search stopped at 6 months, and the two longest optima (Mandau and Talang Muandau on ONI, Mandau on SPEI-3) sit on that boundary, so the true best lag could be longer. And the correlation at neighbouring lags is usually close to the maximum: a kecamatan with "best lag 5" is better read as "ONI informs fire anywhere from a few months to half a year ahead". The notebook turns the ONI lags into per-kecamatan watch windows ("alert N months before the dry-season peak"), which is a reasonable operational summary but not a precise forecast.
+
+The chain from ocean to fire also shows in the phase statistics. Grouping months by ENSO phase explains 20% of the variance in SPEI-3 (a large effect), 7% in rainfall, 5% in air temperature and 6% in hotspot counts. ENSO shapes the *drought*; the drought, with all the local factors, shapes the fire.
+
+## One more check: is the regency-wide relationship an artefact?
+
+Pooling eleven kecamatan can reverse a relationship that holds in every kecamatan, or create one that holds in none: Simpson's paradox. The check is to compute the same correlation inside each unit and compare signs.
+
+<SimpsonDots client:visible />
+
+All eleven kecamatan have the same sign as the pooled value, and the relationship is strongest in Rupat (−0.46) and Siak Kecil (−0.45). Mandau is weakest at −0.14. The pooled rainfall-fire relationship is not a mixing artefact.
+
+## What to take from this
+
+<div class="pp-callout"><div>
+<p><strong>Time, not space, is where the structure is.</strong> The data support a declining trend, strong seasonality, event-like bursts and place-specific lead times. They do not support claims about spatial hotspots that persist, intensify or spread.</p>
+<p><strong>Plan for the early dry spell.</strong> The biggest events in the record started in February–March, before the main dry season.</p>
+<p><strong>Use two signals.</strong> ONI gives months of notice in some kecamatan; SPEI-3 gives the sharper, near-term signal in several. They are complements, not alternatives.</p>
+</div></div>
+
+For how much of this predictive skill is climate, see [the feature ablation](/blog/climate-vs-everything-else-ablation-bengkalis). For whether hotspots measure fire at all, see [the burned-area validation](/blog/hotspot-vs-burned-area-validation-bengkalis).
+
+<div class="pp-callout note"><div>
+<p><strong>Limits.</strong> Eleven kecamatan make eleven spatial units, which limits any spatial statistic: the notebook itself notes that the island kecamatan need special handling in the neighbour weights. ST-DBSCAN uses only the high-confidence hotspots (2,388 of 3,536), so smouldering fires that the main analysis rescues are not in these events. The ten-year record contains only two El Niño episodes (2015–16 and 2023–24), so lead-time estimates may not be stable.</p>
+</div></div>
+
+<div class="pp-cite">
+<pre>Rifqy, M. (2026). Thesis analysis notebook: ENSO, climate and peatland
+fire hotspots in Bengkalis Regency, 2015–2024 (revised, 14 Oct 2026).
+Master's Programme in Disaster Management, Universitas Riau.</pre>
+</div>
+
+*Methods: seasonal Mann-Kendall (Hirsch and Slack, 1984), Moran's I and LISA (Anselin, 1995; esda, 999 permutations), ST-DBSCAN (Birant and Kut, 2007). Hotspots: NASA FIRMS (MODIS). Climate: CHIRPS v2.0, ERA5-Land, NOAA ONI.*

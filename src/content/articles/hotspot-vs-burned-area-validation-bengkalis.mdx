@@ -1,0 +1,146 @@
+---
+title: "Is a Hotspot Really a Fire? Testing Bengkalis's Satellite Record Against Burned Scars"
+subtitle: "Two independent checks of the thesis's central assumption: MODIS burned-area maps, and a Landsat burn index built for the job."
+date: "2026-10-14"
+author: "Muhammad Rifqy"
+tags: ["fire", "peatland", "remote-sensing", "validation", "Bengkalis"]
+---
+
+import '../../styles/paper.css';
+import '../../styles/thesis.css';
+import Tier1Map from '../../components/thesis/Tier1Map.jsx';
+import MonthlyBurn from '../../components/thesis/MonthlyBurn.jsx';
+import LiftExplorer from '../../components/thesis/LiftExplorer.jsx';
+import Y2019Bars from '../../components/thesis/Y2019Bars.jsx';
+import ExplainedShare from '../../components/thesis/ExplainedShare.jsx';
+
+Every result in this study rests on one assumption: that a satellite *hotspot* is a fair stand-in for a peat fire. A hotspot is a heat anomaly in a pixel roughly a kilometre across, seen at one moment. It is not a burn scar. Reviewers of the thesis asked, reasonably, what evidence there is that the two line up. This post is the answer the revised analysis gives, and it is a mixed one.
+
+<div class="pp-keys">
+  <div><b>0.68</b><span>of burned months (MODIS MCD64A1) also contain a hotspot; 0.83 if a one-month slack is allowed</span></div>
+  <div><b>0.32</b><span>of hotspot months contain a MODIS burned pixel. Hotspots are far more common than 500 m burn scars</span></div>
+  <div><b>8–11<small>×</small></b><span>how much more of the regency's Landsat burned area sits within 1 km of a hotspot than chance alone would put there (2015 and 2019)</span></div>
+  <div><b>46<small>%</small></b><span>of 2023's Landsat burned area lay within 1 km of a hotspot. In the big years it was 73–82%</span></div>
+</div>
+
+## The short version
+
+- **Where and when: hotspots hold up.** Month by month and kecamatan by kecamatan they agree with the MODIS burned-area product clearly better than chance, and year by year the two track each other (Spearman ρ = 0.73 across 110 kecamatan-years).
+- **How much: they do not.** Burned hectares per hotspot vary from about 5 to 28 depending on the year and the product. Hotspot counts are a signal of fire activity, not an area estimate.
+- **Small fire years are the weak spot.** In 2023, more than half of the burned area detected by Landsat had no hotspot within 2 km.
+- **The climate signal is weaker in burned area than in hotspots.** The correlation of monthly burned area with ONI is 0.09, against 0.24 for hotspots. The direction agrees; the strength does not.
+
+## Check 1: do hotspot months match burned months?
+
+The first test needs no new satellite work. MODIS publishes a monthly burned-area product, MCD64A1, at 500 m. For each of the 1,320 kecamatan-months (11 kecamatan × 120 months) the question is simple: did the study's filtered hotspots flag a fire, and did MCD64A1 see at least one burned pixel?
+
+Across the regency, 327 months carry a hotspot and 155 carry burned pixels. Precision is 0.32, recall is 0.68 and Cohen's κ is 0.33, a fair but unspectacular agreement. Allowing the burn to be dated one month either side raises precision to 0.54 and recall to 0.83, which says a good part of the disagreement is timing: a hotspot is a snapshot, a burn scar appears when the algorithm sees the surface change.
+
+<Tier1Map client:visible />
+
+The map shows how uneven that is. Bantan and Pinggir recover more than 90% of their burned months with a hotspot. Bukit Batu is the outlier: it has 22 burned months and 20 hotspot months, but they rarely coincide (recall 0.18, ρ = 0.05). Mandau and Bathin Solapan have too few burned months (2 and 4) for their ratios to mean much.
+
+Over a full year the picture tightens. Annual hotspot counts and burned hectares correlate at ρ = 0.73 across the 110 kecamatan-years, and at 0.65 on average *within* a kecamatan. There is one more warning in the diagnostics: in 23 of the 83 kecamatan-months with at least 10 hotspots, MCD64A1 shows no burned pixel at all, 10 of them in 2015.
+
+<div class="pp-callout note"><div>
+<p><strong>This check is not fully independent.</strong> MCD64A1 uses MODIS active-fire detections as one of its inputs, so agreement with hotspots is partly built in. The thesis treats Tier 1 as a consistency test, and leans on the Landsat check below for independent evidence.</p>
+</div></div>
+
+### Timing, in the three key years
+
+The three years the Landsat check covers (2015, 2019, 2023) differ a lot in size. In the chart below each series is scaled to its own peak, so you can compare shape rather than size.
+
+<MonthlyBurn client:visible />
+
+## Check 2: a burn index from Landsat, with no fire detections in it
+
+For independent evidence the notebook follows Bilal et al. (2025), who built an index for burned-area mapping that uses reflectance alone: **ATBI = NBR × (SWIR / NIR)**, where NBR = (NIR − SWIR) / (NIR + SWIR). Burn is mapped from the *drop* in ATBI between a pre-fire image and post-fire images (dATBI ≥ 0.20 marks a burned pixel), at Landsat's 30 m resolution. The standard dNBR is run alongside it for comparison.
+
+Applying a method from a paper to a tropical peat swamp means deviating from it, and the notebook lists the deviations plainly:
+
+- **Atmospheric correction.** The paper uses SREM; no code was released, so Landsat Collection 2 Level-2 (LaSRC) is used for both indices. Results may differ slightly from the paper's version.
+- **Pre-fire image.** A single clear scene is almost never available in this climate, so the pre-fire reference is a median composite. Two windows are tested: the wet season of the same year, or the dry season of the year before. The first risks a wet-to-dry seasonal bias; the second can count last year's scars as "already burned".
+- **Thresholds.** 0.20 comes from the paper and was calibrated on non-peat ecosystems. Higher values (0.27, 0.44, 0.66) are tested as a sensitivity grid.
+- **A matched control.** dATBI and dNBR use the same thresholds, so a higher confirmation rate could just mean more false alarms. Each hotspot is therefore compared with control points on peat in the same kecamatan and month, and what is reported is the *difference* in hit-rate, not the raw hit-rate.
+
+### Does the index tell burned ground from unburned ground?
+
+Pick a year, a buffer and a pre-fire window below. A good index should hit near hotspots much more often than at control points. It should also report a plausible burned area; the peat in Bengkalis covers about 511,000 ha.
+
+<LiftExplorer client:visible />
+
+Two things are worth taking from this explorer.
+
+**dATBI separates hotspots from controls in every combination.** At the paper's threshold of 0.20 and a 500 m buffer, the hit-rate at hotspots exceeds that at control points by 0.56 to 0.63. With a 1 km buffer and the dry-season pre-fire window, hotspots hit 0.84, 0.82 and 0.81 of the time in 2015, 2019 and 2023, against 0.27, 0.18 and 0.09 for controls. The result barely moves between the two pre-fire windows.
+
+**Standard dNBR does not, at the usual threshold.** At T = 0.20 its hit-rate at control points is already 94–99%, so there is almost nothing left to separate: the difference is at most 0.13 (500 m) and usually near zero. It also maps 88,000 to 189,000 ha as burned, which is not plausible for a year like 2023 that had 83 hotspots. At T = 0.66 dNBR does separate hotspots from controls, but with the dry-season window it then reports 19,014 ha burned in 2023, eight times the MODIS figure for that year. That is difficult to reconcile with a quiet fire year, so dNBR serves here only as a comparison.
+
+### How much does Landsat see compared with MODIS?
+
+| | 2015 | 2019 | 2023 |
+|---|---:|---:|---:|
+| Filtered hotspots | 1,232 | 844 | 83 |
+| MCD64A1 burned area (ha) | 8,508 | 12,831 | 2,332 |
+| dATBI burned area, T = 0.20 (ha) | 6,076 | 3,962 | 774 |
+| dATBI ÷ MCD64A1 | 0.74 | 0.29 | 0.33 |
+| Spearman ρ, dATBI vs MCD64A1 across the 11 kecamatan | 0.81 | 0.28 | 0.88 |
+
+Landsat's total is lower than MODIS's in all three years, which fits clouds hiding some of the post-fire scenes and the 500 m MODIS pixel exaggerating small burns. The weak 2019 agreement between the two (ρ = 0.28) is the one that needs explaining, and the notebook's checks do not settle it. In 2019 the dATBI-to-MODIS ratio is strongly tied to the number of usable post-fire scenes (ρ = −0.75 across kecamatan), which points at image coverage, but the pooled version of that test does not show the same thing.
+
+Here is 2019 by kecamatan.
+
+<Y2019Bars client:visible />
+
+## Check 3: how much of the burned area do hotspots account for?
+
+The last question flips the first. Instead of asking whether hotspots land on burn scars, ask how much of the Landsat burned area has a hotspot nearby. A high share could be a fluke if hotspots happened to cover a large part of the regency, so the notebook always compares it to a baseline: the fraction of the regency that lies within the same distance of any hotspot.
+
+<ExplainedShare client:visible />
+
+At 1 km the study's filtered hotspots account for 82% of 2015's burned area, 73% of 2019's and 46% of 2023's, which is 8, 11 and 38 times what chance would give. Two points stand out.
+
+**The DBSCAN filter costs little where fires were large.** Using all raw detections raises the share at 1 km by 4 points in 2015, 9 in 2019 and 3 in 2023. The filter does discard some points that sat next to real burn scars, but it also removes false alarms, and the trade-off is modest.
+
+**Small years are poorly covered.** In 2023 the share stays at about 47–52% even at a 2 km radius, regardless of which hotspot set is used. That is the Landsat burn that MODIS hotspots do not see at all: roughly 420 ha of the 774 ha detected that year, with no filtered hotspot within a kilometre. Small, short-lived peat fires are exactly what a coarse thermal sensor misses.
+
+### Is it just the land cover?
+
+Hotspots do not fall on a random sample of peat. Under hotspots, ESA WorldCover shows grass in 25% (2015) and 36% (2019) of cases, against 10% and 15% under control points, and tree cover is correspondingly lower. If burn detection were easier on grassland, that could flatter the result. Re-running the comparison with controls matched to the hotspots' own land-cover class leaves the difference almost unchanged: 0.57 against 0.58 in 2015, 0.52 against 0.56 in 2019 and 0.54 against 0.58 in 2023, all at 500 m.
+
+## What the burned-area signal says about ENSO and drought
+
+The headline finding of the thesis is that El Niño and drought raise fire activity. The same test run on burned area gives the same signs but weaker numbers.
+
+<div class="pp-table"><table>
+<caption>Spearman ρ with hotspots and with MODIS burned area</caption>
+<thead><tr><th>Climate signal</th><th>Hotspots</th><th>Burned area</th></tr></thead>
+<tbody>
+<tr><td>ONI · monthly, pooled</td><td>+0.24</td><td>+0.09</td></tr>
+<tr><td>SPI-3 · monthly, pooled</td><td>−0.33</td><td>−0.19</td></tr>
+<tr><td>ONI (Jul–Oct) · annual total, n = 110</td><td>+0.27</td><td>+0.22</td></tr>
+<tr><td>SPI-3 (Jul–Oct) · annual total, n = 110</td><td>−0.42</td><td>−0.23</td></tr>
+<tr><td>ONI (Jul–Oct) · annual total, n = 10 years</td><td>+0.38</td><td>+0.30</td></tr>
+<tr><td>SPI-3 (Jul–Oct) · annual total, n = 10 years</td><td>−0.82</td><td>−0.55</td></tr>
+</tbody></table></div>
+
+Drought is the stronger driver in both records: at the annual scale, July–October SPI-3 tracks the hotspot total at ρ = −0.82 and the MODIS burned area at −0.55 (ten years, so treat both with care). The gap is consistent with burned area being a noisier, coarser measure, and also with hotspots responding to dry conditions more readily than burn scars do.
+
+## What this means for the thesis
+
+<div class="pp-callout"><div>
+<p><strong>Safe to say:</strong> in Bengkalis, 2015–2024, hotspots are a defensible indicator of <em>where and when peat fires were active</em>. Landsat, which shares no fire-detection inputs with them, confirms that hotspots sit on burned ground far more often than matched peat controls do.</p>
+<p><strong>Not safe to say:</strong> that hotspot counts measure <em>how much</em> burned. Hectares per hotspot range from about 5 to 28 across years and products, and small fire years are largely invisible to the thermal record.</p>
+<p><strong>Open:</strong> why dATBI and MODIS disagree so much in 2019, how the dATBI threshold behaves on peat (it was calibrated elsewhere), and whether the weaker climate signal in burned area reflects the data or the fires.</p>
+</div></div>
+
+All of the numbers above come from the thesis notebook. The related posts on [the ENSO and SPI-3 analysis](/blog/enso-spi3-peatland-fire-bengkalis) and [the filtering checks](/blog/behind-the-numbers-hotspot-filtering-checks) describe the hotspot set used here.
+
+<div class="pp-cite">
+<pre>Rifqy, M. (2026). Thesis analysis notebook: ENSO, climate and peatland
+fire hotspots in Bengkalis Regency, 2015–2024 (revised, 14 Oct 2026).
+Master's Programme in Disaster Management, Universitas Riau.</pre>
+<pre>Bilal, M. et al. (2025). Int. J. Appl. Earth Obs. Geoinf. 144:104866
+(ATBI burned-area index).</pre>
+</div>
+
+*Burned area: MODIS MCD64A1 (500 m) and Landsat 8/9 Collection 2 Level-2 (30 m) via Google Earth Engine. Hotspots: NASA FIRMS (MODIS), filtered with DBSCAN. Land cover: ESA WorldCover v200. Climate: NOAA ONI, CHIRPS v2.0.*

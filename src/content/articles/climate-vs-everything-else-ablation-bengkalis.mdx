@@ -1,0 +1,123 @@
+---
+title: "How Much of Bengkalis's Fire Is Climate? Taking the Model Apart, Feature by Feature"
+subtitle: "A leave-one-kecamatan-out ablation of the fire model, and what it changes about the story of Mandau."
+date: "2026-10-14"
+author: "Muhammad Rifqy"
+tags: ["fire", "peatland", "machine-learning", "SHAP", "Mandau", "Bengkalis"]
+---
+
+import '../../styles/paper.css';
+import '../../styles/thesis.css';
+import AblationChart from '../../components/thesis/AblationChart.jsx';
+import ShapShare from '../../components/thesis/ShapShare.jsx';
+import LokoMap from '../../components/thesis/LokoMap.jsx';
+
+A fire model with 14 predictors can tell you how well it does. It cannot, on its own, tell you where its skill comes from. The revised thesis notebook asks it directly: how much of the prediction is climate, and how much is everything else (peat, land use, people)? It answers by removing features in groups and re-scoring the model each time, with a validation scheme designed so that the answer cannot be flattered by spatial leakage.
+
+<div class="pp-keys">
+  <div><b>0.80</b><span>pooled AUC of the full random forest, tested on kecamatan it never saw (0.82 on average per fold)</span></div>
+  <div><b>0.73</b><span>AUC from the five climate variables alone</span></div>
+  <div><b>0.50</b><span>per-fold AUC from the seven static land and peat variables, which is chance</span></div>
+  <div><b>62<small>%</small></b><span>of the model's mean |SHAP| comes from climate features on held-out kecamatan</span></div>
+</div>
+
+## The short version
+
+- **Climate carries most of the skill.** Five climate variables alone reach a pooled AUC of 0.735. Removing them from the full model drops it to 0.684, the largest loss of any group, and the model gets worse in all 11 kecamatan.
+- **Static features cannot say *when*.** Peat area, depth, oil-palm fraction and the like are constant in a kecamatan, so they cannot rank months within it. Their per-fold AUC is exactly 0.500 by construction.
+- **Adding all non-climate features to climate and season buys little.** The pooled gain is 0.053, but within kecamatan it is 0.015 and not significant (7 of 11 kecamatan improve, p = 0.21).
+- **Mandau is not climate-independent.** An earlier reading of this study called it so. The held-out model predicts it better than any other kecamatan (AUC 0.89), and climate carries 64% of the SHAP weight there.
+
+## How the test is built
+
+The target is binary: does a kecamatan-month contain at least one filtered hotspot? That happens in 327 of 1,320 months, a base rate of 24.8%. The model is a random forest with 200 trees. Validation is **leave-one-kecamatan-out**: train on ten kecamatan, test on the eleventh, repeat eleven times. Randomly splitting months would leak, because neighbouring kecamatan share weather and fire history; holding out a whole kecamatan does not.
+
+The 14 features come in four groups, listed explicitly in the notebook:
+
+<div class="pp-table"><table>
+<thead><tr><th>Group</th><th>Features</th></tr></thead>
+<tbody>
+<tr><td>Climate (5)</td><td style="text-align:left">ONI, SPEI-3, SPI-3, monthly rainfall (CHIRPS), air temperature (ERA5-Land)</td></tr>
+<tr><td>Seasonal (2)</td><td style="text-align:left">calendar month, dry-season flag</td></tr>
+<tr><td>Biophysical-static (3)</td><td style="text-align:left">peat area, fire-weighted peat depth, surface-water occurrence</td></tr>
+<tr><td>Anthropogenic (4)</td><td style="text-align:left">oil-palm fraction, deforestation fraction 2015–2024, population density, NDVI trend</td></tr>
+</tbody></table></div>
+
+Two numbers are reported for every configuration. **Pooled AUC** puts all held-out predictions in one pot and also rewards getting the *ranking of kecamatan* right (Rupat burns more than Mandau). **Per-fold AUC** is the average of eleven separate scores, each measuring only whether the model can tell fire months from quiet months *inside* the held-out kecamatan. The two answer different questions, and the interesting results are where they disagree.
+
+## The ablation
+
+Click any row. The dot is the estimate; the line is a 95% bootstrap interval over the eleven kecamatan, which is wide because eleven is a small number of units. Switch to the per-fold view to see the within-kecamatan skill.
+
+<AblationChart client:visible />
+
+Reading it from the top:
+
+**Seasonality alone is a weak baseline** (0.586), a little better than a coin and no better than the static features. **Climate alone is far better** (0.735), and **climate plus seasonality** gets to 0.744, a gain of 0.158 over seasonality alone (11 of 11 kecamatan improve).
+
+**The static features show the pooled/per-fold split most clearly.** Pooled, they reach 0.590, but the interval (0.492 to 0.687) includes chance. Per-fold, they score exactly 0.500, as they must: a number that never changes within a kecamatan cannot tell you which of its months will burn. Whatever they contribute, it is to the *level* of fire between places, not its timing.
+
+**Dropping a group shows how much the others can cover.** Removing the biophysical-static group changes nothing (0.801, a slight gain). Removing the anthropogenic group costs 0.024 pooled and 0.004 per-fold. Removing climate costs 0.113 pooled and 0.151 per-fold. No other group comes close.
+
+**ONI adds little on top of the local drought variables.** The full model without ONI scores 0.784, against 0.797 with it. The difference is small (+0.013) but consistent: ten of eleven kecamatan do better with it.
+
+**The simple model is close to the forest.** Logistic regression on all features reaches 0.781. The pooled gap to the forest (+0.016) has an interval that spans zero, although within kecamatan the forest is ahead in all 11 (+0.034 on average). With 11 kecamatan, the case for a more flexible model is modest.
+
+### Which differences are real?
+
+<div class="pp-table"><table>
+<caption>Paired differences between configurations (A − B). Pooled: bootstrap over kecamatan. Per-fold: paired across the 11 kecamatan, Wilcoxon test.</caption>
+<thead><tr><th>A</th><th>B</th><th>Pooled Δ AUC</th><th>95% CI</th><th>Per-fold Δ</th><th>Better in</th><th>p</th></tr></thead>
+<tbody>
+<tr><td>All features</td><td>all minus climate</td><td>+0.113</td><td>[+0.060, +0.166]</td><td>+0.151</td><td>11/11</td><td>0.001</td></tr>
+<tr><td>All features</td><td>all minus ONI</td><td>+0.013</td><td>[+0.006, +0.020]</td><td>+0.015</td><td>10/11</td><td>0.002</td></tr>
+<tr><td>Climate + seasonality</td><td>seasonality only</td><td>+0.158</td><td>[+0.124, +0.191]</td><td>+0.155</td><td>11/11</td><td>0.001</td></tr>
+<tr><td>All features</td><td>climate + seasonality</td><td>+0.053</td><td>[+0.002, +0.084]</td><td>+0.015</td><td>7/11</td><td>0.206</td></tr>
+<tr><td>Random forest</td><td>logistic regression</td><td>+0.016</td><td>[−0.024, +0.065]</td><td>+0.034</td><td>11/11</td><td>0.001</td></tr>
+</tbody></table></div>
+
+The fourth row is the honest summary of what the non-climate variables add. Across kecamatan the pooled difference is just significant, because the static features help with the between-place ranking. Within a kecamatan, where the early-warning question lives, the gain is 0.015 and indistinguishable from noise. The notebook flags the caveat itself: with n = 11 the intervals are wide and the Wilcoxon test has little power.
+
+## Where the model's attention goes
+
+SHAP values split each prediction into contributions from the features. Summed by group and averaged over held-out predictions, they give a second, independent view of the same question.
+
+<ShapShare client:visible />
+
+Climate takes 62% of the weight overall, anthropogenic features 18%, biophysical-static 12% and seasonal 8%. The split is much the same in Mandau (64% climate) and Pinggir (62%).
+
+One correction is built into these numbers. An earlier version of the notebook assigned features to groups by matching keywords, which put air temperature, month and the dry-season flag into "non-climate". With the explicit whitelist the climate share for Mandau is 63.9%, where the keyword version had shown 52%.
+
+## Revisiting Mandau
+
+Earlier posts on this blog, [including the vulnerability map](/blog/vulnerability-fire-risk-bengkalis), described Mandau's fire risk as structural, driven by the Duri oil-field operations, deforestation and population density on an agricultural rather than climatic calendar. The revised notebook walks part of that back for Mandau, and its limitations section says so in as many words: the old reading of "r(ONI, hotspots) ≈ 0, climate-independent" is replaced by "dampened coupling, not independence".
+
+Three results drive that change:
+
+- **A model that never saw Mandau predicts it well.** Held out, Mandau scores AUC 0.892, the highest of the 11 (below). A fire regime unrelated to climate would be unlikely to be forecast by a model trained on the other ten.
+- **SHAP weight is the same as elsewhere.** 64% climate in Mandau, against 62% overall.
+- **The weak ONI correlation has a mundane cause.** Mandau has only 23 filtered hotspots in ten years. With so few events, a bivariate correlation with ONI (ρ = +0.15, not significant after adjustment) has little power. Its correlation with the SPEI-3 drought index is −0.40, inside the range of its neighbours (−0.29 to −0.50).
+
+<LokoMap client:visible />
+
+This does not make Mandau an ordinary kecamatan. Its F1 is only 0.32, and Pinggir's is lower still (0.22, with the lowest AUC, 0.75). The model ranks Mandau's months well, but at a fixed threshold it labels fewer of its fire months correctly. What the evidence supports is narrower than the earlier claim: Mandau's *response to climate is smaller in absolute terms* because it burns so rarely, not that climate is irrelevant. Whether industrial and agricultural activity around Duri adds ignitions is a reasonable hypothesis, and this analysis does not test it.
+
+## What to take from this
+
+<div class="pp-callout"><div>
+<p><strong>For early warning:</strong> invest in climate monitoring. SPEI-3, SPI-3 and rainfall, with ONI as a lead indicator, deliver nearly all the month-to-month skill the data contains. A model with only these five variables and the calendar is within 0.015 AUC of the full one per fold (0.053 pooled).</p>
+<p><strong>For prioritising places:</strong> static variables describe where fire concentrates but not when it will happen. Use them to rank kecamatan, not to time alerts.</p>
+<p><strong>For the thesis:</strong> the ablation turns a vague "climate matters most" into a number with an interval, and replaces the Mandau exception with a more modest and better-supported statement.</p>
+</div></div>
+
+<div class="pp-callout note"><div>
+<p><strong>Limits.</strong> Eleven kecamatan are eleven units, so intervals are wide. The target is "any hotspot", which the previous post tests against burned area. The static features were measured once and apply to the whole decade, so changes in land use over time cannot show up as skill. And ablation reports what the model uses, not what causes fire: a variable with no apparent effect may simply be redundant with another.</p>
+</div></div>
+
+<div class="pp-cite">
+<pre>Rifqy, M. (2026). Thesis analysis notebook: ENSO, climate and peatland
+fire hotspots in Bengkalis Regency, 2015–2024 (revised, 14 Oct 2026).
+Master's Programme in Disaster Management, Universitas Riau.</pre>
+</div>
+
+*Climate: CHIRPS v2.0 (rainfall), ERA5-Land (temperature), NOAA ONI. Static layers: national peatland map, Hansen Global Forest Change, ESA WorldCover, JRC Global Surface Water, BPS population. Hotspots: NASA FIRMS (MODIS), DBSCAN-filtered.*
