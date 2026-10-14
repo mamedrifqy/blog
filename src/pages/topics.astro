@@ -6,7 +6,7 @@ const articles = (await getCollection('articles')).filter(a => !a.data.draft);
 
 const topics = [
   { name: 'Peatland', color: 'fire',           count: articles.filter(a => a.data.tags.includes('peatland')).length, desc: 'Fire dynamics, carbon, and drought in tropical peat.' },
-  { name: 'Mangrove', color: '',               count: articles.filter(a => a.data.tags.includes('mangrove')).length, desc: 'Coastal rehabilitation and inundation mapping.' },
+  // hidden for now (Kuala Selat only): { name: 'Mangrove', color: '',               count: articles.filter(a => a.data.tags.includes('mangrove')).length, desc: 'Coastal rehabilitation and inundation mapping.' },
   { name: 'ENSO', color: 'ml',                  count: articles.filter(a => a.data.tags.includes('ENSO')).length,    desc: 'El Niño teleconnection and lag-time analysis.' },
   { name: 'Machine Learning', color: 'ml',      count: articles.filter(a => a.data.tags.includes('machine-learning')).length, desc: 'XGBoost, SHAP, Random Forest for disaster prediction.' },
   { name: 'Remote Sensing', color: 'sar',       count: articles.filter(a => a.data.tags.includes('remote-sensing')).length, desc: 'Satellite imagery analysis and classification.' },
