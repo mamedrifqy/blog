@@ -14,7 +14,7 @@ import LiftExplorer from '../../components/thesis/LiftExplorer.jsx';
 import Y2019Bars from '../../components/thesis/Y2019Bars.jsx';
 import ExplainedShare from '../../components/thesis/ExplainedShare.jsx';
 
-Every result in this study rests on one assumption: that a satellite *hotspot* is a fair stand-in for a peat fire. A hotspot is a heat anomaly in a pixel roughly a kilometre across, seen at one moment. It is not a burn scar. Reviewers of the thesis asked, reasonably, what evidence there is that the two line up. This post is the answer the revised analysis gives, and it is a mixed one.
+Every result in this study rests on one assumption: that a satellite *hotspot* is a fair stand-in for a peat fire. A hotspot is a heat anomaly in a pixel roughly a kilometre across, seen at one moment.[^giglio16] It is not a burn scar. Reviewers of the thesis asked, reasonably, what evidence there is that the two line up. This post is the answer the revised analysis gives, and it is a mixed one.
 
 <div class="pp-keys">
   <div><b>0.68</b><span>of burned months (MODIS MCD64A1) also contain a hotspot; 0.83 if a one-month slack is allowed</span></div>
@@ -26,13 +26,13 @@ Every result in this study rests on one assumption: that a satellite *hotspot* i
 ## The short version
 
 - **Where and when: hotspots hold up.** Month by month and kecamatan by kecamatan they agree with the MODIS burned-area product clearly better than chance, and year by year the two track each other (Spearman ρ = 0.73 across 110 kecamatan-years).
-- **How much: they do not.** Burned hectares per hotspot vary from about 5 to 28 depending on the year and the product. Hotspot counts are a signal of fire activity, not an area estimate.
+- **How much: they do not.** Burned hectares per hotspot vary from about 5 to 28 depending on the year and the product. Hotspot counts are a signal of fire activity, not an area estimate. A study at a degraded peat swamp forest in Central Kalimantan reached the same conclusion.[^tansey08]
 - **Small fire years are the weak spot.** In 2023, more than half of the burned area detected by Landsat had no hotspot within 2 km.
 - **The climate signal is weaker in burned area than in hotspots.** The correlation of monthly burned area with ONI is 0.09, against 0.24 for hotspots. The direction agrees; the strength does not.
 
 ## Check 1: do hotspot months match burned months?
 
-The first test needs no new satellite work. MODIS publishes a monthly burned-area product, MCD64A1, at 500 m. For each of the 1,320 kecamatan-months (11 kecamatan × 120 months) the question is simple: did the study's filtered hotspots flag a fire, and did MCD64A1 see at least one burned pixel?
+The first test needs no new satellite work. MODIS publishes a monthly burned-area product, MCD64A1, at 500 m.[^giglio18] For each of the 1,320 kecamatan-months (11 kecamatan × 120 months) the question is simple: did the study's filtered hotspots flag a fire, and did MCD64A1 see at least one burned pixel?
 
 Across the regency, 327 months carry a hotspot and 155 carry burned pixels. Precision is 0.32, recall is 0.68 and Cohen's κ is 0.33, a fair but unspectacular agreement. Allowing the burn to be dated one month either side raises precision to 0.54 and recall to 0.83, which says a good part of the disagreement is timing: a hotspot is a snapshot, a burn scar appears when the algorithm sees the surface change.
 
@@ -46,6 +46,8 @@ Over a full year the picture tightens. Annual hotspot counts and burned hectares
 <p><strong>This check is not fully independent.</strong> MCD64A1 uses MODIS active-fire detections as one of its inputs, so agreement with hotspots is partly built in. The thesis treats Tier 1 as a consistency test, and leans on the Landsat check below for independent evidence.</p>
 </div></div>
 
+The dependence is documented, not just suspected. The MCD64 user guide states that the product is generated from MODIS surface reflectance *and* active-fire inputs,[^mcd64guide] and the algorithm paper reports that 44% of burned cells coincide with an active fire on the same day, and 68% within two days.[^giglio18] Agreement between the two products here therefore shows that they are consistent with each other; it does not show that either is right.
+
 ### Timing, in the three key years
 
 The three years the Landsat check covers (2015, 2019, 2023) differ a lot in size. In the chart below each series is scaled to its own peak, so you can compare shape rather than size.
@@ -54,11 +56,11 @@ The three years the Landsat check covers (2015, 2019, 2023) differ a lot in size
 
 ## Check 2: a burn index from Landsat, with no fire detections in it
 
-For independent evidence the notebook follows Bilal et al. (2025), who built an index for burned-area mapping that uses reflectance alone: **ATBI = NBR × (SWIR / NIR)**, where NBR = (NIR − SWIR) / (NIR + SWIR). Burn is mapped from the *drop* in ATBI between a pre-fire image and post-fire images (dATBI ≥ 0.20 marks a burned pixel), at Landsat's 30 m resolution. The standard dNBR is run alongside it for comparison.
+For independent evidence the notebook follows Bilal (2025), who built an index for burned-area mapping that uses reflectance alone:[^bilal25] **ATBI = NBR × (SWIR / NIR)**, where NBR = (NIR − SWIR) / (NIR + SWIR). Burn is mapped from the *drop* in ATBI between a pre-fire image and post-fire images (dATBI ≥ 0.20 marks a burned pixel), at Landsat's 30 m resolution. The standard dNBR is run alongside it for comparison.
 
 Applying a method from a paper to a tropical peat swamp means deviating from it, and the notebook lists the deviations plainly:
 
-- **Atmospheric correction.** The paper uses SREM; no code was released, so Landsat Collection 2 Level-2 (LaSRC) is used for both indices. Results may differ slightly from the paper's version.
+- **Atmospheric correction.** The paper uses SREM; no code was released, so Landsat Collection 2 Level-2 (LaSRC) is used for both indices. Results may differ slightly from the paper's version, which itself reports cleaner output from SREM-corrected reflectance than from the standard LaSRC product.[^bilal25]
 - **Pre-fire image.** A single clear scene is almost never available in this climate, so the pre-fire reference is a median composite. Two windows are tested: the wet season of the same year, or the dry season of the year before. The first risks a wet-to-dry seasonal bias; the second can count last year's scars as "already burned".
 - **Thresholds.** 0.20 comes from the paper and was calibrated on non-peat ecosystems. Higher values (0.27, 0.44, 0.66) are tested as a sensitivity grid.
 - **A matched control.** dATBI and dNBR use the same thresholds, so a higher confirmation rate could just mean more false alarms. Each hotspot is therefore compared with control points on peat in the same kecamatan and month, and what is reported is the *difference* in hit-rate, not the raw hit-rate.
@@ -101,7 +103,7 @@ At 1 km the study's filtered hotspots account for 82% of 2015's burned area, 73%
 
 **The DBSCAN filter costs little where fires were large.** Using all raw detections raises the share at 1 km by 4 points in 2015, 9 in 2019 and 3 in 2023. The filter does discard some points that sat next to real burn scars, but it also removes false alarms, and the trade-off is modest.
 
-**Small years are poorly covered.** In 2023 the share stays at about 47–52% even at a 2 km radius, regardless of which hotspot set is used. That is the Landsat burn that MODIS hotspots do not see at all: roughly 420 ha of the 774 ha detected that year, with no filtered hotspot within a kilometre. Small, short-lived peat fires are exactly what a coarse thermal sensor misses.
+**Small years are poorly covered.** In 2023 the share stays at about 47–52% even at a 2 km radius, regardless of which hotspot set is used. That is the Landsat burn that MODIS hotspots do not see at all: roughly 420 ha of the 774 ha detected that year, with no filtered hotspot within a kilometre. Small, short-lived peat fires are exactly what a coarse thermal sensor misses: the MODIS fire-detection validation reports high omission for small fires,[^giglio16] and small fires are known to add materially to burned area in this part of the world.[^randerson12]
 
 ### Is it just the land cover?
 
@@ -125,6 +127,38 @@ The headline finding of the thesis is that El Niño and drought raise fire activ
 
 Drought is the stronger driver in both records: at the annual scale, July–October SPI-3 tracks the hotspot total at ρ = −0.82 and the MODIS burned area at −0.55 (ten years, so treat both with care). The gap is consistent with burned area being a noisier, coarser measure, and also with hotspots responding to dry conditions more readily than burn scars do.
 
+## Reading these numbers against the published validation work
+
+Most checks above are agreement tests between two products. The literature lets us ask a harder question: is this level of agreement what we should expect, given what is known about each product's errors?
+
+### MODIS burned area is an imperfect reference, especially here
+
+The global validation of MCD64A1 summarised in its user guide gives omission of 72.6%, commission of 40.2% and a burned area biased low by 54.1%, mostly because small burns are missed.[^mcd64guide] A dedicated validation against 558 Landsat 8 image pairs found tropical forest to be one of three biomes with omission above 90% and commission above 50%.[^boschetti19] Work in Indonesia is a little kinder. Against SPOT 5 reference data, MCD64A1 Collection 6 was the best of the four MODIS products tested; the products other than MCD45A1 detected 38–48% of burned area, and agreement was better on peat (R² 0.6–0.8) than off peat (0.2–0.5), with cloud and smoke reducing accuracy.[^vetrita21]
+
+Two consequences follow for Check 1. First, a burned month that MCD64A1 missed never enters the test, and a burned month it invented counts against the hotspots, so recall of 0.68 and precision of 0.32 measure agreement with an imperfect map, not accuracy. Second, scale matters. The Landsat validation found that fine-scale errors largely offset at 3–6 km resolution,[^boschetti19] and a kecamatan-month is a much coarser unit than a 500 m pixel. Presence or absence of any burned pixel in a kecamatan-month forgives a lot of pixel-level error, so the figures here should not be compared with pixel-level accuracy numbers.
+
+### What κ = 0.33 hides
+
+Pontius and Millones argue that kappa should be replaced by two quantities: disagreement in *how much* is mapped, and disagreement in *where*.[^pontius11] The post's counts allow a rough version. From 327 hotspot months at precision 0.32 and 155 burned months at recall 0.68, about 105 months agree, which leaves roughly 222 hotspot-only months and 50 burned-only months. Over 1,320 kecamatan-months that is a quantity disagreement of about 13% and an allocation disagreement of about 8% (my arithmetic from the reported precision and recall, not an output of the notebook). Most of the disagreement is therefore that hotspots flag more months than MCD64A1 maps, not that the two flag different months. That fits the omission rates above and the improvement from a one-month slack, and it is a more useful description than a single κ.
+
+### Hectares per hotspot
+
+Dividing the table's burned areas by the filtered hotspot counts gives MCD64A1 values of about 7 ha (2015), 15 ha (2019) and 28 ha (2023) per hotspot, and dATBI values of about 5, 5 and 9 ha. In Central Kalimantan, Tansey and colleagues found about 15–16 ha per hotspot, with omission near 60% and commission near 8% at that site, and concluded that hotspot count is a weak, vegetation-dependent proxy for burned area.[^tansey08] The Bengkalis range brackets their figure, which is reassuring about order of magnitude and not at all about stability: the MCD64A1 ratio moves roughly fourfold between years. The year with the fewest hotspots (2023) has the most hectares per hotspot in both products. One reading is that when fires are small and scattered the thermal sensor catches only some of them, which inflates the ratio.[^giglio16] The notebook does not test this, so it stays a hypothesis.
+
+### The small-fire gap
+
+Randerson and colleagues estimate that small fires add about 35% to global burned area, with the largest relative increases in Equatorial Asia.[^randerson12] That is consistent with the roughly 420 ha of Landsat burn in 2023 that had no filtered hotspot within a kilometre. A finer active-fire product, VIIRS at 375 m, exists,[^schroeder14] and repeating Check 3 with it is the obvious test of whether the gap is a resolution problem. It also matters beyond the study window: the 2013 Central Sumatra fires burned 163,336 ha, 84% of it peat, in a year wetter than average after a two-month dry spell.[^gaveau14] A hotspot record read only through ENSO would underweight such episodes.
+
+### Landsat check: what the index paper does and does not support
+
+Bilal reports, over 50 wildfire events worldwide, precision of about 0.92 for dATBI against 0.73 for dNBR and F1 of about 0.94 against 0.84, scored against random-forest reference classifications.[^bilal25] The explorer's result that dNBR cannot separate hotspots from controls at the usual threshold, while dATBI can, points the same way. But the evidence is of a different kind. The paper scores a classification against a reference map; this study asks whether hotspots sit on burned ground more often than matched controls do. Neither is a validation on tropical peat. A design-based accuracy assessment in the sense of Olofsson and colleagues, with a probability sample of reference pixels interpreted independently, would be needed for that.[^olofsson14]
+
+For 2019, the dATBI-to-MODIS ratio tracked the number of usable post-fire scenes. Roy and colleagues describe a combined Landsat-8 and Sentinel-2 change-detection approach to burned-area mapping,[^roy19] and adding a second sensor's scenes is the natural way to test whether coverage explains the weak 2019 agreement.
+
+### Why burned area may show a weaker climate signal
+
+Burned area correlates with ONI at 0.09, against 0.24 for hotspots. One candidate explanation comes from the Indonesian validation above: cloud and smoke reduced the accuracy of MODIS burned-area products.[^vetrita21] Smoke is heaviest in dry El Niño seasons, so detection error could be correlated with the very signal being measured and would weaken the apparent relationship. This is a hypothesis, not a result. The peat-only control design also matters here, since in Sumatra and Kalimantan the annual burned share per unit area on peat has been about five times that of non-peat land.[^vetrita19] Finally, hectares are not emissions: carbon loss per hectare in drained peatland fell from 114 to 64, 38 and 13 t C/ha over the first to fourth fire,[^konecny16] so an unstable hectares-per-hotspot ratio and a recurrence-dependent loss per hectare compound each other.
+
 ## What this means for the thesis
 
 <div class="pp-callout"><div>
@@ -139,8 +173,24 @@ All of the numbers above come from the thesis notebook. The related posts on [th
 <pre>Rifqy, M. (2026). Thesis analysis notebook: ENSO, climate and peatland
 fire hotspots in Bengkalis Regency, 2015–2024 (revised, 14 Oct 2026).
 Master's Programme in Disaster Management, Universitas Riau.</pre>
-<pre>Bilal, M. et al. (2025). Int. J. Appl. Earth Obs. Geoinf. 144:104866
+<pre>Bilal, M. (2025). Int. J. Appl. Earth Obs. Geoinf. 144:104866
 (ATBI burned-area index).</pre>
 </div>
 
 *Burned area: MODIS MCD64A1 (500 m) and Landsat 8/9 Collection 2 Level-2 (30 m) via Google Earth Engine. Hotspots: NASA FIRMS (MODIS), filtered with DBSCAN. Land cover: ESA WorldCover v200. Climate: NOAA ONI, CHIRPS v2.0.*
+
+[^giglio16]: Giglio, L., Schroeder, W. & Justice, C. O. (2016). The Collection 6 MODIS active fire detection algorithm and fire products. *Remote Sensing of Environment* 178, 31–41. [doi:10.1016/j.rse.2016.02.054](https://doi.org/10.1016/j.rse.2016.02.054). Describes the 1 km detection algorithm, a heuristic confidence value built from several sub-confidences, a new rejection test for small tropical forest clearings, and the validation figures (commission 1.2%, omission 86.2% overall, below 10% for fires of about 140 or more 30 m pixels) quoted in the text. The conversion to roughly 13 ha is arithmetic on 30 m pixels (0.09 ha each).
+[^tansey08]: Tansey, K., Beston, J., Hoscilo, A., Page, S. E. & Paredes Hernández, C. U. (2008). Relationship between MODIS fire hot spot count and burned area in a degraded tropical peat swamp forest in Central Kalimantan, Indonesia. *Journal of Geophysical Research* 113(D23). [doi:10.1029/2008JD010717](https://doi.org/10.1029/2008JD010717). Concludes that hotspot count is a weak, vegetation-dependent proxy for burned area; reports about 15–16 ha per hotspot, omission near 60% and commission near 8% at one site.
+[^giglio18]: Giglio, L., Boschetti, L., Roy, D. P., Humber, M. L. & Justice, C. O. (2018). The Collection 6 MODIS burned area mapping algorithm and product. *Remote Sensing of Environment* 217, 72–85. [doi:10.1016/j.rse.2018.08.005](https://doi.org/10.1016/j.rse.2018.08.005). Describes the 500 m MCD64A1 algorithm; reports that Collection 6 maps about 26% more burned area globally than Collection 5.1 (2002–2016) and that 44% of burned cells coincide with an active fire on the same day and 68% within two days.
+[^mcd64guide]: NASA Land Processes Distributed Active Archive Center. *MCD64 User Guide, Collection 6.1.* [lpdaac.usgs.gov/documents/1006/MCD64_User_Guide_V61.pdf](https://lpdaac.usgs.gov/documents/1006/MCD64_User_Guide_V61.pdf). States that the product is generated from the Collection 6.1 MODIS surface reflectance and active fire products, and summarises global validation (omission 72.6%, commission 40.2%, area biased low by 54.1%, mainly from underestimating small burns).
+[^bilal25]: Bilal, M. (2025). The automated temporal burn index (ATBI) for accurate and scalable burned area mapping. *International Journal of Applied Earth Observation and Geoinformation* 144, 104866. [doi:10.1016/j.jag.2025.104866](https://doi.org/10.1016/j.jag.2025.104866). Landsat-based, run in Google Earth Engine on 50 wildfire events worldwide; reports precision of about 0.92 for dATBI against 0.73 for dNBR and F1 of about 0.94 against 0.84, assessed against random-forest reference classifications; also reports that SREM-corrected reflectance gave cleaner dATBI output than the standard LaSRC product.
+[^randerson12]: Randerson, J. T., Chen, Y., van der Werf, G. R., Rogers, B. M. & Morton, D. C. (2012). Global burned area and biomass burning emissions from small fires. *Journal of Geophysical Research: Biogeosciences* 117(G4). [doi:10.1029/2012JG002128](https://doi.org/10.1029/2012JG002128). Small fires add about 35% to global burned area (345 to 464 Mha per year); the largest relative increases are in Equatorial Asia, Central America and Southeast Asia.
+[^boschetti19]: Boschetti, L., Roy, D. P., Giglio, L., Huang, H., Zubkova, M. & Humber, M. L. (2019). Global validation of the Collection 6 MODIS burned area product. *Remote Sensing of Environment* 235, 111490. [doi:10.1016/j.rse.2019.111490](https://doi.org/10.1016/j.rse.2019.111490). Validated against 558 Landsat 8 image pairs (March 2014–March 2015); tropical forest, temperate forest and Mediterranean biomes had omission above 90% and commission above 50%; fine-scale errors largely offset at 3–6 km resolution.
+[^vetrita21]: Vetrita, Y., Cochrane, M. A., Suwarsono, Priyatna, M., Sukowati, K. A. D. & Khomarudin, M. R. (2021). Evaluating accuracy of four MODIS-derived burned area products for tropical peatland and non-peatland fires. *Environmental Research Letters* 16(3), 035015. [doi:10.1088/1748-9326/abd3d1](https://doi.org/10.1088/1748-9326/abd3d1). Against SPOT 5 reference data in Indonesia, MCD64A1 Collection 6 performed best; the products other than MCD45A1 detected 38–48% of burned area (45–57% when burns under 100 ha were excluded); agreement was better on peat (R² 0.6–0.8) than off peat (0.2–0.5); cloud and smoke reduced accuracy.
+[^pontius11]: Pontius, R. G. Jr & Millones, M. (2011). Death to Kappa: birth of quantity disagreement and allocation disagreement for accuracy assessment. *International Journal of Remote Sensing* 32(15), 4407–4429. [doi:10.1080/01431161.2011.552923](https://doi.org/10.1080/01431161.2011.552923). Argues for reporting quantity disagreement and allocation disagreement in place of the kappa coefficient.
+[^schroeder14]: Schroeder, W., Oliva, P., Giglio, L. & Csiszar, I. A. (2014). The New VIIRS 375 m active fire detection data product: algorithm description and initial assessment. *Remote Sensing of Environment* 143, 85–96. [doi:10.1016/j.rse.2013.12.008](https://doi.org/10.1016/j.rse.2013.12.008).
+[^gaveau14]: Gaveau, D. L. A. et al. (2014). Major atmospheric emissions from peat fires in Southeast Asia during non-drought years: evidence from the 2013 Sumatran fires. *Scientific Reports* 4, 6112. [doi:10.1038/srep06112](https://doi.org/10.1038/srep06112). Reports 163,336 ha burned in June 2013, 137,044 ha (84%) of it peatland and about 82% on deforested land, emitting an estimated 172 ± 59 Tg CO₂-eq in a wetter-than-average year.
+[^olofsson14]: Olofsson, P., Foody, G. M., Herold, M., Stehman, S. V., Woodcock, C. E. & Wulder, M. A. (2014). Good practices for estimating area and assessing accuracy of land change. *Remote Sensing of Environment* 148, 42–57. [doi:10.1016/j.rse.2014.02.015](https://doi.org/10.1016/j.rse.2014.02.015).
+[^roy19]: Roy, D. P., Huang, H., Boschetti, L., Giglio, L., Yan, L., Zhang, H. H. & Li, Z. (2019). Landsat-8 and Sentinel-2 burned area mapping – a combined sensor multi-temporal change detection approach. *Remote Sensing of Environment* 231, 111254. [doi:10.1016/j.rse.2019.111254](https://doi.org/10.1016/j.rse.2019.111254).
+[^vetrita19]: Vetrita, Y. & Cochrane, M. A. (2019). Fire frequency and related land-use and land-cover changes in Indonesia's peatlands. *Remote Sensing* 12(1), 5. [doi:10.3390/rs12010005](https://doi.org/10.3390/rs12010005). Uses MODIS burned-area data for 2001–2018 on Sumatra and Kalimantan; peatlands cover about 13% of the land and their annual burned share was roughly five times that of non-peat areas.
+[^konecny16]: Konecny, K., Ballhorn, U., Navratil, P., Jubanski, J., Page, S. E., Tansey, K., Hooijer, A., Vernimmen, R. & Siegert, F. (2016). Variable carbon losses from recurrent fires in drained tropical peatlands. *Global Change Biology* 22(4), 1469–1480. [Record](https://epub.ub.uni-muenchen.de/48728). Uses airborne LiDAR to estimate burn depth; carbon losses of 114, 64, 38 and 13 t C/ha for the first to fourth fire.

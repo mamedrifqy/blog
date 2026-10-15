@@ -36,7 +36,7 @@ Ten years of annual totals tell the first part of the story.
 
 <AnnualBars client:visible />
 
-2015 holds 35% of the decade's hotspots, 2019 another 24%, and no year after 2020 exceeds 150 (2021: 148; 2022: 23; 2023: 83; 2024: 88). The formal test is a **seasonal Mann-Kendall** trend on each kecamatan's 120 monthly counts, which compares each month with the same calendar month in other years, so the dry-season cycle does not masquerade as a trend. Switch the map below to the trend view.
+2015 holds 35% of the decade's hotspots, 2019 another 24%, and no year after 2020 exceeds 150 (2021: 148; 2022: 23; 2023: 83; 2024: 88). For scale, regional modelling put fire carbon emissions in maritime Southeast Asia in 2015 at the highest level since 1997.[^huijnen16] The formal test is a **seasonal Mann-Kendall** trend test,[^hirsch84] an extension of Mann's rank-based trend test,[^mann45] on each kecamatan's 120 monthly counts, which compares each month with the same calendar month in other years, so the dry-season cycle does not masquerade as a trend. Switch the map below to the trend view.
 
 <TrendMap client:visible />
 
@@ -46,13 +46,13 @@ Ten kecamatan decline significantly, with Kendall's τ between −0.12 (Talang M
 <p><strong>Read "fading" with care.</strong> A downward trend that begins at the largest event in the record is partly a statement about 2015. Mann-Kendall also reports a slope per month, which comes out as 0 in every kecamatan here (most months have no hotspots at all), so the test says *that* counts are falling but not by how much. The notebook does not separate the effect of the 2015 outlier from the later years. And 2023–24 was an El Niño period too; fire stayed low. The study does not test why.</p>
 </div></div>
 
-That last point matters for early warning. If ENSO phase alone set the level of fire, 2023–24 should have looked more like 2015. It did not. Whatever changed between those years (land management, rewetting, the weather within the phase) is not in the data this study uses.
+That last point matters for early warning. If ENSO phase alone set the level of fire, 2023–24 should have looked more like 2015. It did not. Whatever changed between those years (land management, rewetting, the weather within the phase) is not in the data this study uses. Published work gives several candidate explanations; they are set out in the section on the wider literature below.
 
 ## Does fire cluster in space?
 
-The standard tool is Moran's I, which asks whether neighbouring kecamatan have similar fire levels. The answer, for mean monthly hotspots, is **I = −0.38 (p = 0.096)**: if anything a tendency for neighbours to *differ*, but not significantly so. The same test on the strength of each kecamatan's ONI correlation gives I = +0.21 (p = 0.175).
+The standard tool is Moran's I,[^moran50] which asks whether neighbouring kecamatan have similar fire levels. The answer, for mean monthly hotspots, is **I = −0.38 (p = 0.096)**: if anything a tendency for neighbours to *differ*, but not significantly so. The same test on the strength of each kecamatan's ONI correlation gives I = +0.21 (p = 0.175).
 
-**Local Moran's I (LISA)** classifies each kecamatan as part of a high-high cluster, a low-low cluster, or a spatial outlier. For the whole decade only one is significant: Rupat Utara, labelled low-high (p = 0.001), a quiet kecamatan next to hot Rupat. That result comes with a caveat. In the neighbour structure used here, Rupat and Rupat Utara are each other's *only* neighbours, so the label really means "these two island kecamatan differ a lot", and there is no cluster of hot places around them.
+**Local Moran's I (LISA)**[^anselin95] classifies each kecamatan as part of a high-high cluster, a low-low cluster, or a spatial outlier. For the whole decade only one is significant: Rupat Utara, labelled low-high (p = 0.001), a quiet kecamatan next to hot Rupat. That result comes with a caveat. In the neighbour structure used here, Rupat and Rupat Utara are each other's *only* neighbours, so the label really means "these two island kecamatan differ a lot", and there is no cluster of hot places around them.
 
 Splitting the months by ENSO phase does not reveal one either. Moran's I is −0.13 in El Niño (43 months, p = 0.48), +0.04 in La Niña (32 months, p = 0.30) and −0.12 in neutral months (45, p = 0.50). The spatial structure of fire does not measurably change with the phase.
 
@@ -66,7 +66,7 @@ Six of 55 kecamatan-periods carry a significant label, and they do not repeat. T
 
 ## Fire arrives in events
 
-Monthly counts blur what happens on the ground. **ST-DBSCAN** clusters hotspots that are close in both space and time: here within 1.5 km and 30 days of each other, in groups of at least 3. It was run on the 2,388 high-confidence hotspots (confidence ≥ 70%).
+Monthly counts blur what happens on the ground. **ST-DBSCAN**[^birant07] clusters hotspots that are close in both space and time, extending the density-based DBSCAN algorithm:[^ester96] here within 1.5 km and 30 days of each other, in groups of at least 3. It was run on the 2,388 high-confidence hotspots (confidence ≥ 70%), a cut that sits inside the product's "nominal" class (30–79%), whose class boundaries the user guide defines at 30 and 80.[^modisguide]
 
 It finds **138 events** and puts 90.7% of the hotspots into one. The remaining 222 are singletons. 32 events have 20 or more hotspots. The ten largest are shown here against the ENSO phase of each month.
 
@@ -75,7 +75,7 @@ It finds **138 events** and puts 90.7% of the hotspots into one. The remaining 2
 Three details stand out:
 
 - **Size and duration are not the same.** Event 5 (67 hotspots) lasted five days in February 2015; event 10, started two weeks later, ran for 55 days. A fire front that moves quickly looks very different on a map from a smouldering peat fire that reignites.
-- **2015 and 2019 dominate**, both in El Niño-phase months, but three of the ten largest come from other years: July–August 2018 (neutral), February–March 2020 (a weak El Niño, ONI around 0.5–0.6) and March 2021 (La Niña).
+- **2015 and 2019 dominate**, both in El Niño-phase months (2019 was also a year of an extreme positive Indian Ocean Dipole, which ONI does not capture[^iskandar22]), but three of the ten largest come from other years: July–August 2018 (neutral), February–March 2020 (a weak El Niño, ONI around 0.5–0.6) and March 2021 (La Niña).
 - **The season is early.** Eight of the ten began between 31 January and 14 March, in the first dry spell of the year. Only two began in June–July. The MODIS burned-area record points the same way: in 2015 and 2019 it peaks in February–March, and in 2015 again in July. A warning system built only around the June–September dry season would miss the start of eight of the ten largest events.
 
 ## How early can the climate warn?
@@ -83,7 +83,7 @@ Three details stand out:
 Each kecamatan was correlated with ONI and SPEI-3 at lags of 0 to 6 months. The best lag for each is on the map (switch the view above).
 
 - **ONI** correlations run from ρ = +0.21 (Rupat Utara) to +0.42 (Siak Kecil). Optimal lead times range from 0 months (Rupat, Rupat Utara) through 3 (Bengkalis, Siak Kecil) to 5–6 (Bantan, Bathin Solapan, Pinggir, Talang Muandau, Mandau).
-- **SPEI-3** correlations run from −0.19 (Pinggir) to −0.48 (Siak Kecil). They are stronger than ONI's in 6 of 11 kecamatan, and in 7 of 11 the best lag is zero. Local drought tells you what is happening now; ONI tells you what may be coming.
+- **SPEI-3** correlations run from −0.19 (Pinggir) to −0.48 (Siak Kecil). They are stronger than ONI's in 6 of 11 kecamatan, and in 7 of 11 the best lag is zero. Local drought tells you what is happening now; ONI tells you what may be coming. SPEI is a drought index that adds temperature-driven evaporative demand to a rainfall-based one,[^vicente10] which makes it a more proximate measure of the surface water balance than an ocean index.
 
 Two cautions. The search stopped at 6 months, and the two longest optima (Mandau and Talang Muandau on ONI, Mandau on SPEI-3) sit on that boundary, so the true best lag could be longer. And the correlation at neighbouring lags is usually close to the maximum: a kecamatan with "best lag 5" is better read as "ONI informs fire anywhere from a few months to half a year ahead". The notebook turns the ONI lags into per-kecamatan watch windows ("alert N months before the dry-season peak"), which is a reasonable operational summary but not a precise forecast.
 
@@ -91,11 +91,43 @@ The chain from ocean to fire also shows in the phase statistics. Grouping months
 
 ## One more check: is the regency-wide relationship an artefact?
 
-Pooling eleven kecamatan can reverse a relationship that holds in every kecamatan, or create one that holds in none: Simpson's paradox. The check is to compute the same correlation inside each unit and compare signs.
+Pooling eleven kecamatan can reverse a relationship that holds in every kecamatan, or create one that holds in none: Simpson's paradox.[^simpson51] The check is to compute the same correlation inside each unit and compare signs.
 
 <SimpsonDots client:visible />
 
 All eleven kecamatan have the same sign as the pooled value, and the relationship is strongest in Rupat (−0.46) and Siak Kecil (−0.45). Mandau is weakest at −0.14. The pooled rainfall-fire relationship is not a mixing artefact.
+
+## Reading the space-time results against the literature
+
+### A short record, and what a trend test can claim
+
+The seasonal Mann-Kendall test compares each month only with the same calendar month in other years. Hirsch and Slack found that its Type I error stays reliable under serial correlation, except with strong long-term persistence or very short records of about five years.[^hirsch84] Ten years is above that line but not far above it, so the p-values are best read as indicative. A second issue is independence. Ten of eleven kecamatan declining is not eleven independent confirmations: they share the same weather and the same enormous 2015, so the result is closer to one fact seen eleven times, the usual problem of treating non-independent observations as replicates.[^hurlbert84] Two follow-up runs would be informative: the same test with 2015 excluded, and on 2016 onward. Both are limited by the short record, but a decline that survives them is a decline that is not only about the first year.
+
+### Why a decade can "fade" without anything changing
+
+Field and colleagues found that fire on degraded peat remains nonlinearly sensitive to dry conditions, with 2015 the most severe season in the NASA satellite record.[^field16] If the response is nonlinear, a decade that opens with an extreme drought and is followed by milder ones will show a steep decline in fire even if the underlying sensitivity never changed. That is the null hypothesis against which any management story needs to be set.
+
+There is also a management hypothesis. Taufik and colleagues coupled a weather model with a drought-fire model for Riau over 2015–2021 and found that extreme fire-hazard events fell from seven before peat rewetting to four after, with the affected area down by about 5% and event duration up; widespread, prolonged extremes occurred only in 2015 and 2019.[^taufik23] That is modelled hazard, not observed fire, and it covers Riau rather than Bengkalis, so it is a lead and not an explanation. It does show that the data used here (hotspot counts, climate indices) cannot separate "less fire because of less drought" from "less fire because of rewetting", a gap the post's caveat already points to.
+
+### Eleven polygons and the scale of clustering
+
+Moran's I of −0.38 (p = 0.096) comes from only eleven units. With so few values, anything short of strong spatial structure is hard to detect, so the result is neither confirmation of clustering nor evidence of its absence. The LISA results carry a multiple-testing problem on top. At a 5% level, 55 kecamatan-periods would throw up about three significant labels by chance alone; six were found, and they did not repeat. Local statistics at neighbouring locations also share observations, so the tests are not independent.[^anselin95]
+
+The more useful observation is that the notebook contradicts itself, productively, across scales. At the kecamatan level there is no spatial structure; at 1.5 km and 30 days, ST-DBSCAN puts 90.7% of hotspots into events. Fire in Bengkalis is clustered at the scale of a fire and not at the scale of an administrative unit. The Simpson check shares this limit. A within-kecamatan correlation is still an aggregate: Robinson showed long ago that correlations computed on areal units need not describe the individuals inside them.[^robinson50] Whether drought drives hotspots at the level of individual peat domes is not something these tests can say.
+
+On the events themselves, the 138 depend on three parameters (1.5 km, 30 days, at least 3 points) for which this post reports no sensitivity analysis. Density-based clustering grows a cluster outward from any point with enough neighbours,[^ester96] so a chain of nearby groups can merge into a single long event; the 55-day event 10 may be one smouldering fire, or several linked ones. A small grid over distance and time would show how stable the event count and the 8-of-10 early-season result are.
+
+### Lead times: what the ENSO literature suggests
+
+The lag search stopped at 6 months, with two optima on the boundary. Wooster and colleagues found, for Borneo before the MODIS era, that the strongest association across five El Niño events was between fire count and the 16-month *cumulative* Niño 3 anomaly (r = 0.98), and suggested that ENSO forecasts could give months of lead.[^wooster12] That is a different quantity from ONI at a single lag, and it argues for extending the search beyond six months and for trying accumulated anomalies. Their data are Borneo, 1980–2000 and five events, so the number is a pointer and not a benchmark.
+
+Aldrian and Susanto found that Indonesia's rainfall regions differ in how strongly ENSO shapes them, and that March–May is the hardest season to predict.[^aldrian03] Events that begin in February and March sit at the edge of that season, which is consistent with the post's advice to lean on local drought rather than ONI for early-season alerts. Differences in lead *between* the eleven kecamatan are, I think, more likely to be statistical noise from two El Niño episodes than distinct regimes, because the units are small and adjacent; that is my reading, not a result.
+
+### Beyond ENSO: the Indian Ocean Dipole and non-drought fires
+
+Saji and colleagues identified the Indian Ocean dipole mode,[^saji99] and Hendon showed that Indonesian rainfall variability reflects local air-sea interaction as well as ENSO.[^hendon03] For fire, the consequences are documented. A strong positive dipole from mid-July to mid-December 2019 reduced rainfall over Indonesia and favoured peat fires in southern Sumatra,[^iskandar22] and a 1995–2016 analysis for South Sumatra found the largest hotspot counts in 2015 and in the 2006 positive-dipole year.[^putra19] That bears directly on 2019, which holds 24% of the decade's hotspots. A dipole index added to the lag analysis is the obvious next step.
+
+Fire can also arrive without a drought at all. The June 2013 Sumatran fires burned 163,336 ha, 84% of it peat, in a year wetter than average.[^gaveau14] The three large Bengkalis events in 2018, 2020 and 2021 are not 2013, but they are a reminder that the "ENSO year or not" frame is incomplete.
 
 ## What to take from this
 
@@ -118,3 +150,25 @@ Master's Programme in Disaster Management, Universitas Riau.</pre>
 </div>
 
 *Methods: seasonal Mann-Kendall (Hirsch and Slack, 1984), Moran's I and LISA (Anselin, 1995; esda, 999 permutations), ST-DBSCAN (Birant and Kut, 2007). Hotspots: NASA FIRMS (MODIS). Climate: CHIRPS v2.0, ERA5-Land, NOAA ONI.*
+
+[^huijnen16]: Huijnen, V., Wooster, M. J., Kaiser, J. W., Gaveau, D. L. A., Flemming, J., Parrington, M., Inness, A., Murdiyarso, D., Main, B. & van Weele, M. (2016). Fire carbon emissions over maritime southeast Asia in 2015 largest since 1997. *Scientific Reports* 6, 26886. [doi:10.1038/srep26886](https://doi.org/10.1038/srep26886). Estimates about 11.3 Tg CO₂ per day in September–October 2015, linked to an El Niño drought.
+[^hirsch84]: Hirsch, R. M. & Slack, J. R. (1984). A nonparametric trend test for seasonal data with serial dependence. *Water Resources Research* 20(6), 727–732. [doi:10.1029/WR020i006p00727](https://doi.org/10.1029/WR020i006p00727). Extends the Mann–Kendall test to seasonal data; its Type I error stays reliable under serial correlation except with strong long-term persistence or very short records (about five years).
+[^mann45]: Mann, H. B. (1945). Nonparametric tests against trend. *Econometrica* 13(3), 245–259. [doi:10.2307/1907187](https://doi.org/10.2307/1907187).
+[^moran50]: Moran, P. A. P. (1950). Notes on continuous stochastic phenomena. *Biometrika* 37(1–2), 17–23. [doi:10.1093/biomet/37.1-2.17](https://doi.org/10.1093/biomet/37.1-2.17).
+[^anselin95]: Anselin, L. (1995). Local indicators of spatial association—LISA. *Geographical Analysis* 27(2), 93–115. [doi:10.1111/j.1538-4632.1995.tb00338.x](https://doi.org/10.1111/j.1538-4632.1995.tb00338.x). Shows how a global statistic such as Moran's I can be split into the contribution of each location, identifying local clusters and spatial outliers.
+[^birant07]: Birant, D. & Kut, A. (2007). ST-DBSCAN: an algorithm for clustering spatial–temporal data. *Data & Knowledge Engineering* 60(1), 208–221. [doi:10.1016/j.datak.2006.01.013](https://doi.org/10.1016/j.datak.2006.01.013).
+[^ester96]: Ester, M., Kriegel, H.-P., Sander, J. & Xu, X. (1996). A density-based algorithm for discovering clusters in large spatial databases with noise. In *Proceedings of the Second International Conference on Knowledge Discovery and Data Mining (KDD-96)*, 226–231. AAAI Press. [aaai.org/Papers/KDD/1996/KDD96-037.pdf](https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf). The original DBSCAN paper: clusters grow from points with enough neighbours within a radius, and points in no dense region are labelled noise.
+[^modisguide]: Giglio, L., Schroeder, W., Hall, J. V. & Justice, C. O. (2021). *MODIS Collection 6 and Collection 6.1 Active Fire Product User's Guide, Version 1.0.* NASA and USGS LP DAAC. [lpdaac.usgs.gov/documents/1005/MOD14_User_Guide_V61.pdf](https://lpdaac.usgs.gov/documents/1005/MOD14_User_Guide_V61.pdf). Defines the confidence classes (low below 30%, nominal 30–79%, high 80–100%) and advises users who need fewer false alarms to keep only nominal and high-confidence pixels.
+[^iskandar22]: Iskandar, I., Lestari, D. O., Saputra, A. D., Setiawan, R. Y., Wirasatriya, A., Susanto, R. D., Mardiansyah, W., Irfan, M., Rozirwan, Setiawan, J. D. & Kunarso (2022). Extreme positive Indian Ocean Dipole in 2019 and its impact on Indonesia. *Sustainability* 14(22), 15155. [doi:10.3390/su142215155](https://doi.org/10.3390/su142215155). Describes a strong positive dipole from mid-July to mid-December 2019 that reduced rainfall over Indonesia and favoured peat fires in southern Sumatra.
+[^vicente10]: Vicente-Serrano, S. M., Beguería, S. & López-Moreno, J. I. (2010). A multiscalar drought index sensitive to global warming: the Standardized Precipitation Evapotranspiration Index. *Journal of Climate* 23(7), 1696–1718. [doi:10.1175/2009JCLI2909.1](https://doi.org/10.1175/2009JCLI2909.1). Introduces SPEI, which adds temperature-driven evaporative demand to an SPI-like multiscalar index.
+[^simpson51]: Simpson, E. H. (1951). The interpretation of interaction in contingency tables. *Journal of the Royal Statistical Society: Series B* 13(2), 238–241. [doi:10.1111/j.2517-6161.1951.tb00088.x](https://doi.org/10.1111/j.2517-6161.1951.tb00088.x).
+[^hurlbert84]: Hurlbert, S. H. (1984). Pseudoreplication and the design of ecological field experiments. *Ecological Monographs* 54(2), 187–211. [doi:10.2307/1942661](https://doi.org/10.2307/1942661). Defines pseudoreplication as using inferential statistics where replicates are not statistically independent.
+[^field16]: Field, R. D., van der Werf, G. R., Fanin, T., Fetzer, E. J., Fuller, R., Jethva, H., Levy, R., Livesey, N. J., Luo, M., Torres, O. & Worden, H. M. (2016). Indonesian fire activity and smoke pollution in 2015 show persistent nonlinear sensitivity to El Niño-induced drought. *Proceedings of the National Academy of Sciences* 113(33), 9204–9209. [doi:10.1073/pnas.1524888113](https://doi.org/10.1073/pnas.1524888113). 2015 was the most severe Indonesian fire season in the NASA Earth Observing satellite record, and fire on degraded peat remains nonlinearly sensitive to dry conditions.
+[^taufik23]: Taufik, M., Haikal, M., Widyastuti, M. T., Arif, C. & Santikayasa, I. P. (2023). The impact of rewetting peatland on fire hazard in Riau, Indonesia. *Sustainability* 15(3), 2169. [MDPI](https://www.mdpi.com/2071-1050/15/3/2169). Couples a weather model with a drought–fire model for 2015–2021: extreme fire-hazard events fell from seven before rewetting to four after, the affected area fell by about 5%, and event duration rose; widespread, prolonged extremes occurred only in 2015 and 2019.
+[^robinson50]: Robinson, W. S. (1950). Ecological correlations and the behavior of individuals. *American Sociological Review* 15(3), 351–357. [doi:10.2307/2087176](https://doi.org/10.2307/2087176).
+[^wooster12]: Wooster, M. J., Perry, G. L. W. & Zoumas, A. (2012). Fire, drought and El Niño relationships on Borneo (Southeast Asia) in the pre-MODIS era (1980–2000). *Biogeosciences* 9(1), 317–340. [doi:10.5194/bg-9-317-2012](https://doi.org/10.5194/bg-9-317-2012). Across five El Niño events the strongest association was between the 16-month cumulative Niño 3 anomaly and active-fire count (r = 0.98); the authors suggest ENSO forecasts could help estimate fire activity months ahead.
+[^aldrian03]: Aldrian, E. & Susanto, R. D. (2003). Identification of three dominant rainfall regions within Indonesia and their relationship to sea surface temperature. *International Journal of Climatology* 23(12), 1435–1452. [doi:10.1002/joc.950](https://doi.org/10.1002/joc.950). Finds three rainfall regions; all but the southern one have a semi-annual component. The north-western region shows little ENSO signal, March–May is the hardest season to predict, and ENSO strongly affects June–September rainfall in the southern and eastern regions.
+[^saji99]: Saji, N. H., Goswami, B. N., Vinayachandran, P. N. & Yamagata, T. (1999). A dipole mode in the tropical Indian Ocean. *Nature* 401(6751), 360–363. [doi:10.1038/43854](https://doi.org/10.1038/43854).
+[^hendon03]: Hendon, H. H. (2003). Indonesian rainfall variability: impacts of ENSO and local air–sea interaction. *Journal of Climate* 16(11), 1775–1790. [doi link](https://doi.org/10.1175/1520-0442%282003%29016%3C1775%3AIRVIOE%3E2.0.CO%3B2).
+[^putra19]: Putra, R., Sutriyono, E., Kadir, S., Iskandar, I. & Lestari, D. O. (2019). Dynamical link of peat fires in South Sumatra and the climate modes in the Indo-Pacific region. *Indonesian Journal of Geography* 51(1), 18–22. [doi:10.22146/ijg.35667](https://doi.org/10.22146/ijg.35667). Hotspot, rainfall, ENSO and Indian Ocean Dipole data for 1995–2016; the largest hotspot counts came in the 2006 positive-dipole year and in 2015.
+[^gaveau14]: Gaveau, D. L. A. et al. (2014). Major atmospheric emissions from peat fires in Southeast Asia during non-drought years: evidence from the 2013 Sumatran fires. *Scientific Reports* 4, 6112. [doi:10.1038/srep06112](https://doi.org/10.1038/srep06112). Reports 163,336 ha burned in June 2013, 137,044 ha (84%) of it peatland and about 82% on deforested land, emitting an estimated 172 ± 59 Tg CO₂-eq in a wetter-than-average year.

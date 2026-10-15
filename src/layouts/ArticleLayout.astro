@@ -165,4 +165,30 @@ const tagColorMap: Record<string, string> = {
     max-width: var(--col-text); margin-left: auto; margin-right: auto; padding-left: 1.5rem;
   }
   .article-body :global(li) { margin-bottom: 0.35rem; color: var(--text); }
+
+  /* Footnotes (GFM): inline markers and the numbered "Notes and references" list */
+  .article-body :global(sup a[data-footnote-ref]) {
+    font-size: 0.72em; font-weight: 700; padding: 0 0.12em; margin-left: 0.05em;
+    color: var(--teal); text-decoration: none;
+  }
+  .article-body :global(sup a[data-footnote-ref]:hover) { color: var(--gold); }
+  .article-body :global(section.footnotes) {
+    max-width: var(--col-text); margin: 4rem auto 2rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border-md);
+  }
+  .article-body :global(section.footnotes .footnotes-heading) {
+    font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-dim); font-family: var(--font-sans); font-weight: 700;
+    margin: 0 0 1rem; max-width: none;
+  }
+  .article-body :global(section.footnotes ol) { padding-left: 1.4rem; max-width: none; }
+  .article-body :global(section.footnotes li) {
+    font-size: 0.8rem; line-height: 1.6; color: var(--text-muted);
+    margin-bottom: 0.7rem; scroll-margin-top: calc(var(--nav-h) + 1.5rem);
+  }
+  .article-body :global(section.footnotes li p) { font-size: 0.8rem; margin: 0; max-width: none; color: var(--text-muted); }
+  .article-body :global(section.footnotes li:target) { background: var(--teal-dim); border-radius: 3px; }
+  .article-body :global(section.footnotes a[data-footnote-backref]) { margin-left: 0.35rem; text-decoration: none; }
+  .article-body :global(section.footnotes em) { color: var(--text); }
+  .article-body :global(sup a[data-footnote-ref]) { scroll-margin-top: calc(var(--nav-h) + 1.5rem); }
 </style>

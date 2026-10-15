@@ -15,7 +15,7 @@ import PhaseBars from '../../components/paper/PhaseBars.jsx';
 import CorrelationDots from '../../components/paper/CorrelationDots.jsx';
 import DbscanExplorer from '../../components/paper/DbscanExplorer.jsx';
 
-Bengkalis Regency sits on one of the largest peat landscapes in Riau, and in the last decade it has burned in pulses: a catastrophic 2015, a heavy 2019, and long quiet stretches in between. This post walks through what a ten-year record of satellite hotspots can and cannot say about why. It follows the manuscript, adds interactive versions of its figures, and states plainly where the evidence is strong and where it is thin.
+Bengkalis Regency sits on one of the largest peat landscapes in Riau, and in the last decade it has burned in pulses: a catastrophic 2015,[^field16][^huijnen16] a heavy 2019,[^iskandar22] and long quiet stretches in between. This post walks through what a ten-year record of satellite hotspots can and cannot say about why. It follows the manuscript, adds interactive versions of its figures, and states plainly where the evidence is strong and where it is thin.
 
 <div class="pp-keys">
   <div><b>3,536</b><span>filtered hotspots, 2015–2024, from 5,603 raw MODIS detections inside the regency</span></div>
@@ -33,7 +33,7 @@ Bengkalis Regency sits on one of the largest peat landscapes in Riau, and in the
 
 ## Where the data comes from
 
-Hotspots are NASA FIRMS MODIS detections for 2015–2024 inside Bengkalis, 5,603 points in total. Raw satellite fire data contains false alarms (gas flares, refineries, hot ground), so the manuscript filters it in three tiers before any statistics are run.
+Hotspots are NASA FIRMS MODIS detections for 2015–2024 inside Bengkalis, 5,603 points in total. Raw satellite fire data contains false alarms (gas flares, refineries, hot ground), so the manuscript filters it in three tiers before any statistics are run.[^giglio16] The product's own confidence value runs from 0 to 100, with low, nominal and high classes cut at 30% and 80%.[^modisguide]
 
 <div class="pp-funnel">
   <div class="row"><span>All detections in the boundary</span><div class="track"><div class="fill alt" style="width:100%"></div></div><b>5,603</b></div>
@@ -42,7 +42,7 @@ Hotspots are NASA FIRMS MODIS detections for 2015–2024 inside Bengkalis, 5,603
   <div class="row"><span>Kept for analysis</span><div class="track"><div class="fill final" style="width:63.1%"></div></div><b>3,536</b></div>
 </div>
 
-Anchors are grouped with DBSCAN (1.5 km radius, haversine distance), giving 137 fire clusters. A medium-confidence point is kept only if it lies within 1.5 km of an anchor cluster, on the reasoning that smouldering peat produces weaker, patchier detections right next to confirmed fire. Everything else, 2,067 points, is discarded.
+Anchors are grouped with DBSCAN (1.5 km radius, haversine distance), giving 137 fire clusters.[^ester96] A medium-confidence point is kept only if it lies within 1.5 km of an anchor cluster, on the reasoning that smouldering peat produces weaker, patchier detections right next to confirmed fire. Everything else, 2,067 points, is discarded.
 
 The filter is a judgement call, and the numbers move with it. Keeping everything with confidence of at least 30% gives 4,981 points; at least 50% gives 3,790; at least 80% gives only 1,725. The anchor-plus-rescue rule sits between the permissive and strict extremes. The conclusions below use the 3,536-point set.
 
@@ -64,7 +64,7 @@ Explore the map below. Switch between the hotspot count and the two climate corr
 
 <KecMap client:visible />
 
-Rupat (976) and Bandar Laksamana (641) lead, followed by Bengkalis (402) and Pinggir (353). That ranking tracks peat: Rupat is a low-lying island whose interior is peat dome. In ten of the eleven kecamatan, between 82% and 98% of hotspots fall on mapped peat. The exception is Talang Muandau, where only 100 of 180 (56%) do.
+Rupat (976) and Bandar Laksamana (641) lead, followed by Bengkalis (402) and Pinggir (353). That ranking tracks peat: Rupat is a low-lying island whose interior is peat dome. In ten of the eleven kecamatan, between 82% and 98% of hotspots fall on mapped peat. The exception is Talang Muandau, where only 100 of 180 (56%) do. Peat concentrates burning in the wider region too: across Sumatra and Kalimantan, peatlands cover about 13% of the land but accounted for roughly five times the annual burned share of non-peat land between 2001 and 2018.[^vetrita19] What makes peat different is the fuel: fire burns into the organic soil itself, so peat fires release large carbon stocks that took millennia to accumulate.[^pagehooijer16]
 
 ## When it burns
 
@@ -76,15 +76,15 @@ The calendar view shows a pattern that surprised me.
 
 <SeasonProfile client:visible />
 
-Hotspots peak twice: February to April, and again in July and August. Roughly 55% of all hotspots fall between February and April, mostly in March. Almost two thirds of the hotspots in February and March come from just two years, 2015 and 2019. This is a regency with a bimodal rainfall regime, and the first dry spell of the year matters as much as the better-known mid-year one. A fire-season definition built only on August to October would miss most of what happened here.
+Hotspots peak twice: February to April, and again in July and August. Roughly 55% of all hotspots fall between February and April, mostly in March. Almost two thirds of the hotspots in February and March come from just two years, 2015 and 2019. This is a regency with a bimodal rainfall regime, and the first dry spell of the year matters as much as the better-known mid-year one.[^aldrian03] A fire-season definition built only on August to October would miss most of what happened here.
 
 ## Does ENSO sort the months?
 
-The test is a Kruskal-Wallis comparison of monthly hotspot counts across the three ENSO phases, using the NOAA rule (ONI at or beyond ±0.5 °C for at least five consecutive months). Counts are zero-inflated and heavily skewed, which is why a rank-based test is used instead of ANOVA.
+The test is a Kruskal-Wallis comparison of monthly hotspot counts across the three ENSO phases,[^kw52] using the NOAA rule (ONI at or beyond ±0.5 °C for at least five consecutive months). ONI is built from the ERSST.v5 sea-surface-temperature product.[^huang17] Counts are zero-inflated and heavily skewed, which is why a rank-based test is used instead of ANOVA.
 
 <PhaseBars client:visible />
 
-The overall test is decisive (H = 80.15, p ≈ 4 × 10⁻¹⁸, n = 1,320 kecamatan-months), and the effect size is small (η² = 0.059). The medians do not move. The mean rises almost tenfold from La Niña to El Niño, and the 95th percentile rises from 2 to 30 hotspots per kecamatan-month.
+The overall test is decisive (H = 80.15, p ≈ 4 × 10⁻¹⁸, n = 1,320 kecamatan-months), and the effect size is small (η² = 0.059).[^tomczak14] The medians do not move. The mean rises almost tenfold from La Niña to El Niño, and the 95th percentile rises from 2 to 30 hotspots per kecamatan-month.
 
 <div class="pp-table">
 <table>
@@ -98,25 +98,37 @@ The overall test is decisive (H = 80.15, p ≈ 4 × 10⁻¹⁸, n = 1,320 kecama
 </table>
 </div>
 
-A technical point worth knowing: 75% of kecamatan-months record zero hotspots, so ranks are heavily tied. Dunn's test has to use the tie-corrected variance, and without it the p-values come out far too large. With the correction, all three phase pairs differ.
+A technical point worth knowing: 75% of kecamatan-months record zero hotspots, so ranks are heavily tied. Dunn's test has to use the tie-corrected variance, and without it the p-values come out far too large. With the correction, all three phase pairs differ.[^dunn64][^dinno15][^bh95]
 
 Splitting by season changes the story slightly. The ONI-hotspot association holds in both the June–September dry season (ρ = +0.23, η² = 0.034) and the rest of the year (ρ = +0.25, η² = 0.083). ENSO phase explains proportionally more of the variation outside the dry season. A plausible reading is that El Niño works partly by switching off the rainy season's normal suppression of fire, rather than only by deepening the dry season.
 
 ## Drought beats the Pacific index
 
-SPI-3 is computed from CHIRPS rainfall for each kecamatan. Hotspots correlate negatively with it (drier means more fire), and the correlation is stronger than the one with ONI in every kecamatan.
+SPI-3 is computed from CHIRPS rainfall for each kecamatan.[^funk15][^svoboda12] Hotspots correlate negatively with it (drier means more fire), and the correlation is stronger than the one with ONI in every kecamatan.
 
 <CorrelationDots client:visible />
 
 Pooled across all kecamatan-months, ONI correlates with hotspots at ρ = +0.235 and SPI-3 at ρ = −0.326. Nine of the eleven kecamatan show significant correlations with both indices after false-discovery-rate correction. The regency's total monthly count correlates more strongly with ONI (ρ = +0.36) than any pooled figure suggests, because summing eleven noisy series removes much of the noise.
 
-SPI-3 being the stronger predictor fits the physical picture. ONI describes a remote ocean state, and rainfall over Bengkalis is only one of the things it influences. SPI-3 measures the local deficit that actually dries the peat.
+SPI-3 being the stronger predictor fits the physical picture. ONI describes a remote ocean state, and rainfall over Bengkalis is only one of the things it influences. SPI-3 measures the local deficit that actually dries the peat. Other work in Indonesia also treats accumulated rainfall as the relevant quantity, and finds that the best accumulation window differs by region: about 120 days in southern Sumatra and Kalimantan, about 30 days in northern Sumatra.[^fanin17]
 
 ### Mandau and Pinggir
 
 Mandau has few hotspots (23), so its weak ONI correlation (ρ = +0.15, not significant) is partly a power problem. Its SPI-3 link survives correction, so the coupling is dampened rather than absent.
 
 Pinggir is different. With 353 hotspots there is plenty to analyse, yet neither ONI (ρ = +0.14) nor SPI-3 (ρ = −0.18, adjusted p ≈ 0.06) is significant. Its fires look driven by something other than the weather. The manuscript points to land-use conversion and drainage from decades of plantation and oil-field development as candidates, but those factors are not measured here, so this stays a hypothesis.
+
+## Reading the result against the wider literature
+
+Four points from published work sharpen how the numbers above should be read. They are context for the findings, not part of the manuscript's own analysis.
+
+**The dryness–fire link is nonlinear, which a rank correlation understates.** A study of Indonesia from 1997 to 2015 attributes the nonlinear rainfall–fire relationship to longer rain-free spells in extremely dry years.[^fanin17] Fire on degraded peat has been shown to stay nonlinearly sensitive to dry conditions, including in 2015.[^field16] A Borneo analysis found fire frequency jumping when monthly rainfall fell below roughly 200 mm.[^sloan17] That fits what this post found: medians of zero in every ENSO phase, and an effect that lives in the tail. A Spearman coefficient and an η² summarise average association, so they will read "modest" for a process that behaves like a threshold. A natural next step is to test exceedance models, for example the probability of a fire month once accumulated rainfall drops below a regionally estimated level, and to compare accumulation windows rather than fixing SPI-3.
+
+**Fire does not need an ENSO year.** Fires in central Sumatra in June 2013 burned an estimated 163,336 ha, 84% of it peatland and about 82% on deforested land, in a year that was wetter than average and after only a two-month dry spell.[^gaveau14] The 2019 season, which this post flags as the second wave despite a weak ENSO signal, coincided with a strong positive Indian Ocean Dipole that cut rainfall across Indonesia and raised hotspot numbers in southern Sumatra.[^iskandar22] An earlier South Sumatra study found the largest hotspot counts in 1995–2016 in the 2006 positive-dipole year and in 2015.[^putra19] The Pacific index cannot see this. The standard Indian Ocean index is the dipole mode index defined in the original dipole-mode paper,[^saji99] and adding it as a second climate covariate is a direct test of whether 2019 is explained.
+
+**The early-year peak sits where ENSO is weakest.** A regionalisation of Indonesian rainfall found a north-western region with little ENSO signal, and found March to May to be the hardest season to predict.[^aldrian03] Indonesian rainfall variability reflects local air–sea interaction as well as ENSO.[^hendon03] The February–April hotspot peak documented above falls in that window, which suggests that ENSO's weaker explanatory power outside the June–September season may reflect the local rainfall regime as much as El Niño "switching off" rainy-season suppression. Whether Bengkalis lies inside the north-western region should be checked against the regionalisation map before leaning on it.
+
+**Pinggir's "something else" has candidate causes that can be tested.** Concessions accounted for about 41% of fire emissions in Sumatra in the 2006 burning season, most of it from peat, and timber concessions held 47% of Sumatra's concession area but 88% of its concession-related fire emissions.[^marlier15] In Borneo, fire frequency rose with oil palm expansion, most strongly within 10 km of plantations.[^sloan17] Hydrology matters too: in Borneo, models that include subsurface hydrology predicted burnt area better than climate-only models.[^taufik17] These studies do not concern Pinggir directly. They give a concrete overlay list for the manuscript's hypothesis: concession boundaries, canal density, and peat-restoration or rewetting records.
 
 ## What this means for early warning
 
@@ -131,6 +143,8 @@ An ENSO-based alert is useful for Bengkalis, with caveats. ONI forecasts give mo
 <p><strong>SPI-3 is relative to this decade.</strong> It is standardized against 2015–2024 itself, not a 30-year climatology, so it tells you how dry a month was compared with the rest of the study period.</p>
 <p><strong>The correlations are bivariate.</strong> No land cover, drainage or population variables are controlled for.</p>
 </div></div>
+
+Each caveat has support in the methods literature. Treating non-independent observations as independent replicates is the classic problem of pseudoreplication.[^hurlbert84] A hotspot count is a weak guide to fire size, and the conversion to hectares varies with site and vegetation.[^tansey08] The confidence cut-offs follow the product's own classes only partly, and the algorithm's omission of small fires is large,[^giglio16] so the filter is better read as a sensitivity range than a single truth. For SPI, the WMO user guide asks for a long calibration record. A summary of that guidance from the Integrated Drought Management Programme gives 20 years as the absolute minimum and 30 years as the ideal,[^svoboda12] so a ten-year baseline is shorter than even the minimum, and the index values are best read as within-decade anomalies.
 
 ## Data and reproducibility
 
@@ -149,3 +163,31 @@ Universitas Riau.</pre>
 </div>
 
 *Hotspot data: NASA FIRMS (MODIS). Rainfall: CHIRPS v2.0. ENSO: NOAA Oceanic Niño Index. Peat polygons: national peatland map. Kecamatan boundaries: TASWIL 2022.*
+
+[^field16]: Field, R. D., van der Werf, G. R., Fanin, T., Fetzer, E. J., Fuller, R., Jethva, H., Levy, R., Livesey, N. J., Luo, M., Torres, O. & Worden, H. M. (2016). Indonesian fire activity and smoke pollution in 2015 show persistent nonlinear sensitivity to El Niño-induced drought. *Proceedings of the National Academy of Sciences* 113(33), 9204–9209. [doi:10.1073/pnas.1524888113](https://doi.org/10.1073/pnas.1524888113). 2015 was the most severe Indonesian fire season in the NASA Earth Observing satellite record, and fire on degraded peat remains nonlinearly sensitive to dry conditions.
+[^huijnen16]: Huijnen, V., Wooster, M. J., Kaiser, J. W., Gaveau, D. L. A., Flemming, J., Parrington, M., Inness, A., Murdiyarso, D., Main, B. & van Weele, M. (2016). Fire carbon emissions over maritime southeast Asia in 2015 largest since 1997. *Scientific Reports* 6, 26886. [doi:10.1038/srep26886](https://doi.org/10.1038/srep26886). Estimates about 11.3 Tg CO₂ per day in September–October 2015, linked to an El Niño drought.
+[^iskandar22]: Iskandar, I., Lestari, D. O., Saputra, A. D., Setiawan, R. Y., Wirasatriya, A., Susanto, R. D., Mardiansyah, W., Irfan, M., Rozirwan, Setiawan, J. D. & Kunarso (2022). Extreme positive Indian Ocean Dipole in 2019 and its impact on Indonesia. *Sustainability* 14(22), 15155. [doi:10.3390/su142215155](https://doi.org/10.3390/su142215155). Describes a strong positive dipole from mid-July to mid-December 2019 that reduced rainfall over Indonesia and favoured peat fires in southern Sumatra.
+[^giglio16]: Giglio, L., Schroeder, W. & Justice, C. O. (2016). The Collection 6 MODIS active fire detection algorithm and fire products. *Remote Sensing of Environment* 178, 31–41. [doi:10.1016/j.rse.2016.02.054](https://doi.org/10.1016/j.rse.2016.02.054). Describes the 1 km detection algorithm, a heuristic confidence value built from several sub-confidences, a new rejection test for small tropical forest clearings, and the validation figures (commission 1.2%, omission 86.2% overall, below 10% for fires of about 140 or more 30 m pixels) quoted in the text. The conversion to roughly 13 ha is arithmetic on 30 m pixels (0.09 ha each).
+[^modisguide]: Giglio, L., Schroeder, W., Hall, J. V. & Justice, C. O. (2021). *MODIS Collection 6 and Collection 6.1 Active Fire Product User's Guide, Version 1.0.* NASA and USGS LP DAAC. [lpdaac.usgs.gov/documents/1005/MOD14_User_Guide_V61.pdf](https://lpdaac.usgs.gov/documents/1005/MOD14_User_Guide_V61.pdf). Defines the confidence classes (low below 30%, nominal 30–79%, high 80–100%) and advises users who need fewer false alarms to keep only nominal and high-confidence pixels.
+[^ester96]: Ester, M., Kriegel, H.-P., Sander, J. & Xu, X. (1996). A density-based algorithm for discovering clusters in large spatial databases with noise. In *Proceedings of the Second International Conference on Knowledge Discovery and Data Mining (KDD-96)*, 226–231. AAAI Press. [aaai.org/Papers/KDD/1996/KDD96-037.pdf](https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf). The original DBSCAN paper: clusters grow from points with enough neighbours within a radius, and points in no dense region are labelled noise.
+[^vetrita19]: Vetrita, Y. & Cochrane, M. A. (2019). Fire frequency and related land-use and land-cover changes in Indonesia's peatlands. *Remote Sensing* 12(1), 5. [doi:10.3390/rs12010005](https://doi.org/10.3390/rs12010005). Uses MODIS burned-area data for 2001–2018 on Sumatra and Kalimantan; peatlands cover about 13% of the land and their annual burned share was roughly five times that of non-peat areas.
+[^pagehooijer16]: Page, S. E. & Hooijer, A. (2016). In the line of fire: the peatlands of Southeast Asia. *Philosophical Transactions of the Royal Society B* 371(1696), 20150176. [doi:10.1098/rstb.2015.0176](https://doi.org/10.1098/rstb.2015.0176). Describes Southeast Asian peatlands shifting from carbon sink to carbon source as land-use change and fire compound peat loss.
+[^aldrian03]: Aldrian, E. & Susanto, R. D. (2003). Identification of three dominant rainfall regions within Indonesia and their relationship to sea surface temperature. *International Journal of Climatology* 23(12), 1435–1452. [doi:10.1002/joc.950](https://doi.org/10.1002/joc.950). Finds three rainfall regions; all but the southern one have a semi-annual component. The north-western region shows little ENSO signal, March–May is the hardest season to predict, and ENSO strongly affects June–September rainfall in the southern and eastern regions.
+[^kw52]: Kruskal, W. H. & Wallis, W. A. (1952). Use of ranks in one-criterion variance analysis. *Journal of the American Statistical Association* 47(260), 583–621. [doi:10.1080/01621459.1952.10483441](https://doi.org/10.1080/01621459.1952.10483441).
+[^huang17]: Huang, B. et al. (2017). Extended Reconstructed Sea Surface Temperature, Version 5 (ERSSTv5): upgrades, validations, and intercomparisons. *Journal of Climate* 30(20), 8179–8205. [doi:10.1175/JCLI-D-16-0836.1](https://doi.org/10.1175/JCLI-D-16-0836.1). The validation includes the magnitudes of El Niño and La Niña events.
+[^tomczak14]: Tomczak, M. & Tomczak, E. (2014). The need to report effect size estimates revisited. An overview of some recommended measures of effect size. *Trends in Sport Sciences* 21(1). [Record](https://tss.awf.poznan.pl/The-need-to-report-effect-size-estimates-revisited-An-overview-of-some-recommended,188960,0,2.html). An overview of effect-size measures, including ones that can be computed for non-parametric tests.
+[^dunn64]: Dunn, O. J. (1964). Multiple comparisons using rank sums. *Technometrics* 6(3), 241–252. [doi:10.1080/00401706.1964.10490181](https://doi.org/10.1080/00401706.1964.10490181).
+[^dinno15]: Dinno, A. (2015). Nonparametric pairwise multiple comparisons in independent groups using Dunn's test. *The Stata Journal* 15(1), 292–300. [doi:10.1177/1536867X1501500117](https://doi.org/10.1177/1536867X1501500117). Documents Dunn's test as the post-hoc step after a significant Kruskal–Wallis test, with Bonferroni, Šidák, Holm and Benjamini–Hochberg adjustments.
+[^bh95]: Benjamini, Y. & Hochberg, Y. (1995). Controlling the false discovery rate: a practical and powerful approach to multiple testing. *Journal of the Royal Statistical Society: Series B* 57(1), 289–300. [doi:10.1111/j.2517-6161.1995.tb02031.x](https://doi.org/10.1111/j.2517-6161.1995.tb02031.x).
+[^funk15]: Funk, C. et al. (2015). The climate hazards infrared precipitation with stations—a new environmental record for monitoring extremes. *Scientific Data* 2, 150066. [doi:10.1038/sdata.2015.66](https://doi.org/10.1038/sdata.2015.66). Describes CHIRPS, which blends infrared cold-cloud-duration estimates with station data on a 0.05° grid from 1981.
+[^svoboda12]: Svoboda, M., Hayes, M. & Wood, D. (2012). *Standardized Precipitation Index User Guide.* WMO-No. 1090. Geneva: World Meteorological Organization. [PDF](https://www.droughtmanagement.info/literature/WMO_standardized_precipitation_index_user_guide_ar_2012.pdf). The Integrated Drought Management Programme's [summary of the SPI](https://droughtmanagement.info/standardized-precipitation-index-spi/) states that the index can be calculated from as little as 20 years of data and that a record spanning at least three decades is preferable.
+[^fanin17]: Fanin, T. & van der Werf, G. R. (2017). Precipitation–fire linkages in Indonesia (1997–2015). *Biogeosciences* 14, 3995–4008. [doi:10.5194/bg-14-3995-2017](https://doi.org/10.5194/bg-14-3995-2017). Rainfall accumulated over 120 days best tracked annual fire in southern Sumatra and Kalimantan, and over 30 days in northern Sumatra; antecedent-rainfall thresholds of about 200 mm (southern Sumatra) and 305 mm (southern Kalimantan) separated high-fire years; the nonlinear relationship is attributed to longer rain-free periods in extremely dry years; peatland burning made up 61% of fires in 2015 and 45% in 1997.
+[^sloan17]: Sloan, S., Locatelli, B., Wooster, M. J. & Gaveau, D. L. A. (2017). Fire activity in Borneo driven by industrial land conversion and drought during El Niño periods, 1982–2010. *Global Environmental Change* 47, 95–109. [doi:10.1016/j.gloenvcha.2017.10.001](https://doi.org/10.1016/j.gloenvcha.2017.10.001). A random-forest analysis of AVHRR fire frequency: fire frequency rose with oil-palm cover up to about 20% of a grid cell, most strongly within 10 km of plantations, and jumped when monthly rainfall fell below about 200 mm.
+[^gaveau14]: Gaveau, D. L. A. et al. (2014). Major atmospheric emissions from peat fires in Southeast Asia during non-drought years: evidence from the 2013 Sumatran fires. *Scientific Reports* 4, 6112. [doi:10.1038/srep06112](https://doi.org/10.1038/srep06112). Reports 163,336 ha burned in June 2013, 137,044 ha (84%) of it peatland and about 82% on deforested land, emitting an estimated 172 ± 59 Tg CO₂-eq in a wetter-than-average year.
+[^putra19]: Putra, R., Sutriyono, E., Kadir, S., Iskandar, I. & Lestari, D. O. (2019). Dynamical link of peat fires in South Sumatra and the climate modes in the Indo-Pacific region. *Indonesian Journal of Geography* 51(1), 18–22. [doi:10.22146/ijg.35667](https://doi.org/10.22146/ijg.35667). Hotspot, rainfall, ENSO and Indian Ocean Dipole data for 1995–2016; the largest hotspot counts came in the 2006 positive-dipole year and in 2015.
+[^saji99]: Saji, N. H., Goswami, B. N., Vinayachandran, P. N. & Yamagata, T. (1999). A dipole mode in the tropical Indian Ocean. *Nature* 401(6751), 360–363. [doi:10.1038/43854](https://doi.org/10.1038/43854).
+[^hendon03]: Hendon, H. H. (2003). Indonesian rainfall variability: impacts of ENSO and local air–sea interaction. *Journal of Climate* 16(11), 1775–1790. [doi link](https://doi.org/10.1175/1520-0442%282003%29016%3C1775%3AIRVIOE%3E2.0.CO%3B2).
+[^marlier15]: Marlier, M. E., DeFries, R. S., Kim, P. S., Koplitz, S. N., Jacob, D. J., Mickley, L. J. & Myers, S. S. (2015). Fire emissions and regional air quality impacts from fires in oil palm, timber, and logging concessions in Indonesia. *Environmental Research Letters* 10, 085005. [doi:10.1088/1748-9326/10/8/085005](https://doi.org/10.1088/1748-9326/10/8/085005). Concessions accounted for about 41% of Sumatra's fire emissions in the 2006 burning season, 62% of that from peat; timber concessions held 47% of Sumatra's concession area and 88% of its concession-related emissions.
+[^taufik17]: Taufik, M., Torfs, P. J. J. F., Uijlenhoet, R., Jones, P. D., Murdiyarso, D. & Van Lanen, H. A. J. (2017). Amplification of wildfire area burnt by hydrological drought in the humid tropics. *Nature Climate Change* 7(6), 428–431. [doi:10.1038/nclimate3280](https://doi.org/10.1038/nclimate3280). A Borneo study; models that include hydrology predict burnt area better than climate-only models.
+[^hurlbert84]: Hurlbert, S. H. (1984). Pseudoreplication and the design of ecological field experiments. *Ecological Monographs* 54(2), 187–211. [doi:10.2307/1942661](https://doi.org/10.2307/1942661). Defines pseudoreplication as using inferential statistics where replicates are not statistically independent.
+[^tansey08]: Tansey, K., Beston, J., Hoscilo, A., Page, S. E. & Paredes Hernández, C. U. (2008). Relationship between MODIS fire hot spot count and burned area in a degraded tropical peat swamp forest in Central Kalimantan, Indonesia. *Journal of Geophysical Research* 113(D23). [doi:10.1029/2008JD010717](https://doi.org/10.1029/2008JD010717). Concludes that hotspot count is a weak, vegetation-dependent proxy for burned area; reports about 15–16 ha per hotspot, omission near 60% and commission near 8% at one site.

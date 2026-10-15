@@ -30,9 +30,9 @@ A fire model with 14 predictors can tell you how well it does. It cannot, on its
 
 ## How the test is built
 
-The target is binary: does a kecamatan-month contain at least one filtered hotspot? That happens in 327 of 1,320 months, a base rate of 24.8%. The model is a random forest with 200 trees. Validation is **leave-one-kecamatan-out**: train on ten kecamatan, test on the eleventh, repeat eleven times. Randomly splitting months would leak, because neighbouring kecamatan share weather and fire history; holding out a whole kecamatan does not.
+The target is binary: does a kecamatan-month contain at least one filtered hotspot? That happens in 327 of 1,320 months, a base rate of 24.8%. The model is a random forest with 200 trees.[^breiman01] Validation is **leave-one-kecamatan-out**: train on ten kecamatan, test on the eleventh, repeat eleven times. Randomly splitting months would leak, because neighbouring kecamatan share weather and fire history; holding out a whole kecamatan does not. This follows the standard advice for dependent data: cross-validation that ignores dependence can badly underestimate prediction error, and blocked designs are recommended whenever dependence exists.[^roberts17]
 
-The 14 features come in four groups, listed explicitly in the notebook:
+The 14 features come in four groups, listed explicitly in the notebook. Rainfall comes from CHIRPS[^funk15] and air temperature from ERA5-Land.[^munoz21]
 
 <div class="pp-table"><table>
 <thead><tr><th>Group</th><th>Features</th></tr></thead>
@@ -43,7 +43,7 @@ The 14 features come in four groups, listed explicitly in the notebook:
 <tr><td>Anthropogenic (4)</td><td style="text-align:left">oil-palm fraction, deforestation fraction 2015–2024, population density, NDVI trend</td></tr>
 </tbody></table></div>
 
-Two numbers are reported for every configuration. **Pooled AUC** puts all held-out predictions in one pot and also rewards getting the *ranking of kecamatan* right (Rupat burns more than Mandau). **Per-fold AUC** is the average of eleven separate scores, each measuring only whether the model can tell fire months from quiet months *inside* the held-out kecamatan. The two answer different questions, and the interesting results are where they disagree.
+Two numbers are reported for every configuration. **Pooled AUC** puts all held-out predictions in one pot and also rewards getting the *ranking of kecamatan* right (Rupat burns more than Mandau). **Per-fold AUC** is the average of eleven separate scores, each measuring only whether the model can tell fire months from quiet months *inside* the held-out kecamatan. The two answer different questions, and the interesting results are where they disagree. The distinction matters because AUC is known to depend strongly on the extent of the area being modelled, and says nothing about the spatial pattern of errors.[^lobo08]
 
 ## The ablation
 
@@ -76,11 +76,11 @@ Reading it from the top:
 <tr><td>Random forest</td><td>logistic regression</td><td>+0.016</td><td>[−0.024, +0.065]</td><td>+0.034</td><td>11/11</td><td>0.001</td></tr>
 </tbody></table></div>
 
-The fourth row is the honest summary of what the non-climate variables add. Across kecamatan the pooled difference is just significant, because the static features help with the between-place ranking. Within a kecamatan, where the early-warning question lives, the gain is 0.015 and indistinguishable from noise. The notebook flags the caveat itself: with n = 11 the intervals are wide and the Wilcoxon test has little power.
+The fourth row is the honest summary of what the non-climate variables add. Across kecamatan the pooled difference is just significant, because the static features help with the between-place ranking. Within a kecamatan, where the early-warning question lives, the gain is 0.015 and indistinguishable from noise. The notebook flags the caveat itself: with n = 11 the intervals are wide and the Wilcoxon signed-rank test[^wilcoxon45] has little power.
 
 ## Where the model's attention goes
 
-SHAP values split each prediction into contributions from the features. Summed by group and averaged over held-out predictions, they give a second, independent view of the same question.
+SHAP values split each prediction into contributions from the features. Summed by group and averaged over held-out predictions, they give a second view of the same question. The SHAP values here are the tree-model version described by Lundberg and colleagues.[^lundberg20] It is a second view of the same fitted model rather than an independent test, so it can reinforce the ablation but cannot replace it.
 
 <ShapShare client:visible />
 
@@ -102,6 +102,40 @@ Three results drive that change:
 
 This does not make Mandau an ordinary kecamatan. Its F1 is only 0.32, and Pinggir's is lower still (0.22, with the lowest AUC, 0.75). The model ranks Mandau's months well, but at a fixed threshold it labels fewer of its fire months correctly. What the evidence supports is narrower than the earlier claim: Mandau's *response to climate is smaller in absolute terms* because it burns so rarely, not that climate is irrelevant. Whether industrial and agricultural activity around Duri adds ignitions is a reasonable hypothesis, and this analysis does not test it.
 
+## What the ablation can and cannot show
+
+Leave-one-kecamatan-out is a good defence against one kind of leakage. It is worth being exact about which kind, and about what the other limits of the design are. This section sets the result against the methods and ecology literature.
+
+### Space is blocked; time is not
+
+Holding out a kecamatan removes spatial dependence between train and test. Ploton and colleagues found that large-scale ecological mapping models performed poorly once validated spatially,[^ploton20] which is why the spatial block is the right default. But it leaves temporal dependence untouched. The ten training kecamatan lived through the same months as the held-out one. ONI is a single series shared by every kecamatan, and gridded rainfall and temperature are likely to be very similar across neighbouring units. A forest can therefore learn that the climate values of September 2015 mean fire, and apply that to the eleventh kecamatan in the same September.
+
+That is a legitimate test of whether the model transfers *across space*. It is a weaker test of whether the model would warn of an episode it has not seen. The follow-up that would settle it is a leave-one-year-out run, or leave-one-episode-out for 2015 and 2019. With only two large fire years the result will be noisy, but a large drop from 0.80 would be informative in itself, and a small one would be the strongest support for the early-warning claim the thesis makes.
+
+### AUC and the base rate
+
+Lobo and colleagues list the limits of AUC: it ignores the predicted probability values and the model's fit, shows nothing about where errors fall, and responds strongly to the extent of the modelled area.[^lobo08] The pooled figure is exactly the case where extent matters, since it also rewards ranking kecamatan correctly. With 24.8% of months positive, the data are imbalanced enough that Saito and Rehmsmeier's argument for precision-recall plots over ROC applies.[^saito15] The only precision-type numbers reported are the F1 scores (0.32 for Mandau, 0.22 for Pinggir). A per-kecamatan precision-recall curve, drawn against each kecamatan's own base rate, would show how far above climatology the model really is. An early-warning system also needs calibrated probabilities, and AUC says nothing about those.
+
+### Correlated predictors
+
+The five climate variables are not independent. SPI-3 and SPEI-3 are both built around accumulated rainfall, and SPEI differs by adding temperature-driven evaporative demand.[^vicente10] Strobl and colleagues proposed a conditional scheme for random-forest variable importance precisely because standard importance is distorted by correlated predictors.[^strobl08] Group ablation sidesteps that problem: removing the whole group asks whether any climate information is needed, instead of dividing credit among near-duplicates. By the same logic, "ONI adds little" is a statement about its contribution *given* local drought variables. That is what one expects if ENSO acts through local rainfall, as in the El Niño-induced drought that drove 2015,[^field16] and it leaves ONI's value as an upstream indicator untouched.
+
+### Windows and nonlinearity
+
+Fanin and van der Werf found that the rainfall accumulation window that best tracked annual fire differed by region: 120 days in southern Sumatra and Kalimantan, but 30 days in northern Sumatra, with high-fire years separated by antecedent-rainfall thresholds and a nonlinear relationship.[^fanin17] Monthly rainfall (30 days) and the three-month indices (about 90 days) sit at the shorter end of that range, and no 120-day accumulation is among the features, so window choice is a testable gap. On nonlinearity, the near-tie between logistic regression and the forest is notable given how often a threshold response is reported. One possible reason, which this analysis does not test, is that ten years contain too few extreme-drought months for the forest to identify the threshold.
+
+### "Static" is not "non-climate" or "human"
+
+The group labels deserve care in both directions. The climate group is purely meteorological. Taufik and colleagues found, for Borneo, that models including hydrology predicted burnt area better than climate-only models,[^taufik17] and the present model has no water-table or soil-moisture series; its surface-water layer is a long-term occurrence map. The ablation therefore cannot say how the climate share would change if peat hydrology were added, though a dynamic hydrological variable would likely be partly redundant with the climate group and share its credit.
+
+The anthropogenic group is the opposite problem: it is measured once and averaged over a kecamatan. In a random-forest analysis of Borneo fire frequency, Sloan and colleagues found fire rising with oil-palm cover up to about 20% of a grid cell, most strongly within 10 km of plantations.[^sloan17] A once-measured, kecamatan-wide oil-palm fraction cannot encode proximity within 10 km, nor its change over time. Land use does change: across the peatlands of Peninsular Malaysia, Sumatra and Borneo combined, managed land rose from 11% to 33% to 50% of the peatland area between 1990, 2007 and 2015.[^miettinen16] Concessions were also responsible for about 41% of Sumatra's fire emissions in the 2006 burning season.[^marlier15] The finding that non-climate features add 0.015 per fold is therefore a result about *these layers at this resolution*, not about human drivers in general.
+
+A Sumatra-wide ensemble of machine-learning models on 2012–2019 hotspots found the normalized burn ratio to be the strongest predictor in every ENSO phase, followed by human-related factors, and Riau to be the most fire-prone province.[^prasetyo22] That study worked at a different spatial scale with a vegetation-state predictor that the present model lacks, so the two are not directly comparable. It does point to a feature class missing here: a dynamic measure of fuel or vegetation condition.
+
+### Eleven units and the Wilcoxon floor
+
+With 11 pairs and no ties, the smallest two-sided p an exact Wilcoxon test can return is 2 divided by 2 to the power 11, about 0.001. That is the value in every "11/11" row of the table, so 0.001 there marks the floor of what the test can say, not a measured difference in strength between rows. Treating the kecamatan, not the 120 months within each, as the unit of analysis is also what avoids pseudoreplication, the use of inferential statistics on observations that are not independent.[^hurlbert84] It is the reason the intervals are wide, and the right price to pay.
+
 ## What to take from this
 
 <div class="pp-callout"><div>
@@ -121,3 +155,23 @@ Master's Programme in Disaster Management, Universitas Riau.</pre>
 </div>
 
 *Climate: CHIRPS v2.0 (rainfall), ERA5-Land (temperature), NOAA ONI. Static layers: national peatland map, Hansen Global Forest Change, ESA WorldCover, JRC Global Surface Water, BPS population. Hotspots: NASA FIRMS (MODIS), DBSCAN-filtered.*
+
+[^breiman01]: Breiman, L. (2001). Random forests. *Machine Learning* 45(1), 5–32. [doi:10.1023/A:1010933404324](https://doi.org/10.1023/A:1010933404324).
+[^roberts17]: Roberts, D. R. et al. (2017). Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure. *Ecography* 40(8), 913–929. [doi:10.1111/ecog.02881](https://doi.org/10.1111/ecog.02881). Shows that random cross-validation can badly underestimate prediction error when data are dependent, and recommends blocked cross-validation whenever dependence exists.
+[^funk15]: Funk, C. et al. (2015). The climate hazards infrared precipitation with stations—a new environmental record for monitoring extremes. *Scientific Data* 2, 150066. [doi:10.1038/sdata.2015.66](https://doi.org/10.1038/sdata.2015.66). Describes CHIRPS, which blends infrared cold-cloud-duration estimates with station data on a 0.05° grid from 1981.
+[^munoz21]: Muñoz-Sabater, J. et al. (2021). ERA5-Land: a state-of-the-art global reanalysis dataset for land applications. *Earth System Science Data* 13(9), 4349–4383. [doi:10.5194/essd-13-4349-2021](https://doi.org/10.5194/essd-13-4349-2021). Describes the roughly 9 km hourly land reanalysis.
+[^lobo08]: Lobo, J. M., Jiménez-Valverde, A. & Real, R. (2008). AUC: a misleading measure of the performance of predictive distribution models. *Global Ecology and Biogeography* 17(2), 145–151. [doi:10.1111/j.1466-8238.2007.00358.x](https://doi.org/10.1111/j.1466-8238.2007.00358.x). Argues that AUC ignores predicted probability values and model fit, reveals nothing about the spatial pattern of errors, and is strongly affected by the extent of the modelled area.
+[^wilcoxon45]: Wilcoxon, F. (1945). Individual comparisons by ranking methods. *Biometrics Bulletin* 1(6), 80–83. [doi:10.2307/3001968](https://doi.org/10.2307/3001968).
+[^lundberg20]: Lundberg, S. M. et al. (2020). From local explanations to global understanding with explainable AI for trees. *Nature Machine Intelligence* 2(1), 56–67. [doi:10.1038/s42256-019-0138-9](https://doi.org/10.1038/s42256-019-0138-9).
+[^ploton20]: Ploton, P. et al. (2020). Spatial validation reveals poor predictive performance of large-scale ecological mapping models. *Nature Communications* 11. [doi:10.1038/s41467-020-18321-y](https://doi.org/10.1038/s41467-020-18321-y).
+[^saito15]: Saito, T. & Rehmsmeier, M. (2015). The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets. *PLOS ONE* 10(3), e0118432. [doi:10.1371/journal.pone.0118432](https://doi.org/10.1371/journal.pone.0118432).
+[^vicente10]: Vicente-Serrano, S. M., Beguería, S. & López-Moreno, J. I. (2010). A multiscalar drought index sensitive to global warming: the Standardized Precipitation Evapotranspiration Index. *Journal of Climate* 23(7), 1696–1718. [doi:10.1175/2009JCLI2909.1](https://doi.org/10.1175/2009JCLI2909.1). Introduces SPEI, which adds temperature-driven evaporative demand to an SPI-like multiscalar index.
+[^strobl08]: Strobl, C., Boulesteix, A.-L., Kneib, T., Augustin, T. & Zeileis, A. (2008). Conditional variable importance for random forests. *BMC Bioinformatics* 9, 307. [doi:10.1186/1471-2105-9-307](https://doi.org/10.1186/1471-2105-9-307). Proposes a conditional permutation scheme for random-forest variable importance, motivated by correlated predictors.
+[^field16]: Field, R. D., van der Werf, G. R., Fanin, T., Fetzer, E. J., Fuller, R., Jethva, H., Levy, R., Livesey, N. J., Luo, M., Torres, O. & Worden, H. M. (2016). Indonesian fire activity and smoke pollution in 2015 show persistent nonlinear sensitivity to El Niño-induced drought. *Proceedings of the National Academy of Sciences* 113(33), 9204–9209. [doi:10.1073/pnas.1524888113](https://doi.org/10.1073/pnas.1524888113). 2015 was the most severe Indonesian fire season in the NASA Earth Observing satellite record, and fire on degraded peat remains nonlinearly sensitive to dry conditions.
+[^fanin17]: Fanin, T. & van der Werf, G. R. (2017). Precipitation–fire linkages in Indonesia (1997–2015). *Biogeosciences* 14, 3995–4008. [doi:10.5194/bg-14-3995-2017](https://doi.org/10.5194/bg-14-3995-2017). Rainfall accumulated over 120 days best tracked annual fire in southern Sumatra and Kalimantan, and over 30 days in northern Sumatra; antecedent-rainfall thresholds of about 200 mm (southern Sumatra) and 305 mm (southern Kalimantan) separated high-fire years; the nonlinear relationship is attributed to longer rain-free periods in extremely dry years; peatland burning made up 61% of fires in 2015 and 45% in 1997.
+[^taufik17]: Taufik, M., Torfs, P. J. J. F., Uijlenhoet, R., Jones, P. D., Murdiyarso, D. & Van Lanen, H. A. J. (2017). Amplification of wildfire area burnt by hydrological drought in the humid tropics. *Nature Climate Change* 7(6), 428–431. [doi:10.1038/nclimate3280](https://doi.org/10.1038/nclimate3280). A Borneo study; models that include hydrology predict burnt area better than climate-only models.
+[^sloan17]: Sloan, S., Locatelli, B., Wooster, M. J. & Gaveau, D. L. A. (2017). Fire activity in Borneo driven by industrial land conversion and drought during El Niño periods, 1982–2010. *Global Environmental Change* 47, 95–109. [doi:10.1016/j.gloenvcha.2017.10.001](https://doi.org/10.1016/j.gloenvcha.2017.10.001). A random-forest analysis of AVHRR fire frequency: fire frequency rose with oil-palm cover up to about 20% of a grid cell, most strongly within 10 km of plantations, and jumped when monthly rainfall fell below about 200 mm.
+[^miettinen16]: Miettinen, J., Shi, C. & Liew, S. C. (2016). Land cover distribution in the peatlands of Peninsular Malaysia, Sumatra and Borneo in 2015 with changes since 1990. *Global Ecology and Conservation* 6, 67–78. [Record](https://doaj.org/article/8508bccda98c430aa7776409f9cd7bd3). Peat swamp forest fell from 76% (1990) to 41% (2007) to 29% (2015) of the peatland area; managed land rose from 11% to 33% to 50%. The figures cover the three regions combined, not Sumatra alone.
+[^marlier15]: Marlier, M. E., DeFries, R. S., Kim, P. S., Koplitz, S. N., Jacob, D. J., Mickley, L. J. & Myers, S. S. (2015). Fire emissions and regional air quality impacts from fires in oil palm, timber, and logging concessions in Indonesia. *Environmental Research Letters* 10, 085005. [doi:10.1088/1748-9326/10/8/085005](https://doi.org/10.1088/1748-9326/10/8/085005). Concessions accounted for about 41% of Sumatra's fire emissions in the 2006 burning season, 62% of that from peat; timber concessions held 47% of Sumatra's concession area and 88% of its concession-related emissions.
+[^prasetyo22]: Prasetyo, L. B., Setiawan, Y., Condro, A. A., Kustiyo, K., Putra, E. I., Hayati, N., Wijayanto, A. K., Ramadhi, A. & Murdiyarso, D. (2022). Assessing Sumatran peat vulnerability to fire under various condition of ENSO phases using machine learning approaches. *Forests* 13(6), 828. [doi:10.3390/f13060828](https://doi.org/10.3390/f13060828). An ensemble of four machine-learning methods on 2012–2019 hotspot data: the normalized burn ratio was the strongest predictor in every ENSO phase, followed by human-related factors; vulnerability rose in El Niño and its spatial pattern shifted between phases; Riau was the most fire-prone province.
+[^hurlbert84]: Hurlbert, S. H. (1984). Pseudoreplication and the design of ecological field experiments. *Ecological Monographs* 54(2), 187–211. [doi:10.2307/1942661](https://doi.org/10.2307/1942661). Defines pseudoreplication as using inferential statistics where replicates are not statistically independent.
