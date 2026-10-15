@@ -7,9 +7,10 @@ export interface Props {
   date: string;
   author: string;
   tags?: string[];
+  coverImage?: string;
 }
 
-const { title, subtitle, date, author, tags = [] } = Astro.props;
+const { title, subtitle, date, author, tags = [], coverImage } = Astro.props;
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const formattedDate = new Date(date).toLocaleDateString('en-GB', {
@@ -23,7 +24,13 @@ const tagColorMap: Record<string, string> = {
 };
 ---
 
-<BaseLayout title={title} description={subtitle}>
+<BaseLayout
+  title={title}
+  description={subtitle}
+  image={coverImage}
+  ogType="article"
+  publishedTime={new Date(date).toISOString()}
+>
   <!-- Article hero — full-width dark with subtle gradient -->
   <header class="article-hero">
     <div class="hero-track">
