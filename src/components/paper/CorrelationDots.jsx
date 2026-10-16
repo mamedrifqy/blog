@@ -21,7 +21,7 @@ export default function CorrelationDots() {
           );
         })}
       </svg>
-      <figcaption>Spearman ρ between monthly hotspot counts and each climate index, per kecamatan (n = 118 months). SPI-3 values are taken from the manuscript; ONI values were recomputed from the filtered points.</figcaption>
+      <figcaption>Spearman ρ between monthly hotspot counts and each climate index, per kecamatan (n = 120 months). ONI and SPI-3 correlations were recomputed from the 3,402 filtered points; SPI-3 uses a 1991–2024 CHIRPS baseline.</figcaption>
     </figure>
   );
 }

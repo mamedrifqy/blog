@@ -1,6 +1,6 @@
 ---
 title: "Behind the Numbers: Filtering Hotspots and Checking the Statistics"
-subtitle: "How 205,215 raw MODIS detections became 3,536 analysed fires in Bengkalis, how sensitive the results are to that choice, and the checks that caught two mistakes along the way."
+subtitle: "How 205,215 raw MODIS detections became 3,402 analysed fires in Bengkalis, how sensitive the results are to that choice, and the checks that caught two mistakes along the way."
 date: "2026-10-12"
 author: "Muhammad Rifqy"
 tags: ["peatland", "methodology", "remote-sensing", "Bengkalis"]
@@ -14,14 +14,15 @@ A fire count looks like a fact. It is really the output of a chain of choices: w
 
 <div class="pp-funnel">
   <div class="row"><span>Raw MODIS file, all years</span><div class="track"><div class="fill alt" style="width:100%"></div></div><b>205,215</b></div>
-  <div class="row"><span>2015–2024 only</span><div class="track"><div class="fill alt" style="width:16.8%"></div></div><b>34,542</b></div>
-  <div class="row"><span>Inside Bengkalis boundary</span><div class="track"><div class="fill alt" style="width:2.7%"></div></div><b>5,603</b></div>
-  <div class="row"><span>After DBSCAN filter</span><div class="track"><div class="fill final" style="width:1.7%"></div></div><b>3,536</b></div>
+  <div class="row"><span>Vegetation-fire detections only (type 0)</span><div class="track"><div class="fill alt" style="width:92.2%"></div></div><b>189,234</b></div>
+  <div class="row"><span>2015–2024 only</span><div class="track"><div class="fill alt" style="width:16.5%"></div></div><b>33,759</b></div>
+  <div class="row"><span>Inside Bengkalis boundary</span><div class="track"><div class="fill alt" style="width:2.6%"></div></div><b>5,386</b></div>
+  <div class="row"><span>After DBSCAN filter</span><div class="track"><div class="fill final" style="width:1.7%"></div></div><b>3,402</b></div>
 </div>
 
-The detections are MODIS active fires from Terra and Aqua (collections 6.03 and 61.03), downloaded from NASA FIRMS. Each carries a confidence value from 0 to 100.[^modisguide] The study keeps points in three tiers: 2,388 at 70% or higher are anchors, 1,402 between 50% and 69% are candidates, and 1,813 below 50% are dropped. Anchors are clustered with DBSCAN (1.5 km radius, minimum one point, haversine distance), producing 137 clusters.[^ester96] Candidates within 1.5 km of a cluster are rescued, which adds 1,148 points.
+The detections are MODIS active fires from Terra and Aqua (collections 6.03 and 61.03), downloaded from NASA FIRMS. Each carries a confidence value from 0 to 100.[^modisguide] The file also mixes detection types: 0 is a presumed vegetation fire, while 1 (active volcano), 2 (other static land source) and 3 (offshore) are not. The 16 October 2026 rerun keeps only type 0, which removes 15,981 of the 205,215 detections before any other step. The draft manuscript did not apply this filter, which is one reason its counts (5,603 inside the boundary, 3,536 analysed) differ from the ones here. The study keeps points in three tiers: 2,292 at 70% or higher are anchors, 1,363 between 50% and 69% are candidates, and 1,731 below 50% are dropped. Anchors are clustered with DBSCAN (1.5 km radius, minimum one point, haversine distance), producing 137 clusters.[^ester96] Candidates within 1.5 km of a cluster are rescued, which adds 1,110 points.
 
-The tier boundaries are the study's own. The product's user guide defines three confidence classes: low (below 30%), nominal (30% to below 80%) and high (80% and above).[^modisguide] The 70% anchor threshold therefore sits inside the nominal class, while the 30% and 80% rows of the table below line up with the product's own class edges. That gives readers a fixed reference: the 1,725 points at 80% or above are the product's high-confidence class, and the 4,981 at 30% or above are the nominal-plus-high set that the guide suggests for users who want fewer false alarms.
+The tier boundaries are the study's own. The product's user guide defines three confidence classes: low (below 30%), nominal (30% to below 80%) and high (80% and above).[^modisguide] The 70% anchor threshold therefore sits inside the nominal class, while the 30% and 80% rows of the table below line up with the product's own class edges. That gives readers a fixed reference: the 1,648 points at 80% or above are the product's high-confidence class, and the 4,795 at 30% or above are the nominal-plus-high set that the guide suggests for users who want fewer false alarms.
 
 ## How much does the choice matter?
 
@@ -30,61 +31,61 @@ The tier boundaries are the study's own. The product's user guide defines three 
 <caption>Hotspot totals for Bengkalis, 2015–2024, under different rules.</caption>
 <thead><tr><th>Rule</th><th>Points</th><th>Share of raw</th></tr></thead>
 <tbody>
-<tr><td>Everything inside the boundary</td><td>5,603</td><td>100%</td></tr>
-<tr><td>Confidence ≥ 30%</td><td>4,981</td><td>88.9%</td></tr>
-<tr><td>Confidence ≥ 50%</td><td>3,790</td><td>67.6%</td></tr>
-<tr><td>Confidence ≥ 80%</td><td>1,725</td><td>30.8%</td></tr>
-<tr><td><strong>Anchors + DBSCAN rescue (used in the study)</strong></td><td><strong>3,536</strong></td><td><strong>63.1%</strong></td></tr>
+<tr><td>Everything inside the boundary</td><td>5,386</td><td>100%</td></tr>
+<tr><td>Confidence ≥ 30%</td><td>4,795</td><td>89.0%</td></tr>
+<tr><td>Confidence ≥ 50%</td><td>3,655</td><td>67.9%</td></tr>
+<tr><td>Confidence ≥ 80%</td><td>1,648</td><td>30.6%</td></tr>
+<tr><td><strong>Anchors + DBSCAN rescue (used in the study)</strong></td><td><strong>3,402</strong></td><td><strong>63.2%</strong></td></tr>
 </tbody>
 </table>
 </div>
 
-The same fires can be counted as 1,725 or 5,603 depending on the cut-off. That is why the regional report, which uses a 30% cut-off and reports 4,981 for Bengkalis, and the thesis analysis, which reports 3,536, are not in conflict. They are two filters applied to the same points. Absolute counts depend on the filter, so any comparison should state which one was used.
+The same fires can be counted as 1,648 or 5,386 depending on the cut-off. That is why the regional report, which uses a 30% cut-off and reports 4,981 for Bengkalis (before non-vegetation-fire detections were removed; the same cut-off gives 4,795 now), and the thesis analysis, which reports 3,402, are not in conflict. They are two filters applied to nearly the same points. Absolute counts depend on the filter, so any comparison should state which one was used.
 
 It helps to know what a filter is trying to fix. The algorithm's own validation reports a global daytime commission error of 1.2% in Collection 6, down from 2.4% in Collection 5, but omission is large for small fires: 86.2% across all detectable fire sizes, falling below 10% only for reference fires of about 140 or more 30 m pixels (roughly 13 ha).[^giglio16] A comparison against mapped burn scars in a degraded peat swamp forest in Central Kalimantan found omission near 60% and commission near 8%, and estimated 15 to 16 ha of burned area per hotspot.[^tansey08] In both sources omission dwarfs commission. If that carries over to Bengkalis, the larger uncertainty in a hotspot count is fire that was missed, not false alarms, and a stricter filter trades a little commission for more omission. The burned-area validation post tests this directly.
 
 ## The checks
 
-Before anything was written up, the pipeline was re-run independently and compared with the original results.
+The numbers in this post were refreshed on 16 October 2026 after the pipeline changed. The checks below were repeated or restated for that rerun.
 
 Re-running a pipeline independently and comparing it with the printed results is a lightweight version of the reproducibility standard argued for in computational science generally: code and data available, so that others can regenerate the numbers.[^peng11]
 
-1. **The filter was reproduced step by step.** Twelve checkpoints, from the raw file size to the final 3,536, matched exactly.
-2. **The regional series was matched to raw points.** Summing raw MODIS detections with confidence of at least 30% month by month reproduces the Riau report in all 120 months and the 30,988 total.
-3. **The statistics were recomputed from the points.** The Kruskal-Wallis result (H = 80.15, η² = 0.059), the Spearman correlations with ONI for each kecamatan, and the seasonal tests all reproduced to the printed precision.
+1. **The filter was reproduced independently.** The in-browser explorer on the Bengkalis study page re-implements the filter separately from the notebook. On the 5,386 raw detections it returns 2,292 anchors, 1,363 candidates, 1,731 dropped, 137 clusters, 1,110 rescued and 3,402 kept, exactly the notebook's figures.
+2. **The regional series was matched to raw points in the earlier version.** Summing raw MODIS detections with confidence of at least 30% month by month reproduced the Riau report in all 120 months and the 30,988 total. That check has not been repeated for the rerun, which also drops non-vegetation-fire detections.
+3. **The statistics were recomputed from the points.** The Kruskal-Wallis result (H = 77.90, η² = 0.058), the seasonal tests, and the Spearman correlation with ONI for each of the eleven kecamatan all reproduce the notebook's printed values.
 
 Two things did not survive the check.
 
 ### A Dunn test that needed tie correction
 
-The post-hoc comparison of ENSO phases was originally computed with a hand-written pairwise test without a tie correction. With 75% of observations equal to zero, that makes the test strongly conservative. The standard tie-corrected Dunn test, with Benjamini-Hochberg adjustment,[^dunn64][^dinno15][^bh95] finds all three phase pairs different (adjusted p of 3 × 10⁻⁶ or smaller), not only La Niña against El Niño. Any "compact letter" labels derived from the uncorrected version, such as a/ab/b, should be dropped.
+The post-hoc comparison of ENSO phases was originally computed with a hand-written pairwise test without a tie correction. With 76% of observations equal to zero, that makes the test strongly conservative. The standard tie-corrected Dunn test, with Benjamini-Hochberg adjustment,[^dunn64][^dinno15][^bh95] finds all three phase pairs different (adjusted p of 1.2 × 10⁻⁵ or smaller), not only La Niña against El Niño. Any "compact letter" labels derived from the uncorrected version, such as a/ab/b, should be dropped.
 
 ### A peat-depth ratio built on the wrong area
 
-The study compares the share of hotspots in each peat-depth class with the share of peat area in that class. The area shares were computed from all 4,070 national peat polygons rather than from the peat inside Bengkalis. Using the right denominator changes the picture:
+The study compares the share of hotspots in each peat-depth class with the share of peat area in that class. In the draft, the area shares were computed from all 4,070 national peat polygons rather than from the peat inside Bengkalis. The rerun clips the polygons to Bengkalis first (511,265 ha of peat). Using the right denominator changes the picture:
 
 <div class="pp-table">
 <table>
 <caption>Ratio of hotspot share to peat-area share, by depth class (1.0 means fire in proportion to area).</caption>
-<thead><tr><th>Depth class</th><th>Hotspots</th><th>Original ratio</th><th>Corrected ratio</th></tr></thead>
+<thead><tr><th>Depth class</th><th>Hotspots (rerun)</th><th>Draft ratio (wrong area)</th><th>Corrected ratio (rerun)</th></tr></thead>
 <tbody>
-<tr><td>under 100 cm</td><td>132</td><td>0.28</td><td>0.47</td></tr>
-<tr><td>100–200 cm</td><td>758</td><td>1.04</td><td>1.32</td></tr>
-<tr><td>200–300 cm</td><td>219</td><td>0.35</td><td>0.91</td></tr>
-<tr><td>300–500 cm</td><td>684</td><td>0.92</td><td>1.27</td></tr>
-<tr><td>500–700 cm</td><td>1,385</td><td>3.25</td><td>1.35</td></tr>
+<tr><td>under 100 cm</td><td>132</td><td>0.28</td><td>0.49</td></tr>
+<tr><td>100–200 cm</td><td>743</td><td>1.04</td><td>1.34</td></tr>
+<tr><td>200–300 cm</td><td>219</td><td>0.35</td><td>0.95</td></tr>
+<tr><td>300–500 cm</td><td>644</td><td>0.92</td><td>1.24</td></tr>
+<tr><td>500–700 cm</td><td>1,308</td><td>3.25</td><td>1.33</td></tr>
 <tr><td>over 700 cm</td><td>54</td><td>0.24</td><td>0.10</td></tr>
 </tbody>
 </table>
 </div>
 
-The 500–700 cm class is still over-burned, but by about a third, not by a factor of three. Deep peat is mildly over-represented in fires, and the deepest class (over 700 cm) is strongly under-represented. The fit to "fire in proportion to area" is rejected in both versions (χ² = 765, Cohen's w = 0.49 with the corrected area),[^cohen88] so the qualitative conclusion that fire is not spread evenly across peat depth stands. The size of the effect does not.
+The 500–700 cm class is still over-burned, but by about a third, not by a factor of three. Deep peat is mildly over-represented in fires, and the deepest class (over 700 cm) is strongly under-represented. The fit to "fire in proportion to area" is rejected in both versions (χ² = 714, Cohen's w = 0.48 with the corrected area),[^cohen88] so the qualitative conclusion that fire is not spread evenly across peat depth stands. The size of the effect does not.
 
 A depth ratio has a second limit besides its denominator: it measures how often a depth class burns, not how much it loses. Airborne LiDAR work on drained tropical peatland estimated carbon losses of 114, 64, 38 and 13 t C/ha for the first to the fourth fire, so loss depends on burn depth and fire history, not on hotspot counts.[^konecny16] The deepest class being under-represented in fire (ratio 0.10) therefore does not mean it matters least for carbon. One candidate explanation for it, that the deepest domes are the least disturbed, is a hypothesis that land-cover data could test. Regional mapping shows peat swamp forest falling from 76% of the peatlands of Peninsular Malaysia, Sumatra and Borneo in 1990 to 29% in 2015, while managed land rose from 11% to 50%.[^miettinen16]
 
 ## What was not checked
 
-Several inputs could not be independently verified. The CHIRPS rainfall behind SPI-3 is not part of the open data repository, so the SPI-3 correlations are reported as printed in the manuscript.[^funk15] The fire probabilities from the machine-learning model are in-sample outputs and were not recomputed. That matters because in-sample and non-spatial fits can look far better than out-of-sample performance: in a central-African biomass-mapping study, a random forest appeared to explain over half of the variation under non-spatial validation and almost none under spatial validation.[^ploton20] The rainfall and temperature products in the regional report are not named in it. The Bengkalis analysis uses CHIRPS v2.0 rainfall and ERA5-Land temperature;[^munoz21] whether the regional report used the same products is not stated.
+Several inputs could not be independently verified. The CHIRPS rainfall behind SPI-3 is not part of the open data repository. The rerun recomputes SPI-3 from CHIRPS with a 1991–2024 baseline, but readers cannot regenerate it from the public files alone.[^funk15] The earlier fire probabilities from the machine-learning model were in-sample; the rerun uses out-of-fold predictions (leave-one-year-out), which is the safer reading. The difference matters because in-sample and non-spatial fits can look far better than out-of-sample performance: in a central-African biomass-mapping study, a random forest appeared to explain over half of the variation under non-spatial validation and almost none under spatial validation.[^ploton20] The rainfall and temperature products in the regional report are not named in it. The Bengkalis analysis uses CHIRPS v2.0 rainfall and ERA5-Land temperature;[^munoz21] whether the regional report used the same products is not stated.
 
 [^giglio16]: Giglio, L., Schroeder, W. & Justice, C. O. (2016). The Collection 6 MODIS active fire detection algorithm and fire products. *Remote Sensing of Environment* 178, 31–41. [doi:10.1016/j.rse.2016.02.054](https://doi.org/10.1016/j.rse.2016.02.054). Describes the 1 km detection algorithm, a heuristic confidence value built from several sub-confidences, a new rejection test for small tropical forest clearings, and the validation figures (commission 1.2%, omission 86.2% overall, below 10% for fires of about 140 or more 30 m pixels) quoted in the text. The conversion to roughly 13 ha is arithmetic on 30 m pixels (0.09 ha each).
 [^modisguide]: Giglio, L., Schroeder, W., Hall, J. V. & Justice, C. O. (2021). *MODIS Collection 6 and Collection 6.1 Active Fire Product User's Guide, Version 1.0.* NASA and USGS LP DAAC. [lpdaac.usgs.gov/documents/1005/MOD14_User_Guide_V61.pdf](https://lpdaac.usgs.gov/documents/1005/MOD14_User_Guide_V61.pdf). Defines the confidence classes (low below 30%, nominal 30–79%, high 80–100%) and advises users who need fewer false alarms to keep only nominal and high-confidence pixels.

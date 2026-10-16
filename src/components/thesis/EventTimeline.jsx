@@ -6,7 +6,7 @@ const PH = { 'La Niña': '#4f9be8', Neutral: '#6c7480', 'El Niño': '#e8533a' };
 const t = (s) => new Date(s + 'T00:00:00Z').getTime();
 
 export default function EventTimeline() {
-  const [sel, setSel] = useState(27);
+  const [sel, setSel] = useState(25);
   const t0 = t('2015-01-01'), t1 = t('2025-01-01');
   const W = 920, H = 300, L = 44, R = 16, T = 30, B = 34;
   const x = (ms) => L + ((ms - t0) / (t1 - t0)) * (W - L - R);
@@ -35,7 +35,7 @@ export default function EventTimeline() {
         })}
       </svg>
       <p className="th-readout" aria-live="polite"><b>Event {e.id}</b> · {e.start} → {e.end} · {e.days} days · {e.n} high-confidence hotspots · started in {MN[+e.start.slice(5, 7) - 1]} {e.start.slice(0, 4)}. Click another bar.</p>
-      <figcaption>The ten largest of 138 events found by ST-DBSCAN (1.5 km, 30 days, at least 3 points) on the 2,388 high-confidence hotspots. Eight of the ten start between late January and mid-March, in the first dry peak of the year. Only two begin in June–July, in the main dry season.</figcaption>
+      <figcaption>The ten largest of 136 events found by ST-DBSCAN (1.5 km, 30 days, at least 3 points) on the 2,292 high-confidence hotspots. Eight of the ten start between late January and the end of March, in the first dry peak of the year. Only two begin in June–July, in the main dry season.</figcaption>
     </figure>
   );
 }

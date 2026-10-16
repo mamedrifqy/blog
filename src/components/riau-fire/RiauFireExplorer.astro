@@ -251,27 +251,27 @@ const A = `${BASE}/riau-peatland-fire/assets`;
         <p>The median is 0 in every phase, so most kecamatan-months have no hotspot at all. The phase difference lives in the tail: the 95th percentile is <span data-b="p95Nino"></span> in El Niño months against <span data-b="p95Nina"></span> in La Niña months.</p>
         <p>Hotspots are not spread evenly across peat depth. Measured against the peat that actually lies inside Bengkalis, the 500–700 cm class holds <strong data-b="deepShare"></strong> of hotspots on <strong data-b="deepArea"></strong> of the peat (ratio <span data-b="deepRatio"></span>). The 100–200 cm and 300–500 cm classes are slightly over-represented (<span data-b="r100"></span> and <span data-b="r300"></span>). Peat deeper than 700 cm, <span data-b="areaDeepest"></span> of the area, holds only <span data-b="hotDeepest"></span> of hotspots (<span data-b="ratioDeepest"></span>). A goodness-of-fit test against area rejects proportionality (<span data-b="chi"></span>).</p>
         <p class="caveat"><b>Same source points, different filter.</b> The regional report’s Bengkalis series (<span data-v="bkHot"></span> hotspots) equals the raw MODIS count with confidence of 30% or more inside the Bengkalis boundary, month by month, in all 120 months. The thesis starts from the same points and keeps <span data-b="total"></span> after a DBSCAN filter: confidence of 70% or more as anchors, plus 50–69% points within 1.5 km of an anchor. Climate inputs in the thesis are CHIRPS and ERA5-Land; the report does not name its rainfall and temperature products.</p>
-        <p class="read-post"><a class="btn-read" href={`${BASE}/enso-spi3-peatland-fire-bengkalis`}>Read the paper companion post <span aria-hidden="true">→</span></a><span class="read-note">ENSO, SPI-3 and 3,536 hotspots: the full write-up, with interactive figures.</span></p>
+        <p class="read-post"><a class="btn-read" href={`${BASE}/enso-spi3-peatland-fire-bengkalis`}>Read the paper companion post <span aria-hidden="true">→</span></a><span class="read-note">ENSO, SPI-3 and 3,402 hotspots: the full write-up, with interactive figures.</span></p>
       </div>
       <div>
         <figure>
           <figcaption><b>Hotspots per kecamatan, 2015–2024</b>, inside and outside mapped peat.</figcaption>
-          <div class="chart h-380"><canvas id="b-kec" role="img" aria-label="Stacked horizontal bar chart of DBSCAN-filtered hotspots per kecamatan in Bengkalis, split into inside and outside peat. Rupat 976, Bandar Laksamana 641, Bengkalis 402, Pinggir 353, Siak Kecil 281, Bantan 230, Bathin Solapan 182, Talang Muandau 180, Rupat Utara 152, Bukit Batu 116, Mandau 23."></canvas></div>
+          <div class="chart h-380"><canvas id="b-kec" role="img" aria-label="Stacked horizontal bar chart of DBSCAN-filtered hotspots per kecamatan in Bengkalis, split into inside and outside peat. Rupat 976, Bandar Laksamana 641, Bengkalis 356, Pinggir 353, Siak Kecil 281, Bantan 198, Bathin Solapan 181, Talang Muandau 180, Bukit Batu 116, Rupat Utara 98, Mandau 22."></canvas></div>
         </figure>
         <figure>
           <figcaption><b>Hotspots per year</b>, Bengkalis. The 2015 peak was in July (365 points), 2019’s in March (249).</figcaption>
-          <div class="chart h-260"><canvas id="b-year" role="img" aria-label="Bar chart of Bengkalis hotspots per year: 2015 1232, 2016 578, 2017 46, 2018 189, 2019 844, 2020 305, 2021 148, 2022 23, 2023 83, 2024 88."></canvas></div>
+          <div class="chart h-260"><canvas id="b-year" role="img" aria-label="Bar chart of Bengkalis hotspots per year: 2015 1101, 2016 576, 2017 46, 2018 189, 2019 843, 2020 305, 2021 148, 2022 23, 2023 83, 2024 88."></canvas></div>
         </figure>
         <figure>
           <figcaption><b>Spearman ρ between ONI and monthly hotspots</b>, by kecamatan. Filled bars: p &lt; 0.05 (raw, not corrected for 11 tests); hollow: not significant.</figcaption>
-          <div class="chart h-380"><canvas id="b-rho" role="img" aria-label="Horizontal bar chart of rank correlation between the ONI and monthly hotspots for each kecamatan, from 0.14 in Pinggir to 0.38 in Siak Kecil."></canvas></div>
+          <div class="chart h-380"><canvas id="b-rho" role="img" aria-label="Horizontal bar chart of rank correlation between the ONI and monthly hotspots for each kecamatan, from 0.15 in Pinggir to 0.39 in Siak Kecil."></canvas></div>
         </figure>
         <figure>
           <figcaption><b>Hotspots against peat depth.</b> Area is peat inside Bengkalis, from the national peat map. Ratio = share of hotspots divided by share of peat area; above 1 means more fire than area would suggest.</figcaption>
           <div class="table-scroll"><table id="b-depth"></table></div>
         </figure>
         <p class="caveat"><b>The 2023 lag.</b> In 2023 the hotspot peak (April, 32 points, ONI +0.27) came one month before the thesis’s El Niño confirmation (May, ONI +0.57). In 2015 and 2019 the peaks fell inside months already classed as El Niño, so the “local fire precedes the global signal” pattern rests on one weak event.</p>
-        <p class="caveat"><b>Reading ρ with care.</b> Pinggir (ρ = <span data-b="rhoPinggir"></span>) and Mandau (<span data-b="rhoMandau"></span>) are not significant on raw p. Mandau has only 23 hotspots in ten years, so the test has little power; that is a statement about sample size, not proof that fire there ignores climate.</p>
+        <p class="caveat"><b>Reading ρ with care.</b> Pinggir (ρ = <span data-b="rhoPinggir"></span>), Rupat Utara (ρ = 0.17) and Mandau (<span data-b="rhoMandau"></span>) are not significant after Benjamini-Hochberg adjustment. Mandau has only 22 hotspots in ten years, so the test has little power; that is a statement about sample size, not proof that fire there ignores climate.</p>
       </div>
     </div>
     <div class="bk-map">

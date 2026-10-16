@@ -17,30 +17,30 @@ import ExplainedShare from '../../components/thesis/ExplainedShare.jsx';
 Every result in this study rests on one assumption: that a satellite *hotspot* is a fair stand-in for a peat fire. A hotspot is a heat anomaly in a pixel roughly a kilometre across, seen at one moment.[^giglio16] It is not a burn scar. Reviewers of the thesis asked, reasonably, what evidence there is that the two line up. This post is the answer the revised analysis gives, and it is a mixed one.
 
 <div class="pp-keys">
-  <div><b>0.68</b><span>of burned months (MODIS MCD64A1) also contain a hotspot; 0.83 if a one-month slack is allowed</span></div>
-  <div><b>0.32</b><span>of hotspot months contain a MODIS burned pixel. Hotspots are far more common than 500 m burn scars</span></div>
+  <div><b>0.67</b><span>of burned months (MODIS MCD64A1) also contain a hotspot; 0.83 if a one-month slack is allowed</span></div>
+  <div><b>0.33</b><span>of hotspot months contain a MODIS burned pixel. Hotspots are far more common than 500 m burn scars</span></div>
   <div><b>8–11<small>×</small></b><span>how much more of the regency's Landsat burned area sits within 1 km of a hotspot than chance alone would put there (2015 and 2019)</span></div>
   <div><b>46<small>%</small></b><span>of 2023's Landsat burned area lay within 1 km of a hotspot. In the big years it was 73–82%</span></div>
 </div>
 
 ## The short version
 
-- **Where and when: hotspots hold up.** Month by month and kecamatan by kecamatan they agree with the MODIS burned-area product clearly better than chance, and year by year the two track each other (Spearman ρ = 0.73 across 110 kecamatan-years).
+- **Where and when: hotspots hold up.** Month by month and kecamatan by kecamatan they agree with the MODIS burned-area product clearly better than chance, and year by year the two track each other (Spearman ρ = 0.72 across 110 kecamatan-years).
 - **How much: they do not.** Burned hectares per hotspot vary from about 5 to 28 depending on the year and the product. Hotspot counts are a signal of fire activity, not an area estimate. A study at a degraded peat swamp forest in Central Kalimantan reached the same conclusion.[^tansey08]
 - **Small fire years are the weak spot.** In 2023, more than half of the burned area detected by Landsat had no hotspot within 2 km.
-- **The climate signal is weaker in burned area than in hotspots.** The correlation of monthly burned area with ONI is 0.09, against 0.24 for hotspots. The direction agrees; the strength does not.
+- **The climate signal is weaker in burned area than in hotspots.** The correlation of monthly burned area with ONI is 0.09, against 0.23 for hotspots. The direction agrees; the strength does not.
 
 ## Check 1: do hotspot months match burned months?
 
 The first test needs no new satellite work. MODIS publishes a monthly burned-area product, MCD64A1, at 500 m.[^giglio18] For each of the 1,320 kecamatan-months (11 kecamatan × 120 months) the question is simple: did the study's filtered hotspots flag a fire, and did MCD64A1 see at least one burned pixel?
 
-Across the regency, 327 months carry a hotspot and 155 carry burned pixels. Precision is 0.32, recall is 0.68 and Cohen's κ is 0.33, a fair but unspectacular agreement. Allowing the burn to be dated one month either side raises precision to 0.54 and recall to 0.83, which says a good part of the disagreement is timing: a hotspot is a snapshot, a burn scar appears when the algorithm sees the surface change.
+Across the regency, 319 months carry a hotspot and 155 carry burned pixels. Precision is 0.33, recall is 0.67 and Cohen's κ is 0.33, a fair but unspectacular agreement. Allowing the burn to be dated one month either side raises precision to 0.54 and recall to 0.83, which says a good part of the disagreement is timing: a hotspot is a snapshot, a burn scar appears when the algorithm sees the surface change.
 
 <Tier1Map client:visible />
 
 The map shows how uneven that is. Bantan and Pinggir recover more than 90% of their burned months with a hotspot. Bukit Batu is the outlier: it has 22 burned months and 20 hotspot months, but they rarely coincide (recall 0.18, ρ = 0.05). Mandau and Bathin Solapan have too few burned months (2 and 4) for their ratios to mean much.
 
-Over a full year the picture tightens. Annual hotspot counts and burned hectares correlate at ρ = 0.73 across the 110 kecamatan-years, and at 0.65 on average *within* a kecamatan. There is one more warning in the diagnostics: in 23 of the 83 kecamatan-months with at least 10 hotspots, MCD64A1 shows no burned pixel at all, 10 of them in 2015.
+Over a full year the picture tightens. Annual hotspot counts and burned hectares correlate at ρ = 0.72 across the 110 kecamatan-years, and at 0.65 on average *within* a kecamatan. There is one more warning in the diagnostics: in 23 of the 79 kecamatan-months with at least 10 hotspots, MCD64A1 shows no burned pixel at all, 10 of them in 2015.
 
 <div class="pp-callout note"><div>
 <p><strong>This check is not fully independent.</strong> MCD64A1 uses MODIS active-fire detections as one of its inputs, so agreement with hotspots is partly built in. The thesis treats Tier 1 as a consistency test, and leans on the Landsat check below for independent evidence.</p>
@@ -81,7 +81,7 @@ Two things are worth taking from this explorer.
 
 | | 2015 | 2019 | 2023 |
 |---|---:|---:|---:|
-| Filtered hotspots | 1,232 | 844 | 83 |
+| Filtered hotspots | 1,101 | 843 | 83 |
 | MCD64A1 burned area (ha) | 8,508 | 12,831 | 2,332 |
 | dATBI burned area, T = 0.20 (ha) | 6,076 | 3,962 | 774 |
 | dATBI ÷ MCD64A1 | 0.74 | 0.29 | 0.33 |
@@ -117,15 +117,15 @@ The headline finding of the thesis is that El Niño and drought raise fire activ
 <caption>Spearman ρ with hotspots and with MODIS burned area</caption>
 <thead><tr><th>Climate signal</th><th>Hotspots</th><th>Burned area</th></tr></thead>
 <tbody>
-<tr><td>ONI · monthly, pooled</td><td>+0.24</td><td>+0.09</td></tr>
-<tr><td>SPI-3 · monthly, pooled</td><td>−0.33</td><td>−0.19</td></tr>
-<tr><td>ONI (Jul–Oct) · annual total, n = 110</td><td>+0.27</td><td>+0.22</td></tr>
-<tr><td>SPI-3 (Jul–Oct) · annual total, n = 110</td><td>−0.42</td><td>−0.23</td></tr>
+<tr><td>ONI · monthly, pooled</td><td>+0.23</td><td>+0.09</td></tr>
+<tr><td>SPI-3 · monthly, pooled</td><td>−0.29</td><td>−0.17</td></tr>
+<tr><td>ONI (Jul–Oct) · annual total, n = 110</td><td>+0.25</td><td>+0.22</td></tr>
+<tr><td>SPI-3 (Jul–Oct) · annual total, n = 110</td><td>−0.39</td><td>−0.21</td></tr>
 <tr><td>ONI (Jul–Oct) · annual total, n = 10 years</td><td>+0.38</td><td>+0.30</td></tr>
-<tr><td>SPI-3 (Jul–Oct) · annual total, n = 10 years</td><td>−0.82</td><td>−0.55</td></tr>
+<tr><td>SPI-3 (Jul–Oct) · annual total, n = 10 years</td><td>−0.77</td><td>−0.53</td></tr>
 </tbody></table></div>
 
-Drought is the stronger driver in both records: at the annual scale, July–October SPI-3 tracks the hotspot total at ρ = −0.82 and the MODIS burned area at −0.55 (ten years, so treat both with care). The gap is consistent with burned area being a noisier, coarser measure, and also with hotspots responding to dry conditions more readily than burn scars do.
+Drought is the stronger driver in both records: at the annual scale, July–October SPI-3 tracks the hotspot total at ρ = −0.77 and the MODIS burned area at −0.53 (ten years, so treat both with care). The gap is consistent with burned area being a noisier, coarser measure, and also with hotspots responding to dry conditions more readily than burn scars do.
 
 ## Reading these numbers against the published validation work
 
@@ -135,15 +135,15 @@ Most checks above are agreement tests between two products. The literature lets 
 
 The global validation of MCD64A1 summarised in its user guide gives omission of 72.6%, commission of 40.2% and a burned area biased low by 54.1%, mostly because small burns are missed.[^mcd64guide] A dedicated validation against 558 Landsat 8 image pairs found tropical forest to be one of three biomes with omission above 90% and commission above 50%.[^boschetti19] Work in Indonesia is a little kinder. Against SPOT 5 reference data, MCD64A1 Collection 6 was the best of the four MODIS products tested; the products other than MCD45A1 detected 38–48% of burned area, and agreement was better on peat (R² 0.6–0.8) than off peat (0.2–0.5), with cloud and smoke reducing accuracy.[^vetrita21]
 
-Two consequences follow for Check 1. First, a burned month that MCD64A1 missed never enters the test, and a burned month it invented counts against the hotspots, so recall of 0.68 and precision of 0.32 measure agreement with an imperfect map, not accuracy. Second, scale matters. The Landsat validation found that fine-scale errors largely offset at 3–6 km resolution,[^boschetti19] and a kecamatan-month is a much coarser unit than a 500 m pixel. Presence or absence of any burned pixel in a kecamatan-month forgives a lot of pixel-level error, so the figures here should not be compared with pixel-level accuracy numbers.
+Two consequences follow for Check 1. First, a burned month that MCD64A1 missed never enters the test, and a burned month it invented counts against the hotspots, so recall of 0.67 and precision of 0.33 measure agreement with an imperfect map, not accuracy. Second, scale matters. The Landsat validation found that fine-scale errors largely offset at 3–6 km resolution,[^boschetti19] and a kecamatan-month is a much coarser unit than a 500 m pixel. Presence or absence of any burned pixel in a kecamatan-month forgives a lot of pixel-level error, so the figures here should not be compared with pixel-level accuracy numbers.
 
 ### What κ = 0.33 hides
 
-Pontius and Millones argue that kappa should be replaced by two quantities: disagreement in *how much* is mapped, and disagreement in *where*.[^pontius11] The post's counts allow a rough version. From 327 hotspot months at precision 0.32 and 155 burned months at recall 0.68, about 105 months agree, which leaves roughly 222 hotspot-only months and 50 burned-only months. Over 1,320 kecamatan-months that is a quantity disagreement of about 13% and an allocation disagreement of about 8% (my arithmetic from the reported precision and recall, not an output of the notebook). Most of the disagreement is therefore that hotspots flag more months than MCD64A1 maps, not that the two flag different months. That fits the omission rates above and the improvement from a one-month slack, and it is a more useful description than a single κ.
+Pontius and Millones argue that kappa should be replaced by two quantities: disagreement in *how much* is mapped, and disagreement in *where*.[^pontius11] The post's counts allow a rough version. From 319 hotspot months at precision 0.33 and 155 burned months at recall 0.67, about 104 months agree, which leaves roughly 215 hotspot-only months and 51 burned-only months. Over 1,320 kecamatan-months that is a quantity disagreement of about 12% and an allocation disagreement of about 8% (my arithmetic from the reported precision and recall, not an output of the notebook). Most of the disagreement is therefore that hotspots flag more months than MCD64A1 maps, not that the two flag different months. That fits the omission rates above and the improvement from a one-month slack, and it is a more useful description than a single κ.
 
 ### Hectares per hotspot
 
-Dividing the table's burned areas by the filtered hotspot counts gives MCD64A1 values of about 7 ha (2015), 15 ha (2019) and 28 ha (2023) per hotspot, and dATBI values of about 5, 5 and 9 ha. In Central Kalimantan, Tansey and colleagues found about 15–16 ha per hotspot, with omission near 60% and commission near 8% at that site, and concluded that hotspot count is a weak, vegetation-dependent proxy for burned area.[^tansey08] The Bengkalis range brackets their figure, which is reassuring about order of magnitude and not at all about stability: the MCD64A1 ratio moves roughly fourfold between years. The year with the fewest hotspots (2023) has the most hectares per hotspot in both products. One reading is that when fires are small and scattered the thermal sensor catches only some of them, which inflates the ratio.[^giglio16] The notebook does not test this, so it stays a hypothesis.
+Dividing the table's burned areas by the filtered hotspot counts gives MCD64A1 values of about 7 ha (2015), 16 ha (2019) and 28 ha (2023) per hotspot, and dATBI values of about 6, 5 and 9 ha. In Central Kalimantan, Tansey and colleagues found about 15–16 ha per hotspot, with omission near 60% and commission near 8% at that site, and concluded that hotspot count is a weak, vegetation-dependent proxy for burned area.[^tansey08] The Bengkalis range brackets their figure, which is reassuring about order of magnitude and not at all about stability: the MCD64A1 ratio moves roughly fourfold between years. The year with the fewest hotspots (2023) has the most hectares per hotspot in both products. One reading is that when fires are small and scattered the thermal sensor catches only some of them, which inflates the ratio.[^giglio16] The notebook does not test this, so it stays a hypothesis.
 
 ### The small-fire gap
 
@@ -157,7 +157,7 @@ For 2019, the dATBI-to-MODIS ratio tracked the number of usable post-fire scenes
 
 ### Why burned area may show a weaker climate signal
 
-Burned area correlates with ONI at 0.09, against 0.24 for hotspots. One candidate explanation comes from the Indonesian validation above: cloud and smoke reduced the accuracy of MODIS burned-area products.[^vetrita21] Smoke is heaviest in dry El Niño seasons, so detection error could be correlated with the very signal being measured and would weaken the apparent relationship. This is a hypothesis, not a result. The peat-only control design also matters here, since in Sumatra and Kalimantan the annual burned share per unit area on peat has been about five times that of non-peat land.[^vetrita19] Finally, hectares are not emissions: carbon loss per hectare in drained peatland fell from 114 to 64, 38 and 13 t C/ha over the first to fourth fire,[^konecny16] so an unstable hectares-per-hotspot ratio and a recurrence-dependent loss per hectare compound each other.
+Burned area correlates with ONI at 0.09, against 0.23 for hotspots. One candidate explanation comes from the Indonesian validation above: cloud and smoke reduced the accuracy of MODIS burned-area products.[^vetrita21] Smoke is heaviest in dry El Niño seasons, so detection error could be correlated with the very signal being measured and would weaken the apparent relationship. This is a hypothesis, not a result. The peat-only control design also matters here, since in Sumatra and Kalimantan the annual burned share per unit area on peat has been about five times that of non-peat land.[^vetrita19] Finally, hectares are not emissions: carbon loss per hectare in drained peatland fell from 114 to 64, 38 and 13 t C/ha over the first to fourth fire,[^konecny16] so an unstable hectares-per-hotspot ratio and a recurrence-dependent loss per hectare compound each other.
 
 ## What this means for the thesis
 
@@ -167,11 +167,11 @@ Burned area correlates with ONI at 0.09, against 0.24 for hotspots. One candidat
 <p><strong>Open:</strong> why dATBI and MODIS disagree so much in 2019, how the dATBI threshold behaves on peat (it was calibrated elsewhere), and whether the weaker climate signal in burned area reflects the data or the fires.</p>
 </div></div>
 
-All of the numbers above come from the thesis notebook. The related posts on [the ENSO and SPI-3 analysis](/blog/enso-spi3-peatland-fire-bengkalis) and [the filtering checks](/blog/behind-the-numbers-hotspot-filtering-checks) describe the hotspot set used here.
+All of the numbers above come from the thesis notebook (v3 re-run, in which the hotspot list was rebuilt with the FIRMS TYPE = 0 filter, so hotspot counts differ slightly from the first version of this post; the Landsat indices and the shares in Check 3 were not recomputed). The related posts on [the ENSO and SPI-3 analysis](/blog/enso-spi3-peatland-fire-bengkalis) and [the filtering checks](/blog/behind-the-numbers-hotspot-filtering-checks) describe the hotspot set used here.
 
 <div class="pp-cite">
 <pre>Rifqy, M. (2026). Thesis analysis notebook: ENSO, climate and peatland
-fire hotspots in Bengkalis Regency, 2015–2024 (revised, 14 Oct 2026).
+fire hotspots in Bengkalis Regency, 2015–2024 (v3 re-run, 15 Oct 2026).
 Master's Programme in Disaster Management, Universitas Riau.</pre>
 <pre>Bilal, M. (2025). Int. J. Appl. Earth Obs. Geoinf. 144:104866
 (ATBI burned-area index).</pre>
