@@ -148,7 +148,7 @@ export default function DbscanExplorer() {
             <label><span>Anchor threshold <b>{thr}%</b></span><input type="range" min="60" max="90" step="5" value={thr} onChange={(e) => setThr(+e.target.value)} /></label>
             <label><span>Radius (eps) <b>{eps.toFixed(2)} km</b></span><input type="range" min="0.25" max="5" step="0.25" value={eps} onChange={(e) => setEps(+e.target.value)} /></label>
             <button type="button" className="pp-db-reset" onClick={reset} disabled={isDefault}>Reset to the study's settings</button>
-            <p className="pp-mini">{isDefault ? 'These are the study’s settings: 70% and 1.5 km give 3,536 points.' : `With these settings ${fmt(R.kept)} points are kept (the study keeps 3,536).`}</p>
+            <p className="pp-mini">{isDefault ? 'These are the study’s settings: 70% and 1.5 km give 3,402 points.' : `With these settings ${fmt(R.kept)} points are kept (the study keeps 3,402).`}</p>
           </div>
         </aside>
       </div>

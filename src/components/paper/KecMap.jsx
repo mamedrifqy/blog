@@ -56,7 +56,7 @@ export default function KecMap() {
           <dl>
             <div><dt>Hotspots</dt><dd>{fmt(k.total)}<small> · {Math.round((k.inPeat / k.total) * 100)}% on mapped peat</small></dd></div>
             <div><dt>ρ with ONI</dt><dd>{sgn(k.rhoOni, 3)}<small> · {sig(k.pOniAdj)}</small></dd></div>
-            <div><dt>ρ with SPI-3</dt><dd>{sgn(k.rhoSpi, 3)}<small> · {sig(k.pSpiAdj)} <em>(manuscript)</em></small></dd></div>
+            <div><dt>ρ with SPI-3</dt><dd>{sgn(k.rhoSpi, 3)}<small> · {sig(k.pSpiAdj)}</small></dd></div>
           </dl>
           <Spark series={k.monthly} />
           <p className="pp-mini">Monthly hotspots, 2015–2024. Click a kecamatan to inspect it. Dashed outline: not significant after FDR correction for the variable shown.</p>

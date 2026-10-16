@@ -383,7 +383,7 @@
     let msg = "";
     if (twin) msg = r.name + "’s rainfall and temperature series are identical to " + twin.filter((x) => x !== r.name)[0] + "’s in the report. Only the hotspot counts differ.";
     else if (!r.peatHa) msg = "The report maps no peat in " + r.name + ", so the peat chart is empty. Its hotspot counts still cover the whole regency.";
-    if (r.name === "Bengkalis") msg = (msg ? msg + " " : "") + "These counts are the report’s series (MODIS, confidence ≥30%, no DBSCAN). The thesis section below uses 3,536 points after DBSCAN filtering, drawn from the same source points.";
+    if (r.name === "Bengkalis") msg = (msg ? msg + " " : "") + "These counts are the report’s series (MODIS, confidence ≥30%, no DBSCAN). The thesis section below uses 3,402 points after TYPE and DBSCAN filtering, drawn from the same source points.";
     n.hidden = !msg; n.textContent = msg;
   }
 
@@ -659,7 +659,7 @@
       share: { v: (k) => k.inPeat / k.total * 100, t: (v) => (v - 50) / 50, lo: "50%", hi: "100% of hotspots inside peat polygons", f: (v) => v.toFixed(1) + "% in peat",
         cap: "Share of each kecamatan’s hotspots that fall inside mapped peat. Talang Muandau (55.6%) and Bandar Laksamana (81.9%) are the least peat-bound." },
       rho: { v: (k) => k.rho, t: (v) => v / 0.4, lo: "0", hi: "ρ = 0.40", f: (v) => "ρ = " + v.toFixed(2),
-        cap: "Spearman ρ between ONI and monthly hotspots, per kecamatan (raw p; Pinggir and Mandau are not significant)." },
+        cap: "Spearman ρ between ONI and monthly hotspots, per kecamatan (BH-adjusted p; Pinggir, Rupat Utara and Mandau are not significant)." },
       pAnnual: { v: (k) => k.pAnnual, t: (v) => v / 0.7, lo: "0%", hi: "70%", f: (v) => Math.round(v * 100) + "%",
         cap: "Random Forest predicted probability of at least one hotspot in a month, averaged over all months. In-sample output of the thesis model, so it describes the fit, not forecast skill." },
       pElNino: { v: (k) => k.pElNino, t: (v) => v / 0.7, lo: "0%", hi: "70%", f: (v) => Math.round(v * 100) + "%",
