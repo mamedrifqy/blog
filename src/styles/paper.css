@@ -3,6 +3,7 @@
 .pp-fig.pp-wide { max-width: 1040px; }
 .pp-fig figcaption { font-size: .8rem; color: var(--text-muted); line-height: 1.55; margin-top: .9rem; max-width: 720px; }
 .pp-canvas { position: relative; width: 100%; }
+.pp-canvas canvas { max-width: 100%; }
 .pp-legend { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; font-size: .76rem; color: var(--text-muted); margin-bottom: .75rem; }
 .pp-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: .4rem; vertical-align: -1px; }
 .pp-legend i.pp-line { height: 2px; width: 16px; background: #f0bc2e; vertical-align: 3px; }
@@ -56,7 +57,8 @@
 
 /* map */
 .pp-controls { display: flex; flex-wrap: wrap; gap: .75rem 1.25rem; align-items: center; margin-bottom: 1rem; }
-.pp-seg { display: inline-flex; border: 1px solid var(--border-md); border-radius: 4px; overflow: hidden; }
+.pp-seg { display: inline-flex; max-width: 100%; border: 1px solid var(--border-md); border-radius: 4px; overflow-x: auto; }
+@media (max-width: 340px) { .pp-seg button { padding: .45rem .55rem; font-size: .74rem; } }
 .pp-seg button, .pp-chips button { font: inherit; font-size: .78rem; color: var(--text-muted); background: transparent; border: 0; padding: .45rem .8rem; cursor: pointer; }
 .pp-seg button + button { border-left: 1px solid var(--border-md); }
 .pp-seg button[aria-pressed="true"] { background: var(--teal); color: #0d0e0f; font-weight: 700; }
@@ -128,7 +130,7 @@
 .pp-db-count > div { background: var(--bg-card); border: 1px solid var(--border); padding: .7rem .9rem; }
 .pp-db-count b { display: block; font-family: var(--font-display); font-size: 1.35rem; font-variant-numeric: tabular-nums; color: var(--text-bright); }
 .pp-db-count span { font-size: .7rem; color: var(--text-muted); letter-spacing: .04em; }
-.pp-db-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+.pp-db-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
 .pp-db-charts h5 { font-size: .78rem; color: var(--text-muted); font-weight: 600; margin: 0 0 .5rem; font-family: var(--font-sans); }
 .pp-db-chart { width: 100%; height: auto; }
 .pp-db-click { cursor: pointer; }
