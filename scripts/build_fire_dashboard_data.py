@@ -3,6 +3,7 @@
 Reads only files already in the repo:
   public/riau-peatland-fire/data/riau_monthly_panel.csv   (12 regencies x 120 months: hotspot_count, enso_phase)
   public/riau-peatland-fire/data/peat_depth_classes.csv   (mapped peat area by depth class, per regency)
+  public/riau-peatland-fire/assets/riau-geo.js            (GADM v4.0 regency boundaries as SVG paths)
 
 The Bengkalis series (thesis v3, DBSCAN-filtered) are NOT rebuilt here: the dashboard imports
 src/data/bengkalis-paper.json and src/components/thesis/data.js directly, so those numbers stay
@@ -20,6 +21,8 @@ DATA = ROOT / 'public' / 'riau-peatland-fire' / 'data'
 OUT = ROOT / 'src' / 'data' / 'fire-dashboard.json'
 
 PHASE_KEY = {'El Nino': 'E', 'Netral': 'N', 'La Nina': 'L'}
+# NB: the panel's ENSO phase/ONI differ slightly from the thesis series (9 of 120 months classified differently,
+# ONI up to 0.19 apart). The dashboard uses the thesis series (bengkalis-paper.json) everywhere, so they are not exported.
 YEARS = list(range(2015, 2025))
 
 panel = list(csv.DictReader(open(DATA / 'riau_monthly_panel.csv', encoding='utf-8')))
@@ -48,19 +51,38 @@ peat = defaultdict(lambda: [0.0] * len(CLASSES))
 for r in csv.DictReader(open(DATA / 'peat_depth_classes.csv', encoding='utf-8')):
     peat[r['regency']][CLASSES.index(r['depth_class_cm'])] += float(r['area_ha'])
 
+# monthly hotspots per regency (for the regency filter's timeline)
+by_reg_month = defaultdict(lambda: defaultdict(int))
+for r in panel:
+    by_reg_month[r['regency']][r['month']] += int(float(r['hotspot_count']))
+
 out = {
     'note': 'Riau-wide MODIS hotspots (confidence >= 30%), 12 regencies, 2015-2024, from riau_monthly_panel.csv. '
             'A different filter from the Bengkalis thesis series (DBSCAN-filtered, 3,402 points).',
     'years': YEARS,
     'regencies': regencies,
     'hs': {k: [by_reg_year[k][y] for y in YEARS] for k in regencies},
+    'hsMonthly': {k: [by_reg_month[k][m] for m in months] for k in regencies},
     'monthly': [monthly_total[m] for m in months],
-    'phase': [phase_by_month[m] for m in months],
-    'oni': [oni_by_month[m] for m in months],
     'depthClasses': CLASSES,
     'peatHa': {k: [round(v) for v in peat[k]] for k in regencies},
 }
 
 assert sum(out['monthly']) == sum(sum(v) for v in out['hs'].values())
+for k in regencies:
+    assert sum(out['hsMonthly'][k]) == sum(out['hs'][k])
 OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
 print('wrote', OUT.relative_to(ROOT), OUT.stat().st_size, 'bytes; total hotspots', sum(out['monthly']))
+
+# Regency boundaries: GADM v4.0 (simplified), already projected to SVG paths for the Riau explorer.
+# Read from public/riau-peatland-fire/assets/riau-geo.js (a `window.RIAU_GEO = {...}` file).
+src = (ROOT / 'public' / 'riau-peatland-fire' / 'assets' / 'riau-geo.js').read_text(encoding='utf-8')
+geo = json.loads(src[src.index('{'):src.rindex('}') + 1])
+names = {v['name'] for v in geo['regencies'].values()}
+assert names == set(regencies), names ^ set(regencies)  # boundary names must match the panel's regency names
+GEO_OUT = ROOT / 'src' / 'data' / 'riau-geo.json'
+GEO_OUT.write_text(json.dumps({
+    'w': geo['w'], 'h': geo['h'], 'source': geo['source'],
+    'regencies': {v['name']: {'d': v['d'], 'cx': v['cx'], 'cy': v['cy']} for v in geo['regencies'].values()},
+}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+print('wrote', GEO_OUT.relative_to(ROOT), GEO_OUT.stat().st_size, 'bytes;', len(names), 'regencies')
