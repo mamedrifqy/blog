@@ -197,5 +197,10 @@ const tagColorMap: Record<string, string> = {
   .article-body :global(section.footnotes li:target) { background: var(--teal-dim); border-radius: 3px; }
   .article-body :global(section.footnotes a[data-footnote-backref]) { margin-left: 0.35rem; text-decoration: none; }
   .article-body :global(section.footnotes em) { color: var(--text); }
+  /* long DOIs and PDF URLs in references must wrap instead of widening the page on phones */
+  .article-body :global(section.footnotes a) { overflow-wrap: anywhere; }
+  .article-body :global(p code), .article-body :global(li code) { overflow-wrap: anywhere; }
+  /* markdown tables scroll inside the column instead of widening the page */
+  .article-body > :global(table) { display: block; max-width: 100%; overflow-x: auto; }
   .article-body :global(sup a[data-footnote-ref]) { scroll-margin-top: calc(var(--nav-h) + 1.5rem); }
 </style>

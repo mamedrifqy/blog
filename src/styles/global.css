@@ -228,6 +228,25 @@ blockquote {
   transform: translateY(-1px);
 }
 
+/* Nav on narrow screens: it used to overflow because nothing here shrank.
+   <=900px drop the tagline; <=600px tighten and hide the GitHub button (it is in the footer);
+   <=360px keep only the logo mark. */
+@media (max-width: 900px) {
+  .nav-inner { padding: 0 1.25rem; gap: 1.25rem; }
+  .nav-divider, .nav-tagline { display: none; }
+}
+@media (max-width: 600px) {
+  .nav-inner { padding: 0 1rem; gap: .75rem; }
+  .nav-links { gap: 0; min-width: 0; }
+  .nav-link { font-size: .74rem; padding: .4rem .5rem; }
+  .nav-cta { display: none; }
+}
+@media (max-width: 360px) {
+  .nav-inner { padding: 0 .75rem; }
+  .nav-logo-word { display: none; }
+  .nav-link { padding: .4rem .4rem; }
+}
+
 /* ── Tag pill ───────────────────────────────────────────────── */
 .tag {
   display: inline-block;
