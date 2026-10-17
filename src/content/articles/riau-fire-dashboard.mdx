@@ -1,0 +1,53 @@
+---
+title: "Fire in Riau at a Glance: Hotspots, Peat and Burned Area, 2015–2024"
+subtitle: "A filterable dashboard of ten years of MODIS hotspots, how many sat on peat, and how much ground MODIS and Landsat say actually burned."
+date: "2026-10-17"
+author: "Muhammad Rifqy"
+tags: ["fire", "peatland", "dashboard", "remote-sensing", "Bengkalis"]
+---
+
+import '../../styles/paper.css';
+import '../../styles/thesis.css';
+import '../../styles/dashboard.css';
+import FireDashboard from '../../components/dashboard/FireDashboard.jsx';
+
+The other posts on this blog each take one question about Riau's fires and follow it through. This one is the overview: every number in one place, with a year filter on top. Pick a year to re-cut the map, the kecamatan ranking and the headline tiles; click a bar in any chart to jump to that year; click a kecamatan to see its own record.
+
+<FireDashboard client:load />
+
+## How to read it
+
+Three different quantities share this dashboard, and they are not interchangeable.
+
+- **Hotspots** are heat anomalies seen by MODIS at a moment in time, in pixels about a kilometre across.[^giglio16] They tell you fire *activity* happened somewhere in that pixel. They are not a measure of area.
+- **MODIS burned area** (MCD64A1) maps the surface change left behind, at 500 m, month by month.[^giglio18] It uses active-fire detections as one of its inputs,[^mcd64guide] so agreement with hotspots is partly built in.
+- **Landsat dATBI** is an independent burn index built from reflectance alone, at 30 m, applied for 2015, 2019 and 2023 only.[^bilal25] That is why the Landsat tile reads "n/a" for the other seven years.
+
+<div class="pp-callout note"><div>
+<p><strong>Two hotspot filters are in use, on purpose.</strong> The Bengkalis panels use the thesis series: MODIS points of type 0, quality-filtered with DBSCAN, 3,402 in all. The Riau panel at the bottom uses the regional report's series: all MODIS detections with confidence of at least 30%, 30,988 in all across twelve regencies. Bengkalis has 4,981 under the second filter and 3,402 under the first, so do not compare numbers across the two halves of the page.</p>
+</div></div>
+
+## What stands out
+
+**A few years hold most of the fire.** In Bengkalis, 2015 and 2019 together account for 1,944 of the 3,402 hotspots (57%). Across Riau the same two years hold 56% of the 30,988. The hotspot peaks of those years, July 2015 (364) and March 2019 (249), both fell in El Niño months, and the ENSO strip under the monthly chart shows how the high bars cluster in El Niño phases.
+
+**Most hotspots sit on mapped peat, but the share is not constant.** Over the decade 91.1% of Bengkalis's hotspots fall on mapped peat. From 2015 to 2021 the yearly share stays between 90% and 97%. In 2022, 2023 and 2024 it drops to 70%, 78% and 52%. Those are the three years with the fewest hotspots (23, 83 and 88), so a handful of points moves the percentage a long way, and the dashboard does not by itself say why.
+
+**Hotspot counts and burned area rank the years differently.** 2015 has the most hotspots (1,101) but 2019 has the most MODIS burned area (12,831 ha, against 8,508 ha in 2015). Divide one by the other and MODIS burned hectares per hotspot range from 2.5 in 2024 to 34.2 in 2021, with 7.7, 15.2 and 28.1 for 2015, 2019 and 2023. A hotspot count is a good signal of *when and where* fire was active; it is a poor stand-in for how much burned. The [validation post](/blog/hotspot-vs-burned-area-validation-bengkalis) tests this properly.
+
+**The two burned-area sources disagree on size, and on which year was bigger.** Landsat dATBI puts 2015 at 6,076 ha, 2019 at 3,962 ha and 2023 at 774 ha, always below MODIS, and it ranks 2015 above 2019 where MODIS ranks 2019 above 2015. Select 2019 and click through the kecamatan: Rupat leads on all three measures (251 hotspots, about 5,975 ha MODIS, about 1,641 ha Landsat), while Bukit Batu shows 571 ha of MODIS burned area with no hotspots at all. Landsat finds almost nothing there (about 10 ha), so that MODIS-only area is unresolved rather than confirmed.
+
+## What the dashboard cannot show
+
+- **Burned area is only as granular as the extracts.** Annual MODIS burned area exists for every year and for the whole regency; monthly series exist for 2015, 2019 and 2023; a per-kecamatan split exists for 2019 only; Landsat covers three years. Where a panel has nothing for the selected year it says so rather than filling the gap.
+- **No burned-area numbers for the rest of Riau.** The Riau panel is hotspots and mapped peat only.
+- **Hotspots per peat hectare is a rough density.** It divides all of a regency's hotspots by its mapped peat area, so it overstates regencies with little peat.
+
+## Data
+
+Bengkalis hotspots: MODIS active fire (Collection 6.1) from the FIRMS archive, 2015–2024, type 0 only, DBSCAN-filtered, with the on-peat flag from the thesis peat layer. MODIS burned area: MCD64A1, summed to the regency. Landsat burned area: dATBI ≥ 0.20 with the dry-season-of-the-previous-year baseline. All Bengkalis burned-area figures are the ones already published in the validation post, transcribed from the thesis notebook run. Riau-wide hotspots, ENSO phase and mapped peat by depth class: the regional report behind the [twelve-regency post](/blog/riau-hotspot-decade-12-regencies). The numbers on this page are rebuilt from those files by `scripts/build_fire_dashboard_data.py` and the thesis data module, not typed in.
+
+[^giglio16]: Giglio, L., Schroeder, W. & Justice, C. O. (2016). The Collection 6 MODIS active fire detection algorithm and fire products. *Remote Sensing of Environment* 178, 31–41. [doi:10.1016/j.rse.2016.02.054](https://doi.org/10.1016/j.rse.2016.02.054). Describes the 1 km detection algorithm and its confidence value.
+[^giglio18]: Giglio, L., Boschetti, L., Roy, D. P., Humber, M. L. & Justice, C. O. (2018). The Collection 6 MODIS burned area mapping algorithm and product. *Remote Sensing of Environment* 217, 72–85. [doi:10.1016/j.rse.2018.08.005](https://doi.org/10.1016/j.rse.2018.08.005). Describes the 500 m MCD64A1 algorithm; reports that Collection 6 maps about 26% more burned area globally than Collection 5.1 (2002–2016) and that 44% of burned cells coincide with an active fire on the same day and 68% within two days.
+[^mcd64guide]: NASA Land Processes Distributed Active Archive Center. *MCD64 User Guide, Collection 6.1.* [lpdaac.usgs.gov/documents/1006/MCD64_User_Guide_V61.pdf](https://lpdaac.usgs.gov/documents/1006/MCD64_User_Guide_V61.pdf). States that the product is generated from the Collection 6.1 MODIS surface reflectance and active fire products, and summarises global validation (omission 72.6%, commission 40.2%, area biased low by 54.1%, mainly from underestimating small burns).
+[^bilal25]: Bilal, M. (2025). The automated temporal burn index (ATBI) for accurate and scalable burned area mapping. *International Journal of Applied Earth Observation and Geoinformation* 144, 104866. [doi:10.1016/j.jag.2025.104866](https://doi.org/10.1016/j.jag.2025.104866). Landsat-based, run in Google Earth Engine on 50 wildfire events worldwide; reports precision of about 0.92 for dATBI against 0.73 for dNBR and F1 of about 0.94 against 0.84, assessed against random-forest reference classifications; also reports that SREM-corrected reflectance gave cleaner dATBI output than the standard LaSRC product.
