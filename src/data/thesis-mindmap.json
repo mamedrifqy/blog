@@ -1,0 +1,181 @@
+{
+  "_source": "Built from the table of contents, abstract and text of the thesis PDF (main.pdf, 350 pages). Replace this file to swap in a different mind map; keep the same shape: { root: { label, note?, children: [{ label, note?, ref?, post?, open?, children? }] } }. 'post' is a blog slug; it only renders as a link if that post is published.",
+  "root": {
+    "label": "ENSO, climate variability and peatland fire hotspots",
+    "note": "Bengkalis Regency, Riau · 2015–2024",
+    "children": [
+      {
+        "label": "Introduction",
+        "ref": "Ch. 1",
+        "post": "thesis-overview-enso-peat-fire-bengkalis",
+        "children": [
+          { "label": "Why Bengkalis", "note": "11 sub-districts, about 511 thousand ha of mapped peat; 4,981 of Riau's 30,988 MODIS detections in 2015–2024", "ref": "1.3", "post": "riau-hotspot-decade-12-regencies" },
+          { "label": "Problem", "note": "No sub-district-scale, statistically defensible estimate of ENSO and drought effects, their spatial variation, the predictive value of climate, or early-warning skill", "ref": "1.2" },
+          {
+            "label": "Five research questions",
+            "ref": "1.4",
+            "children": [
+              { "label": "RQ1 Patterns", "note": "Spatial and temporal hotspot patterns, and distribution across peat depth classes", "post": "space-time-structure-fire-bengkalis" },
+              { "label": "RQ2 Climate drivers", "note": "ONI, DMI, SPI-3, SPEI-3: is the ENSO effect mediated by local water deficit?", "post": "enso-spi3-peatland-fire-bengkalis" },
+              { "label": "RQ3 Heterogeneity", "note": "Does the ENSO response differ between sub-districts?", "post": "enso-spi3-peatland-fire-bengkalis" },
+              { "label": "RQ4 Prediction", "note": "Contribution of climatic, seasonal, biophysical and anthropogenic factors; generalisation to unseen sub-districts and years", "post": "climate-vs-everything-else-ablation-bengkalis" },
+              { "label": "RQ5 Early warning", "note": "Does an ENSO-and-drought rule beat a seasonal-calendar alarm, and what follows for disaster risk management?", "post": "early-warning-skill-bengkalis" }
+            ]
+          },
+          { "label": "Scope", "note": "January 2015 to December 2024; unit of analysis is the sub-district-month; 2025 held out for an out-of-time check", "ref": "1.6" }
+        ]
+      },
+      {
+        "label": "Literature review",
+        "ref": "Ch. 2",
+        "children": [
+          { "label": "Tropical peatlands and fire", "ref": "2.1" },
+          { "label": "Climatic drivers: ENSO, IOD, drought", "ref": "2.2" },
+          { "label": "Satellite hotspots as a fire proxy", "ref": "2.3" },
+          { "label": "Anthropogenic and landscape drivers", "ref": "2.4" },
+          { "label": "Statistical considerations", "ref": "2.5" },
+          { "label": "Machine learning and interpretability", "ref": "2.6" },
+          { "label": "Early warning and forecast verification", "ref": "2.7", "post": "early-warning-skill-bengkalis" },
+          { "label": "Disaster-management framework", "note": "BPBD, alert and emergency statuses, national fire-danger and hotspot services", "ref": "2.8", "post": "thesis-recommendations-disaster-management-bengkalis" },
+          {
+            "label": "Research gap",
+            "ref": "2.9",
+            "children": [
+              { "label": "Autocorrelation and pseudo-replication rarely corrected" },
+              { "label": "Spatial heterogeneity rarely tested formally" },
+              { "label": "ML rarely validated against climatology across unseen years" },
+              { "label": "Warning rules rarely verified against a seasonal calendar" }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "Methodology",
+        "ref": "Ch. 3",
+        "post": "thesis-overview-enso-peat-fire-bengkalis",
+        "children": [
+          { "label": "Eight-stage workflow", "note": "Acquisition, ENSO and drought indices, filtering, panel, statistics, non-climatic factors, machine learning, early-warning skill and validation", "ref": "3.1" },
+          { "label": "Data", "note": "NASA FIRMS MODIS, CHIRPS v2.0, ERA5-Land, ONI and DMI, peat map, land-use layers, burned-area products", "ref": "3.3" },
+          { "label": "ENSO classification", "note": "NOAA five-month rule: 44 El Niño, 30 La Niña, 46 Neutral months", "ref": "3.4" },
+          { "label": "Drought indices", "note": "SPI-3 and SPEI-3 fitted per calendar month on a 1991–2024 baseline", "ref": "3.5" },
+          { "label": "Hotspot filtering", "note": "Confidence-anchored DBSCAN: anchors at 70% or more, rescue 50–69% within 1.5 km", "ref": "3.6", "post": "behind-the-numbers-hotspot-filtering-checks" },
+          { "label": "Panel construction", "note": "11 sub-districts × 120 months = 1,320 rows", "ref": "3.7" },
+          { "label": "Statistical analysis", "note": "Kruskal–Wallis and Dunn, effective-N correlation, Poisson count models, heterogeneity, trend, depth preference", "ref": "3.8", "post": "enso-spi3-peatland-fire-bengkalis" },
+          { "label": "Spatial and spatiotemporal analysis", "note": "Moran's I, LISA, ST-DBSCAN", "ref": "3.9", "post": "space-time-structure-fire-bengkalis" },
+          { "label": "Non-climatic factors", "ref": "3.10", "post": "peat-depth-land-cover-bengkalis" },
+          { "label": "Machine learning", "note": "Random Forest and XGBoost; leave-one-sub-district-out and leave-one-year-out; ablation; SHAP", "ref": "3.11", "post": "climate-vs-everything-else-ablation-bengkalis" },
+          { "label": "Composite vulnerability index", "ref": "3.12", "post": "early-warning-skill-bengkalis" },
+          { "label": "Early-warning skill assessment", "note": "Nested leave-one-year-out; POD, FAR, PSS", "ref": "3.13", "post": "early-warning-skill-bengkalis" },
+          { "label": "Hotspot proxy validation", "note": "Tier 1 MODIS MCD64A1; Tier 2 Landsat dNBR and dATBI", "ref": "3.14", "post": "hotspot-vs-burned-area-validation-bengkalis" },
+          { "label": "Drainage canal analysis", "ref": "3.15", "post": "canals-fire-location-bengkalis" }
+        ]
+      },
+      {
+        "label": "Results",
+        "ref": "Ch. 4",
+        "open": true,
+        "children": [
+          { "label": "Hotspot filtering and data overview", "note": "5,386 points inside the regency, 3,402 retained; 91.1% on peat", "ref": "4.1", "post": "behind-the-numbers-hotspot-filtering-checks" },
+          { "label": "Temporal patterns", "note": "Peaks in 2015 and 2019; February–March 43.4% and June–September 38.4% of hotspots; no significant annual trend (Mann–Kendall τ = −0.47, p = 0.074)", "ref": "4.2", "post": "space-time-structure-fire-bengkalis" },
+          { "label": "Hotspots and peat depth", "note": "Over-represented on 100–200 cm and 500–700 cm peat (Cramér's V = 0.22)", "ref": "4.3", "post": "peat-depth-land-cover-bengkalis" },
+          { "label": "Spatial distribution", "note": "Concentrated in Rupat and Bandar Laksamana", "ref": "4.4", "post": "space-time-structure-fire-bengkalis" },
+          {
+            "label": "ENSO, IOD, drought and hotspots",
+            "ref": "4.5",
+            "post": "enso-spi3-peatland-fire-bengkalis",
+            "children": [
+              { "label": "Differences between ENSO phases", "ref": "4.5.1" },
+              { "label": "Correlation corrected for autocorrelation", "ref": "4.5.2" },
+              { "label": "Count models and mediation by drought", "note": "ONI IRR 1.95 per +1 °C; 1.29 after adding SPEI-3 (IRR 0.35)", "ref": "4.5.3" },
+              { "label": "Sensitivity to the hotspot definition", "ref": "4.5.4", "post": "behind-the-numbers-hotspot-filtering-checks" },
+              { "label": "Heterogeneity between sub-districts", "note": "Wald χ² = 23.2 on 10 d.f., p = 0.010", "ref": "4.5.5" }
+            ]
+          },
+          { "label": "Non-climatic factors", "note": "Oil palm and forest loss correlate negatively with hotspots; not significant at sub-district level after correction", "ref": "4.6", "post": "peat-depth-land-cover-bengkalis" },
+          {
+            "label": "Machine-learning models",
+            "ref": "4.7",
+            "post": "climate-vs-everything-else-ablation-bengkalis",
+            "children": [
+              { "label": "Spatial generalisation (LOKO-CV)", "note": "Pooled AUC 0.79", "ref": "4.7.2" },
+              { "label": "Temporal generalisation (LOYO-CV)", "note": "AUC 0.81; Brier skill score 0.21 against climatology", "ref": "4.7.3" },
+              { "label": "Feature contributions", "note": "Climate removed: pooled AUC 0.795 falls to 0.703; climate holds 59.1% of mean |SHAP|", "ref": "4.7.4" },
+              { "label": "Weak climate link: Pinggir and Bathin Solapan", "ref": "4.7.5" },
+              { "label": "Alert levels and spatial risk", "ref": "4.7.6", "post": "early-warning-skill-bengkalis" },
+              { "label": "Alert levels and composite vulnerability", "ref": "4.7.7", "post": "early-warning-skill-bengkalis" }
+            ]
+          },
+          { "label": "Early-warning skill", "note": "PSS 0.21 for the ONI-plus-drought rule against 0.16 for an alarm in every fire month; ΔPSS +0.034, 95% CI −0.039 to +0.102", "ref": "4.8", "post": "early-warning-skill-bengkalis" },
+          { "label": "Drainage canals and fire location", "note": "95.9% of hotspots within 1 km of a canal against 79.4% of peat area; odds ratio 0.74 per ten-fold distance", "ref": "4.9", "post": "canals-fire-location-bengkalis" },
+          {
+            "label": "Validity of hotspots as a fire proxy",
+            "ref": "4.10",
+            "post": "hotspot-vs-burned-area-validation-bengkalis",
+            "children": [
+              { "label": "Tier 1: agreement with MODIS burned area", "ref": "4.10.1" },
+              { "label": "Tier 2: a Landsat burn index without fire detections", "ref": "4.10.2" },
+              { "label": "Landsat versus MODIS burned area", "ref": "4.10.3" },
+              { "label": "How much burned area do hotspots account for?", "ref": "4.10.4" },
+              { "label": "Climate signal in burned area", "ref": "4.10.5" },
+              { "label": "What the checks support", "ref": "4.10.6" }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "Discussion",
+        "ref": "Ch. 5",
+        "children": [
+          { "label": "ENSO as an indirect, drought-mediated driver", "ref": "5.1", "post": "enso-spi3-peatland-fire-bengkalis" },
+          { "label": "A bimodal fire regime", "note": "Two activation windows, not one dry season", "ref": "5.2", "post": "thesis-recommendations-disaster-management-bengkalis" },
+          { "label": "Spatial heterogeneity and land management", "note": "Mandau's weak ONI link reflects low power (22 hotspots), not climate independence", "ref": "5.3" },
+          { "label": "Reading the statistical evidence", "ref": "5.4" },
+          { "label": "Value and limits of machine learning", "note": "Logistic regression is equivalent to Random Forest (AUC 0.806 versus 0.795)", "ref": "5.5", "post": "climate-vs-everything-else-ablation-bengkalis" },
+          { "label": "Non-climatic covariates and earlier studies", "ref": "5.6", "post": "peat-depth-land-cover-bengkalis" },
+          { "label": "Implications for early warning", "ref": "5.7", "post": "early-warning-skill-bengkalis" },
+          { "label": "Methodological contributions", "ref": "5.8" },
+          { "label": "Limitations", "note": "Eleven listed, including a short record, pseudo-replication and hotspots as a proxy", "ref": "5.9", "post": "thesis-recommendations-disaster-management-bengkalis" }
+        ]
+      },
+      {
+        "label": "Conclusions and recommendations",
+        "ref": "Ch. 6",
+        "post": "thesis-recommendations-disaster-management-bengkalis",
+        "children": [
+          { "label": "Conclusions", "note": "One answer for each of RQ1 to RQ5", "ref": "6.1" },
+          {
+            "label": "Recommendations for disaster management",
+            "ref": "6.2",
+            "children": [
+              { "label": "Two-window preparedness calendar", "note": "February–April and July–August" },
+              { "label": "Use ONI to escalate; SPEI-3 as near-term trigger" },
+              { "label": "Prioritise canal blocking, rewetting and patrols", "note": "Rupat, Bandar Laksamana, Bengkalis, Pinggir; non-forest peat near canals", "post": "canals-fire-location-bengkalis" },
+              { "label": "Daily FIRMS monitoring with the DBSCAN filter", "note": "Reduces false alarms from industrial sources around Duri" },
+              { "label": "Communicate model skill honestly" }
+            ]
+          },
+          {
+            "label": "Future research",
+            "ref": "6.3",
+            "children": [
+              { "label": "Extend the record backwards (2001–2024)" },
+              { "label": "Time-varying land use and groundwater data" },
+              { "label": "Cloud-robust burned-area validation (Sentinel-1 SAR)" },
+              { "label": "Probabilistic sub-seasonal forecasts, tested from 2025" },
+              { "label": "Geographically weighted or hierarchical Bayesian models" }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "Appendices",
+        "ref": "A–C",
+        "children": [
+          { "label": "A. Data processing details", "note": "Methodological corrections, software, data and code availability", "ref": "A.1–A.3" },
+          { "label": "B. Supplementary results", "note": "Optimal ONI lag and warning windows; covariates per sub-district; largest space-time fire events", "ref": "B.1–B.3" },
+          { "label": "C. Analysis code", "note": "Steps 01 to 21, from setup and configuration to holdout SHAP scans", "ref": "C.1–C.22" }
+        ]
+      }
+    ]
+  }
+}

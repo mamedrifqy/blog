@@ -1,0 +1,66 @@
+/* Thesis mind map: toggle + modal + horizontal tree */
+.mm-switch { display: inline-flex; align-items: center; gap: .7rem; background: var(--bg-card); border: 1px solid var(--border-md); color: var(--text-bright); border-radius: 999px; padding: .5rem 1rem .5rem .6rem; font: 600 .82rem var(--font-sans); cursor: pointer; transition: border-color .15s, background .15s; }
+.mm-switch:hover { border-color: var(--teal); background: var(--bg-hover); }
+.mm-switch:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.mm-switch-track { width: 34px; height: 20px; border-radius: 999px; background: var(--bg-subtle); border: 1px solid var(--border-md); position: relative; transition: background .2s; flex-shrink: 0; }
+.mm-switch-knob { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--text-muted); transition: transform .2s, background .2s; }
+.mm-switch[aria-checked="true"] .mm-switch-track { background: rgba(28,200,170,.25); border-color: var(--teal); }
+.mm-switch[aria-checked="true"] .mm-switch-knob { transform: translateX(14px); background: var(--teal); }
+
+.mm-dialog { padding: 0; border: 1px solid var(--border-md); border-radius: 8px; background: var(--bg); color: var(--text); width: min(1240px, 96vw); height: min(88vh, 940px); max-width: none; max-height: none; overflow: hidden; }
+.mm-dialog::backdrop { background: rgba(5,6,7,.72); backdrop-filter: blur(2px); }
+.mm-dialog[open] { display: block; }
+.mm-frame { display: flex; flex-direction: column; height: 100%; }
+.mm-head { display: flex; gap: 1.5rem; justify-content: space-between; align-items: flex-start; padding: 1.1rem 1.4rem 1rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.mm-head h2 { font-family: var(--font-display); font-size: 1.35rem; margin: 0 0 .25rem; color: var(--text-bright); }
+.mm-head p { margin: 0; font-size: .82rem; color: var(--text-muted); max-width: 640px; line-height: 1.5; }
+.mm-head p b { color: var(--teal); font-weight: 600; }
+.mm-tools { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+.mm-tools button { background: transparent; border: 1px solid var(--border-md); color: var(--text-muted); border-radius: 4px; padding: .35rem .7rem; font: 600 .74rem var(--font-sans); cursor: pointer; }
+.mm-tools button:hover { color: var(--text-bright); border-color: var(--teal); }
+.mm-tools button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.mm-tools .mm-close { font-size: .9rem; padding: .3rem .6rem; }
+
+.mm-scroll { flex: 1; overflow: auto; padding: 1.4rem 1.6rem 2rem; }
+.mm-scroll:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+.mm-ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; justify-content: center; }
+.mm-top { min-width: max-content; }
+.mm-li { position: relative; display: flex; align-items: center; padding: 4px 0 4px 30px; }
+.mm-root-li { padding-left: 0; }
+/* connectors */
+.mm-li::before { content: ''; position: absolute; left: 15px; top: 50%; width: 15px; border-top: 1.5px solid var(--border-md); }
+.mm-li::after { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; border-left: 1.5px solid var(--border-md); }
+.mm-li:first-child::after { top: 50%; }
+.mm-li:last-child::after { bottom: 50%; }
+.mm-li:only-child::after { display: none; }
+.mm-root-li::before, .mm-root-li::after { display: none; }
+.mm-li > .mm-ul { position: relative; padding-left: 0; }
+.mm-li > .mm-ul::before { content: ''; position: absolute; left: 0; top: 50%; width: 15px; border-top: 1.5px solid var(--border-md); }
+
+.mm-node { display: flex; flex-direction: column; align-items: flex-start; gap: .3rem; width: 15.5rem; flex-shrink: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: .55rem .7rem; }
+.mm-node.has-post { border-color: rgba(28,200,170,.45); }
+.mm-node.mm-root { width: 17rem; border-color: var(--gold); background: linear-gradient(180deg, var(--bg-card), var(--bg-subtle)); padding: .8rem .9rem; }
+.mm-node.mm-root .mm-label { font-family: var(--font-display); font-size: 1.05rem; color: var(--text-bright); }
+.mm-node.mm-branch { border-left: 3px solid var(--teal); }
+.mm-node.mm-branch .mm-label { font-weight: 700; font-size: .92rem; color: var(--text-bright); }
+
+.mm-main { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 1fr auto; gap: .15rem .6rem; width: 100%; cursor: default; }
+button.mm-main { cursor: pointer; }
+button.mm-main:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 3px; }
+.mm-ref { grid-column: 1 / -1; font-size: .64rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--teal); }
+.mm-label { font-size: .82rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+.mm-note { grid-column: 1 / -1; font-size: .72rem; color: var(--text-muted); line-height: 1.45; }
+.mm-caret { grid-row: 2; grid-column: 2; align-self: start; width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--border-md); color: var(--text-muted); font-size: .8rem; line-height: 16px; text-align: center; }
+button.mm-main:hover .mm-caret { border-color: var(--teal); color: var(--teal); }
+.mm-post { font-size: .7rem; font-weight: 700; letter-spacing: .03em; color: var(--teal); }
+.mm-post:hover { color: var(--gold); }
+.mm-post:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+  .mm-dialog { width: 100vw; height: 100dvh; border-radius: 0; border: 0; }
+  .mm-node { width: 13.5rem; }
+  .mm-node.mm-root { width: 14.5rem; }
+  .mm-scroll { padding: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) { .mm-switch-knob, .mm-switch-track { transition: none; } }

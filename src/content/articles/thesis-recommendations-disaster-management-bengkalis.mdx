@@ -1,0 +1,100 @@
+---
+title: "From Findings to Fire Preparedness: What the Thesis Asks of BPBD, BMKG and the Peat Restoration Agency"
+subtitle: "Five conclusions, five recommendations, and a proposed division of tasks for Bengkalis, written with the limits of a ten-year record in plain view."
+date: "2026-10-28"
+author: "Muhammad Rifqy"
+tags: ["fire", "peatland", "disaster-management", "early-warning", "Bengkalis"]
+cluster: "thesis"
+chapter: "5, 6"
+---
+
+import '../../styles/paper.css';
+import '../../styles/thesis.css';
+
+A thesis in a disaster-management programme has to end with something an agency can act on. This post collects the final chapters of the thesis: what the five research questions found, what follows for preparedness in Bengkalis, who would do what, and what the author says still needs to be done. It is also a good place to start if you only have a few minutes, because every other post in this cluster feeds into it.
+
+<div class="pp-keys">
+  <div><b>2</b><span>activation windows proposed for the preparedness calendar: February–April and July–August</span></div>
+  <div><b>1.95</b><span>incidence rate ratio of monthly hotspots per +1 °C of ONI, before accounting for local drought</span></div>
+  <div><b>1.29</b><span>the same ratio after adding SPEI-3 (95% CI 0.98–1.69), no longer clearly different from 1</span></div>
+  <div><b>+0.034</b><span>PSS gain of the ONI-plus-drought rule over a seasonal calendar; 95% CI −0.039 to +0.102</span></div>
+</div>
+
+## The five conclusions
+
+<div class="pp-table pp-left"><table>
+<caption>Answers to the five research questions (Section 6.1). The last column points to the post in this cluster that works through the evidence.</caption>
+<thead><tr><th>Question</th><th>Answer in brief</th><th>Read more</th></tr></thead>
+<tbody>
+<tr><td><b>RQ1.</b> Patterns of hotspots and peat depth</td><td>3,402 quality-filtered hotspots in 2015–2024, 91% on peat. Concentrated in 2015 and 2019, in Rupat and Bandar Laksamana, and in two seasonal peaks (February–April and July–August). Preferential on peat 100–200 cm and 500–700 cm deep. No robust monotonic trend.</td><td><a href="/blog/behind-the-numbers-hotspot-filtering-checks">Filtering</a>, <a href="/blog/space-time-structure-fire-bengkalis">space-time</a>, <a href="/blog/peat-depth-land-cover-bengkalis">peat depth</a></td></tr>
+<tr><td><b>RQ2.</b> ENSO, IOD and drought</td><td>ENSO is significantly associated with hotspot counts (IRR 1.95 per +1 °C ONI), but the effect is largely mediated by local water deficit (SPEI-3 IRR 0.35; residual ONI IRR 1.29). The IOD added no explanatory power at the monthly scale.</td><td><a href="/blog/enso-spi3-peatland-fire-bengkalis">ENSO and SPI-3</a></td></tr>
+<tr><td><b>RQ3.</b> Differences between sub-districts</td><td>The ENSO response differs significantly between sub-districts (p = 0.010). The apparent non-response of Mandau and Pinggir reflects low statistical power, not demonstrated climate independence.</td><td><a href="/blog/enso-spi3-peatland-fire-bengkalis">ENSO and SPI-3</a>, <a href="/blog/climate-vs-everything-else-ablation-bengkalis">ablation</a></td></tr>
+<tr><td><b>RQ4.</b> Machine learning and its sources of skill</td><td>Random Forest reaches AUC about 0.79–0.81 under spatial and temporal hold-out and beats climatology (Brier skill score up to 0.21). The source of the skill depends on the validation scheme; a logistic regression is equivalent (AUC 0.806 versus 0.795), so the added value of nonlinear ML is limited.</td><td><a href="/blog/climate-vs-everything-else-ablation-bengkalis">Ablation</a></td></tr>
+<tr><td><b>RQ5.</b> Early-warning skill</td><td>A nested ONI-plus-drought rule does not significantly beat a seasonal calendar (ΔPSS +0.034, 95% CI −0.039 to +0.102). ENSO is best used to intensify seasonal preparedness, with drought monitoring and spatial targeting of drained, canal-proximate peat.</td><td><a href="/blog/early-warning-skill-bengkalis">Early warning</a>, <a href="/blog/canals-fire-location-bengkalis">canals</a></td></tr>
+</tbody></table></div>
+
+## Reading the evidence correctly
+
+The discussion chapter spends as much effort on how to read the numbers as on the numbers. A few of its points matter for anyone planning around them.
+
+**ENSO acts through local drought.** Adding SPEI-3 to the count model cuts the ONI effect from 1.95 to 1.29, and each unit increase in SPEI-3 lowers expected hotspots by about 65% (IRR 0.35). The thesis calls this attenuation, not a formal mediation analysis, and uses "mediated" as shorthand. In practice, a local drought indicator carries more of the actionable information than ENSO itself, while ENSO remains valuable as a long-lead precursor of drought. The total ENSO effect held up under year-clustered errors and a year-level wild bootstrap, but its direct effect after drought was not significant under year-level inference.
+
+**The fire season is bimodal.** February–April contributes more hotspots than June–September (the abstract gives February–March 43.4% and June–September 38.4%). The conventional dry-season framing, June to September, misses the early-year peak that follows the northeast monsoon and can be severe in El Niño years such as 2015 and 2019.
+
+**Landscape decides where climate-driven risk is realised.** The significant heterogeneity of the ENSO response, the concentration of hotspots in Rupat and Bandar Laksamana, the over-representation of moderately deep peat and the canal result all point the same way. The thesis also uses Mandau as a lesson in why formal testing matters: with little peat (5,655 ha), a high oil palm fraction and only 22 hotspots, its weak ONI correlation reflects low power, and a model that never saw Mandau predicted it well (AUC 0.89).
+
+**Machine learning adds less than it appears to.** Under spatial validation, climate carries the model (pooled AUC falls from 0.795 to 0.703 when climate is removed; a static-only model reaches 0.624). Under temporal validation, the largest gains come from static sub-district features and fire persistence, which act largely as sub-district identifiers. On held-out predictions climate variables carried 59.1% of the mean absolute SHAP value, against 21.8% for anthropogenic, 9.7% for biophysical-static and 9.3% for seasonal features. The thesis stresses that SHAP is a second view of the same model, not an independent test.
+
+## Five recommendations
+
+1. **Adopt a two-window preparedness calendar** (February–April and July–August) for Bengkalis, instead of a single June–September dry season.
+2. **Use ONI forecasts to escalate preparedness** in fire months when El Niño is expected, and monitor SPEI-3 (or a groundwater-level proxy) as the near-term trigger.
+3. **Prioritise canal blocking, rewetting and patrols** in the sub-districts with the highest hotspot burden (Rupat, Bandar Laksamana, Bengkalis, Pinggir) and on non-forest peat within a few hundred metres of canals.
+4. **Integrate daily FIRMS monitoring with the DBSCAN-based filter** to reduce false alarms from industrial sources around Duri.
+5. **Communicate model skill honestly.** Risk maps and alert levels should state their uncertainty and their performance relative to a seasonal baseline.
+
+The fifth is the one that is easiest to skip and probably the most important. The skill test in [the early-warning post](/blog/early-warning-skill-bengkalis) is the reason: a warning that looks sophisticated but does no better than the calendar should be labelled as such.
+
+### Who does what
+
+The thesis proposes the following division of tasks. It describes it as a proposal, to be confirmed against the applicable regulations.
+
+<div class="pp-table pp-left"><table>
+<caption>Proposed roles, triggers and actions for fire preparedness in Bengkalis (Table 6.1).</caption>
+<thead><tr><th>Actor</th><th>Trigger</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>BPBD Bengkalis</td><td>Start of the February–April and July–August windows; El Niño forecast</td><td>Escalate preparedness level; coordinate sub-district task forces and resources</td></tr>
+<tr><td>BMKG</td><td>Monthly ONI update; SPEI-3 or rainfall deficit</td><td>Issue seasonal outlook and drought information for the regency</td></tr>
+<tr><td>Peat restoration agency (BRGM) and regency government</td><td>Before the dry windows; pre-El Niño year</td><td>Prioritise canal blocking and rewetting on non-forest peat near canals in high-burden sub-districts</td></tr>
+<tr><td>Sub-district and village heads, fire-care communities</td><td>Elevated alert level; first hotspots in the sub-district</td><td>Patrols and early suppression, focusing on Rupat, Bandar Laksamana, Bengkalis and Pinggir</td></tr>
+<tr><td>Concession holders and industry (e.g. Duri)</td><td>Alert levels; daily FIRMS filtered detections</td><td>Check industrial heat sources against the filter; maintain water-table and fire-readiness measures</td></tr>
+</tbody></table></div>
+
+### How this fits the legal framework
+
+The thesis grounds the table in Indonesia's disaster law. Under Law No. 24 of 2007, disaster management is organised into pre-disaster (prevention, mitigation, preparedness and early warning), emergency-response and post-disaster phases. Three emergency statuses exist: alert (*siaga darurat*), emergency response (*tanggap darurat*) and transition to recovery, each declared for a fixed period by the governor at provincial level and the regent at regency level, on the recommendation of the disaster agency. Riau Provincial Regulation No. 1 of 2019 gives the BPBD the duty to install and test early warning systems and to prepare the determination of alert status.
+
+Provincial alert periods in Riau typically open in February and close at the end of the second dry season, which already matches the bimodal regime. That is why the seasonal calendar is the right reference for the skill test, and why recommendation 1 is more a formalisation of practice than a departure from it.
+
+## What the thesis does not claim
+
+The limitations section lists eleven. Four bear directly on how far the recommendations can be pushed:
+
+- **A short record.** Ten years contain only two to three ENSO warm episodes (2015, 2019 with a positive IOD, 2023), so confidence intervals for ENSO effects remain optimistic.
+- **Hotspots are a proxy.** They measure detected active fire, not burned area, and filtering affects inter-annual retention (28–71%). The validation against burned area is partial and affected by cloud cover.
+- **Static covariates.** Land-use variables are constant per sub-district, partly computed over the whole period, and highly collinear.
+- **Climate data not bias-corrected.** CHIRPS and ERA5-Land were not validated against station data because no representative station exists (the nearest BMKG station identified was Karimun, about 120 km away).
+
+The analysis also speaks mainly to the hazard component of risk: where and when fire is likely. It says little about exposure of people and assets or about local response capacity, and an early-warning system is more than the forecast that the skill scores assess.
+
+## What comes next
+
+The thesis lists five directions for future research:
+
+1. Extend the record backwards (for example 2001–2024 with MODIS) to include more ENSO events such as 2006 and 2009.
+2. Replace static covariates with time-varying land-use and groundwater-level data, such as peat water-table monitoring networks.
+3. Complete burned-area validation with cloud-robust approaches (for example Sentinel-1 SAR) and calibrate dATBI thresholds for tropical peat.
+4. Develop probabilistic sub-seasonal forecasts that link ENSO forecasts to SPEI predictions, evaluated on out-of-time years (2025 onward).
+5. Apply geographically weighted regression or hierarchical Bayesian models to quantify spatially varying ENSO effects with appropriate uncertainty.
+
+*All numbers and recommendations in this post are taken from Chapters 5 and 6 of the thesis (Section 6.1, 6.2, 6.3, Table 6.1) and from Sections 2.8 and 5.1–5.9. The only changes are condensed wording and cross-links to the other posts in this cluster.*
