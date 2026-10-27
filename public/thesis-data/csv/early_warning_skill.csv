@@ -1,0 +1,3 @@
+rule,POD,FAR,POFD,CSI,PSS,n_alarm,hits
+ONI + drought rule (nested leave-one-year-out),0.4159,0.6158,0.2113,0.2495,0.2046,341.0,131.0
+Seasonal calendar (alarm every fire month),0.527,0.6856,0.3642,0.2452,0.1628,528.0,166.0

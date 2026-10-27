@@ -1,0 +1,324 @@
+[
+ {
+  "file": "csv/hotspots_filtered_3402.csv",
+  "title": "Quality-filtered hotspots, 2015–2024",
+  "description": "All 3,402 MODIS hotspots kept after the confidence and DBSCAN filters, with sub-district, peat depth class and distance to the nearest canal attached by spatial join.",
+  "rows": 3402,
+  "columns": [
+   "date",
+   "year",
+   "month",
+   "latitude",
+   "longitude",
+   "kecamatan",
+   "on_peat",
+   "peat_depth_class",
+   "canal_distance_m",
+   "frp_mw",
+   "confidence",
+   "satellite",
+   "day_night"
+  ],
+  "source": "hotspot_filtered_3402.geojson + gambut_bengkalis_clean.gpkg + dist_to_canal_m_30m_EPSG32748.tif",
+  "ref": "Sections 3.6, 4.1",
+  "bytes": 275534
+ },
+ {
+  "file": "csv/monthly_panel_11x120.csv",
+  "title": "Sub-district × month panel (1,320 rows)",
+  "description": "The analysis panel: 11 sub-districts × 120 months with ONI, DMI, CHIRPS rainfall, ERA5-Land temperature, SPI-3, SPEI-3, hotspot counts, fire occurrence and static covariates.",
+  "rows": 1320,
+  "columns": [
+   "year",
+   "month",
+   "kecamatan",
+   "oni_c",
+   "enso_phase",
+   "precip_mm",
+   "t2m_mean_c",
+   "spi3",
+   "spei3",
+   "hotspot_count",
+   "fire_occurrence",
+   "is_fire_season",
+   "dmi",
+   "peat_area_ha",
+   "oil_palm_fraction",
+   "deforestation_fraction_2015_2024",
+   "population_density_km2"
+  ],
+  "source": "dataset_kecamatan_bengkalis_v3.csv",
+  "ref": "Section 3.7",
+  "bytes": 212596
+ },
+ {
+  "file": "csv/annual_oni_dmi_hotspots.csv",
+  "title": "Annual ONI, DMI and hotspot totals",
+  "description": "June–November mean ONI and DMI against the yearly filtered hotspot count.",
+  "rows": 10,
+  "columns": [
+   "year",
+   "oni_jun_nov_c",
+   "dmi_jun_nov",
+   "hotspots"
+  ],
+  "source": "ringkasan_tahunan_oni_dmi_hotspot.csv",
+  "ref": "Section 4.2.1",
+  "bytes": 234
+ },
+ {
+  "file": "csv/seasonal_profile.csv",
+  "title": "Seasonal profile of hotspots",
+  "description": "Monthly share of all hotspots, median yearly share, how often the month had fire, and whether it counts as a fire month (Feb, Mar, Apr, Jul, Aug).",
+  "rows": 12,
+  "columns": [
+   "month",
+   "hotspot_share_pct",
+   "median_yearly_share_pct",
+   "share_of_years_with_fire",
+   "leave_one_year_out_stability",
+   "is_fire_month"
+  ],
+  "source": "profil_musim_api_empiris.csv",
+  "ref": "Section 4.2.2",
+  "bytes": 409
+ },
+ {
+  "file": "csv/subdistrict_summary.csv",
+  "title": "Sub-district summary",
+  "description": "Correlations of monthly hotspots with ONI, rainfall and drought; peat area, land cover, population, vulnerability index and operational alert level for each of the 11 sub-districts.",
+  "rows": 11,
+  "columns": [
+   "kecamatan",
+   "spearman_r_t2m",
+   "spearman_r_precip",
+   "spearman_r_drought",
+   "spearman_r_hotspots_oni",
+   "p_hotspots_oni",
+   "hotspots_total_panel",
+   "peat_area_ha",
+   "mean_fire_probability",
+   "avg_depth_ordinal",
+   "oil_palm_fraction",
+   "deforestation_fraction",
+   "population_density_km2",
+   "vulnerability_index",
+   "alert_level",
+   "oni_lag_months"
+  ],
+  "source": "ringkasan_per_kecamatan_v3.csv + vulnerability_index_extended.csv + tabel_ews_operasional_v3.csv",
+  "ref": null,
+  "bytes": 1928
+ },
+ {
+  "file": "csv/early_warning_alert_table.csv",
+  "title": "Operational early-warning table",
+  "description": "Alert level, ONI lag, thresholds, conditional fire probabilities and recommended actions per sub-district. Text columns are in Indonesian, as in the source analysis.",
+  "rows": 11,
+  "columns": [
+   "kecamatan",
+   "alert_level",
+   "oni_lag_months",
+   "spearman_r_oni_best_lag",
+   "oni_threshold",
+   "spei_threshold",
+   "p_fire_annual",
+   "p_fire_el_nino",
+   "p_fire_el_nino_dry",
+   "ci95_el_nino_fire_month",
+   "n_months_el_nino_fire_month",
+   "p_fire_fire_month_other_phase",
+   "p_model_oof_el_nino_fire_month",
+   "mann_kendall_trend",
+   "mann_kendall_tau",
+   "mann_kendall_p_bh",
+   "ews_window",
+   "main_trigger",
+   "recommended_action"
+  ],
+  "source": "tabel_ews_operasional_v3.csv",
+  "ref": "Section 4.7.6, Table 4.25",
+  "bytes": 3873
+ },
+ {
+  "file": "csv/hotspots_by_peat_depth.csv",
+  "title": "Hotspots by peat depth class",
+  "description": "Share of hotspots against share of peat area in each depth class; ratio > 1 means over-represented.",
+  "rows": 6,
+  "columns": [
+   "depth_class",
+   "hotspots",
+   "hotspot_share_pct",
+   "peat_area_ha",
+   "peat_area_share_pct",
+   "hotspot_density_per_ha",
+   "ratio",
+   "status"
+  ],
+  "source": "hotspot_peat_depth_distribution.csv",
+  "ref": "Section 4.3",
+  "bytes": 501
+ },
+ {
+  "file": "csv/hotspots_by_canal_distance.csv",
+  "title": "Hotspots by distance to nearest canal",
+  "description": "Hotspot share against peat-area share in five distance bands.",
+  "rows": 5,
+  "columns": [
+   "distance_to_canal",
+   "hotspots",
+   "hotspot_share_pct",
+   "peat_area_share_pct",
+   "ratio"
+  ],
+  "source": "hotspot_canal_dist_bins.csv",
+  "ref": "Table 4.33",
+  "bytes": 206
+ },
+ {
+  "file": "csv/canal_distance_by_depth.csv",
+  "title": "Distance to canal by peat depth (burnable land)",
+  "description": "Median hotspot distance against random burnable-peat points, with Mann–Whitney tests and Benjamini–Hochberg adjustment.",
+  "rows": 6,
+  "columns": [
+   "depth_class",
+   "n_hotspots",
+   "n_null_points",
+   "median_hotspot_distance_m",
+   "median_null_distance_m",
+   "prob_hotspot_closer_than_null",
+   "p_mann_whitney",
+   "p_bh_adjusted"
+  ],
+  "source": "hotspot_canal_dist_by_depth_burnable.csv",
+  "ref": "Table 4.34",
+  "bytes": 614
+ },
+ {
+  "file": "csv/canal_logit.csv",
+  "title": "Canal-distance logistic regression",
+  "description": "Odds ratios for hotspot vs. random burnable-peat point; log_d is log10 distance to the nearest canal, depth classes are relative to class 1.",
+  "rows": 7,
+  "columns": [
+   "term",
+   "odds_ratio",
+   "ci95_low",
+   "ci95_high",
+   "p_value"
+  ],
+  "source": "hotspot_canal_logit.csv",
+  "ref": "Section 4.9",
+  "bytes": 349
+ },
+ {
+  "file": "csv/canal_landcover_composition.csv",
+  "title": "Land cover of hotspots within canal-proximate peat",
+  "description": "Land-cover composition under hotspots against random points.",
+  "rows": 9,
+  "columns": [
+   "land_cover",
+   "hotspot_pct",
+   "null_pct",
+   "ratio"
+  ],
+  "source": "hotspot_canal_landcover_composition.csv",
+  "ref": "Table 4.35",
+  "bytes": 209
+ },
+ {
+  "file": "csv/early_warning_skill.csv",
+  "title": "Early-warning skill: ONI + drought rule vs seasonal calendar",
+  "description": "POD, FAR, POFD, CSI and Peirce skill score for the nested rule and the calendar baseline.",
+  "rows": 2,
+  "columns": [
+   "rule",
+   "POD",
+   "FAR",
+   "POFD",
+   "CSI",
+   "PSS",
+   "n_alarm",
+   "hits"
+  ],
+  "source": "ews_skill_nested_loyo.csv",
+  "ref": "Section 4.8, Table 4.27",
+  "bytes": 222
+ },
+ {
+  "file": "csv/hotspot_retention_by_year.csv",
+  "title": "Hotspot counts under alternative filters, by year",
+  "description": "How the annual hotspot count changes with the confidence cut-off and the DBSCAN filter.",
+  "rows": 10,
+  "columns": [
+   "year",
+   "all_points",
+   "confidence_ge_30",
+   "confidence_ge_50",
+   "confidence_ge_70",
+   "dbscan_filtered",
+   "dbscan_filtered_on_peat",
+   "dbscan_filtered_off_peat"
+  ],
+  "source": "sensitivitas_retensi_tahunan.csv",
+  "ref": "Section 4.5.4, Table 4.15",
+  "bytes": 439
+ },
+ {
+  "file": "csv/hotspots_by_subdistrict_peat.csv",
+  "title": "Hotspots and peat depth by sub-district",
+  "description": "Hotspot totals, share on peat, mean depth class where fires occurred, and area-weighted mean depth class of the sub-district's peat.",
+  "rows": 11,
+  "columns": [
+   "kecamatan",
+   "hotspots_total",
+   "hotspots_on_peat",
+   "hotspots_off_peat",
+   "pct_on_peat",
+   "mean_depth_class_at_fire",
+   "mean_depth_class_of_landscape"
+  ],
+  "source": "hotspot_depth_per_kecamatan.csv",
+  "ref": "Section 4.3",
+  "bytes": 540
+ },
+ {
+  "file": "csv/oil_palm_by_depth.csv",
+  "title": "Oil palm fraction by peat depth class",
+  "description": "Mean and median oil palm fraction (Descals et al. 2024 map) across the 208 peat polygons, by depth class.",
+  "rows": 6,
+  "columns": [
+   "depth_class",
+   "polygons",
+   "mean_oil_palm_fraction",
+   "median_oil_palm_fraction",
+   "pct_polygons_zero"
+  ],
+  "source": "oilpalm_frac_descals_summary_per_depth.csv",
+  "ref": "Section 4.6",
+  "bytes": 279
+ },
+ {
+  "file": "csv/enso_response_by_subdistrict.csv",
+  "title": "ENSO response by sub-district",
+  "description": "Share of fire months in El Niño vs other phases (Fisher test) and Poisson incidence rate ratio per +1 °C ONI, per sub-district, with Benjamini–Hochberg-adjusted p-values.",
+  "rows": 11,
+  "columns": [
+   "kecamatan",
+   "fire_months_el_nino",
+   "fire_months_other",
+   "odds_ratio_fisher",
+   "p_fisher",
+   "irr_per_oni_c",
+   "irr_ci95_low",
+   "irr_ci95_high",
+   "p_irr",
+   "hotspots_total",
+   "n_fire_months",
+   "p_irr_bh",
+   "p_fisher_bh"
+  ],
+  "source": "uji_heterogenitas_enso_per_kecamatan.csv",
+  "ref": "Section 4.5.5, Table 4.17",
+  "bytes": 1007
+ }
+]

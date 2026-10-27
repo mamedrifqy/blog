@@ -1,0 +1,7 @@
+depth_class,hotspots,hotspot_share_pct,peat_area_ha,peat_area_share_pct,hotspot_density_per_ha,ratio,status
+< 100 cm,132,4.26,44886.0,8.78,0.002941,0.49,Under-represented
+100–200 cm,743,23.97,91143.0,17.83,0.008152,1.34,Over-represented
+200–300 cm,219,7.06,38099.0,7.45,0.005748,0.95,Proportional
+300–500 cm,644,20.77,85480.0,16.72,0.007534,1.24,Over-represented
+500–700 cm,1308,42.19,162391.0,31.76,0.008055,1.33,Over-represented
+> 700 cm,54,1.74,89265.0,17.46,0.000605,0.1,Under-represented

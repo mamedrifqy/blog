@@ -10,6 +10,9 @@ chapter: "4.3, 4.6"
 
 import '../../styles/paper.css';
 import '../../styles/thesis.css';
+import FireLandscapeMap from '../../components/thesis/FireLandscapeMap.jsx';
+import DataTable from '../../components/thesis/DataTable.jsx';
+import REPORT from '../../data/thesis-report.json';
 import PairedBars from '../../components/thesis/PairedBars.jsx';
 
 Climate sets the clock; the land sets the map. This post looks at the land side of the thesis: how fire relates to peat depth, and whether oil palm, forest loss and other land-use variables explain where hotspots fall. The first question gets a clear answer. The second gets an honest "not with this design".
@@ -29,6 +32,18 @@ Climate sets the clock; the land sets the map. This post looks at the land side 
 - **Climate still outranks everything static.** Rainfall and SPEI-3 are the strongest correlates of monthly hotspots.
 
 ## Where fire falls on the depth scale
+
+### See it on the map
+
+Peat is coloured by depth class, with the filtered hotspots on top. Pick a single year to see how the burn footprint changes between 2015, 2019 and the quiet years, and click a dot to read its date, depth class and distance to the nearest canal. The side panel re-tallies the hotspots by depth for whatever year is selected.
+
+<FireLandscapeMap
+  client:visible
+  initial="peat"
+  caption="Mapped peat by depth class in Bengkalis Regency, with the 3,402 quality-filtered hotspots of 2015–2024. The deepest peat (over 7 m) forms the dome in the south, where there are comparatively few hotspots, while most fire sits on the moderately deep and very deep peat around it and on Rupat."
+/>
+
+### The ratio, class by class
 
 The test is simple: compare the share of hotspots in each depth class with the share of peat area in that class. A ratio of 1 means fire is in proportion to area.
 
@@ -63,6 +78,27 @@ An earlier draft of the analysis computed the area shares from all 4,070 nationa
 Hotspot counts are not proportional to peat area. Rupat holds 15% of the peat but 29% of the hotspots, whereas Bukit Batu and Siak Kecil, with deep peat, hold 10% and 16% of the peat but 3% and 8% of the hotspots. Between sub-districts, the fire-weighted depth was unrelated to hotspot numbers (Spearman r = −0.09, p = 0.79).
 
 Comparing each sub-district's mean peat depth with the depth at which its fires occurred shows who burns deeper than their landscape average. Bantan, Bengkalis, Pinggir, Mandau, Bathin Solapan and Rupat Utara sit above the 1:1 line; Rupat, Bandar Laksamana, Siak Kecil and Talang Muandau sit below it, and Bukit Batu close to it. Rupat, with by far the most hotspots, burns mainly on peat that is relatively shallow for its own landscape. The thesis also notes that more than 90% of hotspots fall on mapped peat in eight sub-districts; the lowest shares are in Talang Muandau (56%), Bandar Laksamana (82%) and Rupat Utara (85%), and the data do not identify the land cover of the off-peat hotspots.
+
+<figure class="pp-fig pp-wide">
+  <img class="th-img" src="/blog/image/thesis/hotspot-peat-depth-analysis.webp" alt="Three panels: hotspot share against peat area share by depth class; hotspot density per hectare by depth class; fire-weighted depth against area-weighted depth by sub-district." loading="lazy" />
+  <figcaption>The three views of the depth result as drawn in the thesis analysis: hotspot share against peat-area share with the ratio above each pair (left), hotspots per hectare by class (centre), and for each sub-district the depth at which fires occur against the mean depth of its peat, bubble size showing hotspot count (right). Labels are in Indonesian.</figcaption>
+</figure>
+
+<DataTable
+  client:visible
+  csv="hotspots_by_subdistrict_peat.csv"
+  initialSort={{ k: 'hotspots_total', dir: 'desc' }}
+  rows={REPORT.subdistrict_peat}
+  caption="Hotspots and peat depth by sub-district (click a column to sort). Depth class runs from 1 (50–<100 cm) to 6 (over 700 cm); the second depth column is the area-weighted mean of the sub-district's peat."
+  cols={[
+    { k: 'kecamatan', label: 'Sub-district' },
+    { k: 'hotspots_total', label: 'Hotspots', num: true },
+    { k: 'hotspots_on_peat', label: 'On peat', num: true },
+    { k: 'pct_on_peat', label: '% on peat', num: true, digits: 1 },
+    { k: 'mean_depth_class_at_fire', label: 'Depth class at fires', num: true, digits: 2 },
+    { k: 'mean_depth_class_of_landscape', label: 'Depth class of peat', num: true, digits: 2 },
+  ]}
+/>
 
 ## What about land use?
 
@@ -112,11 +148,33 @@ The static layers are also tangled with each other: oil palm fraction with NDVI 
 
 At polygon level (n = 208 peat polygons), the median oil palm fraction is highest on intermediate peat, about 0.32 at 100–200 cm and 0.31 at 200–300 cm, low at 300–500 cm (about 0.03) and 500–700 cm (about 0.05), and zero on peat deeper than 7 m. So oil palm sits on moderately deep peat and is nearly absent from the deepest, which means it cannot be treated as an independent driver alongside depth. The WorldCover cropland class turns out nearly empty in every class (medians near 0, maxima below 0.07), so the oil palm map is the more informative plantation layer here.[^descals24]
 
+<figure class="pp-fig">
+  <img class="th-img" src="/blog/image/thesis/oilpalm-by-depth.webp" alt="Box plots of oil palm fraction per peat polygon by depth class." loading="lazy" />
+  <figcaption>Oil palm fraction per peat polygon (Descals et al. 2024 map; n = 208 polygons) by depth class. Oil palm is concentrated on intermediate peat and absent from peat deeper than 7 m. Labels are in Indonesian.</figcaption>
+</figure>
+
+<figure class="pp-fig">
+  <img class="th-img" src="/blog/image/thesis/cropland-by-depth.webp" alt="Box plots of ESA WorldCover cropland fraction per peat polygon by depth class." loading="lazy" />
+  <figcaption>The same view for the ESA WorldCover cropland class. Note the axis: no polygon exceeds 0.07, so this layer carries almost no information here.</figcaption>
+</figure>
+
 ## What this changes, and what it leaves open
 
 Depth and drainage fit together as an account of *where*: moderate and deep peat that has been drained and converted burns most, and the deepest, wettest domes least. The land-use variables are not reliable evidence for or against a plantation effect at this resolution. The thesis says the negative sign is best read as between-place confounding by peat, and that a within-peat analysis at finer resolution, of the kind done for canals in [the canal post](/blog/canals-fire-location-bengkalis), is needed to test land-use effects directly.
 
 Two further cautions from the thesis: the static covariates are partly computed over the whole 2015–2024 period, which introduces mild temporal leakage, and a model that uses them can end up using them as sub-district identifiers. That second point is the subject of [the ablation post](/blog/climate-vs-everything-else-ablation-bengkalis).
+
+<div class="pp-datanote">
+<h4>Data for this post</h4>
+<p>The hotspot file gives each point its peat depth class (non-peat points are labelled as such), so the depth counts can be re-tallied.</p>
+<ul class="th-dl">
+  <li><a href="/blog/thesis-data/csv/hotspots_by_peat_depth.csv" download>Hotspots by depth class <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/hotspots_by_subdistrict_peat.csv" download>Sub-district table <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/oil_palm_by_depth.csv" download>Oil palm by depth <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/hotspots_filtered_3402.csv" download>All 3,402 hotspots <small>CSV</small></a></li>
+</ul>
+<p class="th-alldata"><a href="/blog/data">All tables, map layers and figures</a></p>
+</div>
 
 *All numbers in this post come from Sections 4.3 and 4.6 and the related discussion of the thesis (Tables 4.6, 4.7, 4.18, 4.19 and Figures 4.19–4.21). Peat map clipped to the regency boundary (511,265 ha; 208 polygons). Oil palm: Descals et al. (2024). Land cover: ESA WorldCover.*
 

@@ -11,6 +11,9 @@ chapter: "4.9"
 import '../../styles/paper.css';
 import '../../styles/thesis.css';
 import PairedBars from '../../components/thesis/PairedBars.jsx';
+import FireLandscapeMap from '../../components/thesis/FireLandscapeMap.jsx';
+import CanalDistanceChart from '../../components/thesis/CanalDistanceChart.jsx';
+import OddsForest from '../../components/thesis/OddsForest.jsx';
 
 Climate decides *when* peat can burn. Drainage is one of the things that decides *where*. A canal lowers the water table around it, the surface layers dry out, and dry peat ignites. That story is well established across Southeast Asia.[^dadap21] This post asks a narrower question, in a landscape that is already heavily drained: inside Bengkalis, are fires closer to canals than a random spot on the same peat?
 
@@ -34,6 +37,16 @@ For each of the 3,100 filtered hotspots that fall on mapped peat, the analysis m
 
 Two limits come with the data, and both shape how far the result can be pushed. The peat landscape of Bengkalis is densely cut by canals and roads: the median random point on peat is only about 209 m from a mapped line. And a MODIS hotspot is placed at the centre of a pixel about 1 km across, so distances of a few hundred metres are below the positional resolution of the hotspots. That is why the analysis leans on contrasts between distributions and on coarse distance classes, not on the distance of any single fire.
 
+### See it on the map
+
+The layer below colours the peat by distance to the nearest mapped canal (teal is close, red is far) and puts every filtered hotspot on top. Switch to peat depth to see the other half of the story, turn the canal network on to see how dense it is, and use the year buttons to watch the hotspots move between the dry seasons of 2015, 2019 and the quiet years in between.
+
+<FireLandscapeMap
+  client:visible
+  initial="canal"
+  caption="Distance to the nearest canal on mapped peat, canal network, and the 3,402 quality-filtered hotspots of 2015–2024. The red core in the middle of the Bandar Laksamana, Bukit Batu and Siak Kecil peat dome lies more than 3 km from any mapped canal and has almost no hotspots."
+/>
+
 ## What the distance classes show
 
 <PairedBars
@@ -49,6 +62,11 @@ Two limits come with the data, and both shape how far the result can be pushed. 
   caption="Share of hotspots (red) and of peat area (grey, from the 30,001 null points) by distance to the nearest canal. A ratio above 1 means over-representation. The goodness-of-fit test gives Cramér's V = 0.212."
 />
 
+<figure class="pp-fig">
+  <img class="th-img" src="/blog/image/thesis/hotspot-vs-canal-distance.webp" alt="Left: cumulative distance to the nearest canal for hotspots and random points. Right: ratio of hotspot share to area share by distance class." loading="lazy" />
+  <figcaption>Left: cumulative share of hotspots (red) and random null points (grey) by distance to the nearest canal. The hotspot curve rises faster and stops near 3 km. Right: ratio of hotspot share to area share by distance class. Figure from the thesis analysis; labels are in Indonesian.</figcaption>
+</figure>
+
 Two things stand out. The excess is largest in the 0.5–1 km class (ratio 1.40), not right next to the canal. And the deficit far from canals is stark: nothing burns beyond 4 km, and the 2–4 km class holds 7.7% of the peat but under 1% of the hotspots. The map in the thesis makes the geography clear: the canal network is very dense on the deep peat dome of Bukit Batu and Bandar Laksamana and on Rupat, while the core of the dome between Talang Muandau and Siak Kecil lies more than 3 km from any canal and has almost no hotspots. Fire accumulates on the canalised margins of the dome, not in its interior.
 
 Because roughly 70% of the peat is already within 0.5 km of a canal, distance only slightly separates hotspots from the background (ratio 1.18 in that class). The effect is moderate in size but very consistent: keeping one hotspot per 500 m cell to reduce clustering changes almost nothing (P = 0.570), and the odds of a location being a hotspot fall by a factor of 0.74 per ten-fold increase in distance once peat depth is controlled for.
@@ -56,6 +74,11 @@ Because roughly 70% of the peat is already within 0.5 km of a canal, distance on
 <div class="pp-callout"><div>
 <p><strong>What "per ten-fold distance" means.</strong> Moving from 100 m to 1 km from a canal multiplies the odds of being a hotspot by about 0.73–0.74. In relative terms, the thesis's table puts a non-forest location at 50 m from a canal about 9% above one at 100 m, and 39% below at 4 km. These relative odds are derived from the model coefficients, not separate outputs.</p>
 </div></div>
+
+<OddsForest
+  client:visible
+  caption="Odds ratios from the logistic regression of hotspot against random burnable-peat point, with 95% confidence intervals. Depth classes are compared with the shallowest class. Source: hotspot_canal_logit.csv in the thesis outputs."
+/>
 
 ## Does it hold up? Four checks
 
@@ -72,6 +95,11 @@ Because roughly 70% of the peat is already within 0.5 km of a canal, distance on
 <tr><td>500–700 cm</td><td>1,308</td><td>227</td><td>215</td><td>0.528</td><td>0.002</td></tr>
 <tr><td>Over 700 cm</td><td>54</td><td>112</td><td>1,840</td><td>0.830</td><td>3.6 × 10⁻¹⁶</td></tr>
 </tbody></table></div>
+
+<CanalDistanceChart
+  client:visible
+  caption="Median distance to the nearest canal for hotspots (filled) and random burnable-peat points (open), by peat depth class, on a log scale. The gap is widest on the shallowest and the deepest peat. Same numbers as the table above."
+/>
 
 The effect is strongest on shallow peat (P = 0.632) and on the very deepest (P = 0.830), where hotspots sit 112 m from a canal while random points in that class have a median of 1.84 km: the burned peat deeper than 7 m is almost entirely the drained margin. There is no clear difference at 100–200 and 300–500 cm. With only 54 hotspots in the deepest class, the thesis cautions against generalising from it to all deep peat.
 
@@ -119,6 +147,19 @@ The last point suggests the most informative next step: estimate the distance ef
 For disaster management the useful reading is spatial. The thesis recommends canal blocking, rewetting and patrols on non-forest peat within a few hundred metres of canals, in the sub-districts with the heaviest hotspot burden. It adds a reason to care beyond hotspot counts: in drained peat, burn depth and the chance of repeat fire rise towards canals, with carbon losses of 114, 64, 38 and 13 t C per hectare for the first to fourth fire,[^konecny16] so a fire near a canal is likely to cost more than a hotspot count suggests.
 
 Two caveats the thesis itself flags: canal blocks from restoration programmes are not in the 2017 map, and records of where and when blocks were built in Bengkalis were not available, so restoration cannot be entered as a covariate. For the full set of recommendations see [the post on what the thesis asks of BPBD and its partners](/blog/thesis-recommendations-disaster-management-bengkalis); for where this fits in the argument, see [the thesis overview](/blog/thesis-overview-enso-peat-fire-bengkalis).
+
+<div class="pp-datanote">
+<h4>Data for this post</h4>
+<p>The hotspot file carries the sub-district, peat depth class and distance to the nearest canal for every point, so the map above can be reproduced. Column names are in English; values come straight from the thesis analysis outputs.</p>
+<ul class="th-dl">
+  <li><a href="/blog/thesis-data/csv/hotspots_filtered_3402.csv" download>All 3,402 hotspots with canal distance <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/hotspots_by_canal_distance.csv" download>Hotspots by distance class <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/canal_distance_by_depth.csv" download>Distance by peat depth <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/canal_logit.csv" download>Logistic regression <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/canal_landcover_composition.csv" download>Land cover under hotspots <small>CSV</small></a></li>
+</ul>
+<p class="th-alldata"><a href="/blog/data">All tables, map layers and figures</a></p>
+</div>
 
 *All numbers in this post come from Section 4.9 of the thesis (Tables 4.30–4.37) and the related discussion. Hotspots: NASA FIRMS (MODIS), filtered with DBSCAN. Canal map: 2017 imagery. Land cover: ESA WorldCover 2021. Burned area: Landsat via Google Earth Engine.*
 

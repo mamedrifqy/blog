@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import datasets from '../data/thesis-datasets.json';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = path.join(process.cwd(), 'public', 'thesis-data');
+
+// First rows of each CSV, read at build time, so the page shows what is inside before anyone downloads it.
+function head(file: string, n = 6) {
+  const lines = fs.readFileSync(path.join(root, file), 'utf8').trim().split('\n');
+  const parse = (l: string) => l.match(/("([^"]|"")*"|[^,]*)(,|$)/g)!.map((c) => c.replace(/,$/, '').replace(/^"|"$/g, '').replace(/""/g, '"')).slice(0, -1);
+  return { cols: parse(lines[0]), rows: lines.slice(1, n + 1).map(parse) };
+}
+const kb = (b: number) => (b < 1024 * 1024 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1048576).toFixed(1) + ' MB');
+const items = datasets.map((d: any) => ({ ...d, preview: head(d.file) }));
+
+const layers = [
+  { file: 'hotspots.json', title: 'Hotspots for the map (compact JSON)', desc: 'Longitude, latitude, year, month, sub-district index, peat depth class (0 = not on mapped peat), distance to canal (m) and FRP for all 3,402 hotspots.' },
+  { file: 'peat.geojson', title: 'Peat depth polygons (GeoJSON, simplified)', desc: '208 peat polygons with depth class 1–6, simplified for the web.' },
+  { file: 'kecamatan.geojson', title: 'Sub-district outlines (GeoJSON)', desc: 'The 11 sub-districts of Bengkalis Regency.' },
+  { file: 'canal_distance.png', title: 'Distance-to-canal overlay (PNG, EPSG:4326)', desc: 'Classes <0.5, 0.5–1, 1–2, 2–4 and >4 km, masked to peat. About 66 m cells.' },
+  { file: 'canal_lines.png', title: 'Canal network overlay (PNG, EPSG:4326)', desc: 'The 30 m canal mask, re-gridded to about 66 m and clipped to the regency.' },
+];
+
+const figures = [
+  ['map-peat-canal-hotspot', 'Peat depth, canal network and hotspots over canal distance', 'map_peat_canal_hotspot.png'],
+  ['hotspot-peat-depth-analysis', 'Hotspot share against peat area by depth class, fire density, and per-sub-district depth', 'hotspot_peat_depth_analysis.png'],
+  ['hotspot-vs-canal-distance', 'Cumulative distance to the nearest canal, hotspots against random points', 'hotspot_vs_canal_distance.png'],
+  ['ews-operational', 'Operational early-warning table: conditional fire probabilities and alert levels', 'fig_ews_operasional.png'],
+  ['seasonal-profile', 'Seasonal profile of hotspots', 'profil_musim_api_empiris.png'],
+  ['oni-timeseries', 'ONI time series', 'gambar_oni_timeseries.png'],
+  ['hotspots-by-year-peat', 'Hotspots by year, on peat and off peat', 'hotspots_by_year_peat_vs_nonpeat_2015_2024.png'],
+  ['lag-heatmap-oni', 'Lag heatmap: ONI against hotspots by sub-district', 'fig_lag_heatmap_oni.png'],
+  ['vulnerability-index', 'Composite vulnerability index', 'composite_vulnerability_index_v3.png'],
+  ['ablation-feature-groups', 'Ablation by feature group', 'ablasi_kelompok_fitur.png'],
+  ['model-evaluation-loko', 'Model evaluation, leave-one-sub-district-out', 'fig_model_evaluation_loko.png'],
+  ['shap-summary', 'SHAP summary', 'shap_summary.png'],
+  ['emerging-hotspot', 'Emerging hotspot classification', 'fig_emerging_hotspot.png'],
+  ['mannkendall-trend', 'Mann–Kendall trend by sub-district', 'fig_mannkendall_trend.png'],
+  ['cropland-by-depth', 'Cropland fraction by peat depth class', 'cropland_frac_per_depth_class.png'],
+  ['oilpalm-by-depth', 'Oil palm fraction by peat depth class', 'oilpalm_frac_descals_per_depth_class.png'],
+];
+---
+<BaseLayout title="Data" activePage="data" description="Downloadable tables, map layers and figures behind the ENSO and peatland fire thesis posts.">
+  <div class="data-wrap container">
+    <div class="data-hero">
+      <div class="section-label"><span class="label-line"></span><span>Data</span></div>
+      <h1>The data behind the thesis posts</h1>
+      <p class="lead">
+        Every table, map layer and figure used in the thesis cluster, as plain files. The tables are CSV with English column names.
+        Nothing here is modelled again for the web: each file is a column-renamed copy or a spatial join of an output of the thesis analysis,
+        and the source file and thesis section are listed for each.
+      </p>
+      <p class="data-note">
+        Text columns that come straight from the analysis (for example the alert-table actions) are in Indonesian. Figure labels are in Indonesian too,
+        as produced by the analysis notebook. Files are built by <code>scripts/build_thesis_report_data.py</code> in the blog repository.
+      </p>
+    </div>
+
+    <h2>Tables</h2>
+    <div class="data-list">
+      {items.map((d: any) => (
+        <article class="data-card" id={d.file.replace(/^csv\//, '').replace(/\.csv$/, '')}>
+          <div class="data-head">
+            <div>
+              <h3>{d.title}</h3>
+              <p>{d.description}</p>
+              <p class="data-meta">
+                {d.rows.toLocaleString('en-US')} rows · {d.columns.length} columns · {kb(d.bytes)}
+                {d.ref ? <> · Thesis {d.ref}</> : null}
+                <br />Source: <code>{d.source}</code>
+              </p>
+            </div>
+            <a class="data-btn" href={`${BASE}/thesis-data/${d.file}`} download>Download CSV</a>
+          </div>
+          <details>
+            <summary>Preview the first rows and columns</summary>
+            <div class="data-scroll">
+              <table>
+                <thead><tr>{d.preview.cols.map((c: string) => <th>{c}</th>)}</tr></thead>
+                <tbody>{d.preview.rows.map((r: string[]) => <tr>{r.map((c) => <td>{c}</td>)}</tr>)}</tbody>
+              </table>
+            </div>
+          </details>
+        </article>
+      ))}
+    </div>
+
+    <h2>Map layers</h2>
+    <p class="data-sub">These drive the interactive maps. All coordinates are EPSG:4326 (WGS 84).</p>
+    <ul class="data-layers">
+      {layers.map((l) => (
+        <li><a href={`${BASE}/thesis-data/${l.file}`} download><b>{l.title}</b></a><span>{l.desc}</span></li>
+      ))}
+    </ul>
+
+    <h2>Figures</h2>
+    <p class="data-sub">Static figures from the analysis, converted to WebP. Click to open full size.</p>
+    <div class="data-figs">
+      {figures.map(([slug, t, src]) => (
+        <a href={`${BASE}/image/thesis/${slug}.webp`} target="_blank" rel="noopener">
+          <img src={`${BASE}/image/thesis/${slug}.webp`} alt={t} loading="lazy" />
+          <span>{t}<small>{src}</small></span>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .data-wrap { padding: calc(var(--nav-h) + 4rem) 0 5rem; max-width: 1040px; }
+  .data-hero { margin-bottom: 2.5rem; }
+  .section-label { display:flex;align-items:center;gap:0.75rem;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:1.5rem; }
+  .label-line { width:24px;height:1px;background:var(--teal); }
+  h1 { margin-bottom: 1rem; }
+  .data-hero .lead { max-width: 720px; }
+  .data-note { max-width: 720px; font-size: .84rem; color: var(--text-muted); line-height: 1.6; margin-top: 1rem; }
+  code { font-family: var(--font-mono); font-size: .78em; color: var(--text); background: var(--bg-subtle); padding: .08rem .3rem; border-radius: 3px; }
+  h2 { font-family: var(--font-display); font-size: 1.6rem; margin: 3rem 0 1rem; }
+  .data-sub { color: var(--text-muted); font-size: .88rem; margin: -.4rem 0 1.2rem; }
+  .data-list { display: grid; gap: .9rem; }
+  .data-card { background: var(--bg-card); border: 1px solid var(--border); padding: 1.2rem 1.4rem; }
+  .data-head { display: flex; gap: 1.5rem; justify-content: space-between; align-items: flex-start; }
+  .data-head h3 { font-family: var(--font-display); font-size: 1.15rem; margin: 0 0 .35rem; color: var(--text-bright); }
+  .data-head p { margin: 0 0 .4rem; font-size: .86rem; color: var(--text-muted); line-height: 1.55; max-width: 640px; }
+  .data-head .data-meta { font-size: .74rem; color: var(--text-dim); }
+  .data-btn { flex: none; font-size: .78rem; font-weight: 700; color: #0d0e0f; background: var(--teal); padding: .5rem .9rem; border-radius: 4px; text-decoration: none; white-space: nowrap; }
+  .data-btn:hover { background: var(--text-bright); }
+  details { margin-top: .8rem; }
+  summary { cursor: pointer; font-size: .78rem; color: var(--teal); }
+  .data-scroll { overflow-x: auto; margin-top: .7rem; border: 1px solid var(--border); }
+  .data-scroll table { border-collapse: collapse; font-size: .74rem; font-variant-numeric: tabular-nums; width: max-content; min-width: 100%; }
+  .data-scroll th { text-align: left; padding: .4rem .65rem; color: var(--text-dim); font-weight: 700; border-bottom: 1px solid var(--border-md); white-space: nowrap; background: var(--bg-subtle); }
+  .data-scroll td { padding: .35rem .65rem; color: var(--text); border-bottom: 1px solid var(--border); white-space: nowrap; max-width: 28ch; overflow: hidden; text-overflow: ellipsis; }
+  .data-layers { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; }
+  .data-layers li { display: grid; grid-template-columns: minmax(0, 20rem) 1fr; gap: 1.2rem; padding: .7rem 0; border-top: 1px solid var(--border); font-size: .84rem; }
+  .data-layers a { color: var(--teal); text-decoration: none; }
+  .data-layers span { color: var(--text-muted); }
+  .data-figs { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+  .data-figs a { display: block; background: var(--bg-card); border: 1px solid var(--border); text-decoration: none; }
+  .data-figs a:hover { border-color: var(--teal); }
+  .data-figs img { width: 100%; height: 190px; object-fit: contain; background: #fff; display: block; }
+  .data-figs span { display: block; padding: .7rem .9rem; font-size: .8rem; color: var(--text); line-height: 1.4; }
+  .data-figs small { display: block; margin-top: .25rem; font-size: .68rem; color: var(--text-dim); font-family: var(--font-mono); }
+  @media (max-width: 720px) {
+    .data-head { flex-direction: column; gap: .8rem; }
+    .data-layers li { grid-template-columns: 1fr; gap: .2rem; }
+  }
+</style>

@@ -11,6 +11,9 @@ featured: true
 
 import '../../styles/paper.css';
 import '../../styles/thesis.css';
+import FireLandscapeMap from '../../components/thesis/FireLandscapeMap.jsx';
+import OniHotspotSeries from '../../components/thesis/OniHotspotSeries.jsx';
+import SeasonCalendar from '../../components/thesis/SeasonCalendar.jsx';
 
 Tropical peatland fires in Riau recur almost every year and turn into regional haze disasters during strong droughts. The El Niño–Southern Oscillation (ENSO) is widely regarded as the dominant climatic driver. What is poorly quantified is how strong that signal is at the scale of a sub-district (*kecamatan*), how it interacts with local drought, and whether it is useful for early warning. This thesis, written for the Master of Disaster Management at Universitas Riau, tries to answer those three things for one regency. This post is the map to the rest of the cluster.
 
@@ -24,6 +27,12 @@ Tropical peatland fires in Riau recur almost every year and turn into regional h
 ## Why Bengkalis, and why now
 
 Drought determines when peat becomes flammable; land management, canal drainage and ignition sources determine where and whether it burns. Bengkalis contains about 511 thousand hectares of mapped peat spread across 11 sub-districts, including the islands of Rupat and Bengkalis and the oil-industry hub of Duri (Mandau). Among Riau's twelve regencies and cities it recorded 4,981 of the 30,988 MODIS detections (confidence 30% or more) in 2015–2024, second only to Pelalawan. Its sub-districts span island peat domes (Rupat, Rupat Utara), coastal mainland, and inland oil-palm and oil-field landscapes (Pinggir, Mandau, Bathin Solapan), which makes it a compact place to test whether the climate–fire relationship is uniform. The wider Riau picture is in [the regional hotspot decade](/blog/riau-hotspot-decade-12-regencies) and [the fire dashboard](/blog/riau-fire-dashboard).
+
+<FireLandscapeMap
+  client:visible
+  initial="peat"
+  caption="Bengkalis Regency: mapped peat by depth class and the 3,402 quality-filtered hotspots of 2015–2024. Use the year buttons to compare the dry seasons of 2015 and 2019 with the quiet years, and switch to the canal layer to see how drained the landscape is."
+/>
 
 Three problems limit the direct use of ENSO in local disaster management, and each shapes a part of the thesis:
 
@@ -77,6 +86,18 @@ The study is quantitative and observational, based on secondary geospatial data,
 
 The filtering is explored in depth in [the filtering post](/blog/behind-the-numbers-hotspot-filtering-checks), including how sensitive the results are to the choice of rule.
 
+### The ten-year record
+
+<OniHotspotSeries
+  client:visible
+  caption="Monthly ONI (top; red bars are months classed as El Niño, blue La Niña, grey neutral, using the thesis rule of at least five consecutive months at or beyond ±0.5 °C) against monthly filtered hotspots summed over the 11 sub-districts (bottom), 2015–2024. The two large bursts follow the 2015 and 2019 El Niño-influenced dry seasons, but a strong ONI does not by itself produce fire: 2023 had El Niño conditions and only 83 hotspots in the year."
+/>
+
+<SeasonCalendar
+  client:visible
+  caption="Share of all hotspots by calendar month. Fire in Bengkalis is bimodal, with a larger peak in February–April and a second in July–August, which is why the thesis proposes a two-window preparedness calendar."
+/>
+
 ### Datasets at a glance
 
 <div class="pp-table pp-left"><table>
@@ -106,5 +127,18 @@ The conclusion the thesis draws: ENSO is a meaningful but indirect, drought-medi
 ## The literature behind it, briefly
 
 Chapter 2 of the thesis reviews nine topics: tropical peatlands and fire; climatic drivers (ENSO, IOD and drought); satellite hotspots as a fire proxy; anthropogenic and landscape drivers; statistical considerations for fire–climate analysis; machine learning and interpretability; early warning and forecast verification; the disaster-management framework; and the research gap above. Its policy section is the part most readers of a GIS blog will not have seen: it sets out Indonesia's three emergency statuses (alert, emergency response, transition to recovery), the role of the BPBD, and how provincial alert periods in Riau have typically run from February to the end of the second dry season, which is why a seasonal calendar is the right baseline for the early-warning test.
+
+<div class="pp-datanote">
+<h4>Data for this post</h4>
+<p>The panel is the dataset every model in the thesis is fitted to. Hotspot counts per sub-district-month, ONI, DMI, rainfall, temperature, SPI-3, SPEI-3 and the static covariates are all in one file.</p>
+<ul class="th-dl">
+  <li><a href="/blog/thesis-data/csv/monthly_panel_11x120.csv" download>Monthly panel, 11 × 120 <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/annual_oni_dmi_hotspots.csv" download>Annual ONI, DMI, hotspots <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/hotspot_retention_by_year.csv" download>Hotspots under alternative filters <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/seasonal_profile.csv" download>Seasonal profile <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/hotspots_filtered_3402.csv" download>All 3,402 hotspots <small>CSV</small></a></li>
+</ul>
+<p class="th-alldata"><a href="/blog/data">All tables, map layers and figures</a></p>
+</div>
 
 *This post summarises Chapters 1 to 3 of the thesis. Figures come from the abstract and Sections 1.1–1.8, 2.8–2.9, 3.1–3.7 and Table 3.2.*
