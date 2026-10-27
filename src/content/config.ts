@@ -12,6 +12,10 @@ const articles = defineCollection({
     mapData:  z.string().optional(),
     draft:    z.boolean().default(false),
     featured: z.boolean().default(false),
+    /** Which cluster (see src/data/clusters.ts) the post belongs to. */
+    cluster:  z.string().default('thesis'),
+    /** Thesis section this post mainly draws on, e.g. "4.9". Used to order posts inside a cluster. */
+    chapter:  z.string().optional(),
   }),
 });
 

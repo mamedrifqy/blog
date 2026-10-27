@@ -1,0 +1,128 @@
+---
+title: "Which Peat Burns? Depth, Oil Palm and Forest Loss in Bengkalis"
+subtitle: "Fire is not spread evenly over the peat, and the usual suspects on the land side, plantations and forest loss, turn out to be hard to pin down with eleven sub-districts."
+date: "2026-10-28"
+author: "Muhammad Rifqy"
+tags: ["fire", "peatland", "land-cover", "peat-depth", "Bengkalis"]
+cluster: "thesis"
+chapter: "4.3, 4.6"
+---
+
+import '../../styles/paper.css';
+import '../../styles/thesis.css';
+import PairedBars from '../../components/thesis/PairedBars.jsx';
+
+Climate sets the clock; the land sets the map. This post looks at the land side of the thesis: how fire relates to peat depth, and whether oil palm, forest loss and other land-use variables explain where hotspots fall. The first question gets a clear answer. The second gets an honest "not with this design".
+
+<div class="pp-keys">
+  <div><b>0.48</b><span>Cohen's w for hotspots against peat depth: a medium-to-large departure from "fire in proportion to area"</span></div>
+  <div><b>1.33<small>×</small></b><span>over-representation of 500–700 cm peat, which holds 42% of all hotspots</span></div>
+  <div><b>0.10<small>×</small></b><span>ratio for the deepest class (over 700 cm): 17.5% of the peat area, 1.7% of the hotspots</span></div>
+  <div><b>−0.67</b><span>sub-district-level Spearman correlation of forest loss with hotspots; not significant after correction (pBH = 0.12)</span></div>
+</div>
+
+## The short version
+
+- **Fire prefers moderate-to-deep peat, and avoids the deepest.** Peat of 100–200 cm and 500–700 cm is over-represented by about a third; shallow peat (under 100 cm) and very deep peat (over 700 cm) are under-represented.
+- **The effect is real but smaller than an early draft suggested.** Using the wrong area denominator inflated the 500–700 cm ratio to 3.25; the corrected value is 1.33. The qualitative conclusion survived, the size did not.
+- **Land-use variables point the "wrong" way, and that is a warning, not a finding.** Forest loss and oil palm correlate negatively with hotspots, which mostly reflects the contrast between peat-dominated island sub-districts and drier inland ones.
+- **Climate still outranks everything static.** Rainfall and SPEI-3 are the strongest correlates of monthly hotspots.
+
+## Where fire falls on the depth scale
+
+The test is simple: compare the share of hotspots in each depth class with the share of peat area in that class. A ratio of 1 means fire is in proportion to area.
+
+<PairedBars
+  client:visible
+  scale={45}
+  rows={[
+    { label: 'Under 100 cm', sub: '132 hotspots', a: 4.3, b: 8.8, ratio: 0.49, note: 'Under 100 cm: 132 hotspots (4.3%) on 8.8% of the peat. Ratio 0.49, under-represented.' },
+    { label: '100–200 cm', sub: '743 hotspots', a: 24.0, b: 17.8, ratio: 1.34, note: '100–200 cm: 743 hotspots (24.0%) on 17.8% of the peat. Ratio 1.34, over-represented.' },
+    { label: '200–300 cm', sub: '219 hotspots', a: 7.1, b: 7.5, ratio: 0.95, note: '200–300 cm: 219 hotspots (7.1%) on 7.5% of the peat. Ratio 0.95, roughly proportional.' },
+    { label: '300–500 cm', sub: '644 hotspots', a: 20.8, b: 16.7, ratio: 1.24, note: '300–500 cm: 644 hotspots (20.8%) on 16.7% of the peat. Ratio 1.24, over-represented.' },
+    { label: '500–700 cm', sub: '1,308 hotspots', a: 42.2, b: 31.8, ratio: 1.33, note: '500–700 cm: 1,308 hotspots (42.2%) on 31.8% of the peat. Ratio 1.33, over-represented.' },
+    { label: 'Over 700 cm', sub: '54 hotspots', a: 1.7, b: 17.5, ratio: 0.10, note: 'Over 700 cm: 54 hotspots (1.7%) on 17.5% of the peat. Ratio 0.10, strongly under-represented.' },
+  ]}
+  caption="Share of filtered hotspots on peat (red) and share of peat area (grey) by depth class, Bengkalis, 2015–2024. The chi-square p-value is not informative because hotspots are spatially autocorrelated; effect sizes and ratios are the appropriate summary."
+/>
+
+The hotspot density tells the same story: about 0.0075–0.0082 hotspots per hectare in the three over-represented classes, and 0.0006 on peat deeper than 7 m, an order of magnitude lower. The pattern fits a drainage mechanism: moderate and deep peat that has been drained and converted dries out and burns, while the deepest domes, usually in the interior, less accessible and wetter, are rarely reached by fire.[^hooijer10] That the deepest domes are the least disturbed is a hypothesis the thesis notes land-cover data could test; peat swamp forest across Peninsular Malaysia, Sumatra and Borneo fell from 76% of the peatland area in 1990 to 29% in 2015.[^miettinen16]
+
+An earlier study of Bengkalis reported that most hotspots fell on very deep Hemist/Saprist peat under shrub swamp.[^syaufina18] The thesis result is compatible if "very deep" there corresponds largely to the 500–700 cm class, which holds 42% of the hotspots here, and it adds that the deepest class is strongly under-represented once burning is compared with area.
+
+<div class="pp-callout"><div>
+<p><strong>A ratio measures how often a class burns, not how much it loses.</strong> Airborne LiDAR in drained peatland found carbon losses of 114, 64, 38 and 13 t C per hectare for the first to fourth fire, with burn depth rising towards canals.[^konecny16] The under-representation of the deepest peat does not mean a fire there would matter less.</p>
+</div></div>
+
+### A correction that changed the size of the result
+
+An earlier draft of the analysis computed the area shares from all 4,070 national peat polygons instead of the 511,265 ha of peat inside Bengkalis. That inflated the ratio for the 500–700 cm class to 3.25. With the right denominator it is 1.33. The goodness-of-fit test rejects proportionality either way, so the finding that fire is not spread evenly over depth stands, but the effect is about a third, not threefold. The details are in [the post on filtering and checks](/blog/behind-the-numbers-hotspot-filtering-checks).
+
+### Sub-district level: peat endowment is not the whole story
+
+Hotspot counts are not proportional to peat area. Rupat holds 15% of the peat but 29% of the hotspots, whereas Bukit Batu and Siak Kecil, with deep peat, hold 10% and 16% of the peat but 3% and 8% of the hotspots. Between sub-districts, the fire-weighted depth was unrelated to hotspot numbers (Spearman r = −0.09, p = 0.79).
+
+Comparing each sub-district's mean peat depth with the depth at which its fires occurred shows who burns deeper than their landscape average. Bantan, Bengkalis, Pinggir, Mandau, Bathin Solapan and Rupat Utara sit above the 1:1 line; Rupat, Bandar Laksamana, Siak Kecil and Talang Muandau sit below it, and Bukit Batu close to it. Rupat, with by far the most hotspots, burns mainly on peat that is relatively shallow for its own landscape. The thesis also notes that more than 90% of hotspots fall on mapped peat in eight sub-districts; the lowest shares are in Talang Muandau (56%), Bandar Laksamana (82%) and Rupat Utara (85%), and the data do not identify the land cover of the off-peat hotspots.
+
+## What about land use?
+
+The thesis extracts static land-use variables per sub-district: oil palm fraction, forest loss, surface-water occurrence, population density and NDVI trend, plus peat area and mean depth. Oil palm is highest in the inland sub-districts of Pinggir (0.58), Mandau (0.56) and Bathin Solapan (0.46) and lowest in Bantan (0.06) and Rupat (0.08). Forest loss in 2015–2024 was largest in absolute terms in Siak Kecil (12,183 ha), Talang Muandau (9,537 ha) and Rupat (8,593 ha). NDVI trends were positive in 10 of 11 sub-districts but none stayed significant after false-discovery-rate correction across 22 tests.
+
+### The predictor ranking
+
+<div class="pp-table"><table>
+<caption>Predictors ranked by absolute Spearman correlation with monthly hotspot counts (pooled panel, N = 1,320; all Benjamini–Hochberg-adjusted p below 0.01). Static variables repeat one value across 120 months, so their panel p-values are inflated and the ranking is indicative only.</caption>
+<thead><tr><th>Rank</th><th>Variable</th><th>r<sub>s</sub></th><th>r<sub>s</sub>²</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Precipitation (CHIRPS)</td><td>−0.322</td><td>0.103</td></tr>
+<tr><td>2</td><td>SPEI-3 (Thornthwaite)</td><td>−0.287</td><td>0.082</td></tr>
+<tr><td>3</td><td>Forest loss 2015–2024 (static)</td><td>−0.267</td><td>0.071</td></tr>
+<tr><td>4</td><td>Peat area (static)</td><td>+0.234</td><td>0.055</td></tr>
+<tr><td>5</td><td>ONI</td><td>+0.231</td><td>0.054</td></tr>
+<tr><td>6</td><td>Air temperature (ERA5-Land)</td><td>+0.218</td><td>0.047</td></tr>
+<tr><td>7</td><td>NDVI trend (static)</td><td>−0.158</td><td>0.025</td></tr>
+<tr><td>8</td><td>Oil palm fraction (static)</td><td>−0.124</td><td>0.015</td></tr>
+<tr><td>9</td><td>Mean peat depth (static)</td><td>+0.074</td><td>0.005</td></tr>
+</tbody></table></div>
+
+Local rainfall and drought come first, ahead of ONI and every static variable. That matches the main message of [the ENSO and SPI-3 analysis](/blog/enso-spi3-peatland-fire-bengkalis).
+
+### Why the negative signs are not a protective effect
+
+Forest loss and oil palm are negatively associated with hotspots, the opposite of what the Borneo literature on plantation expansion would suggest.[^sloan17] The thesis gives three reasons not to read that as plantations protecting against fire:
+
+1. **Eleven values, 120 times.** The correlations rest on eleven static values repeated across 120 months. At the sub-district level, none of the five static variables is significant after correction: forest loss has the largest correlation (r<sub>s</sub> = −0.67, p = 0.023) but pBH = 0.12.
+2. **The sign encodes peat, not land use.** The highest oil palm fractions are in inland Pinggir, Mandau and Bathin Solapan, which contain little peat, whereas hotspots concentrate on the island and coastal peat of Rupat, Bandar Laksamana and Bengkalis.
+3. **Wrong scale.** A sub-district-wide fraction cannot capture proximity to plantations, which is the scale at which the Borneo relationship appeared.
+
+<div class="pp-table"><table>
+<caption>Correlation of static covariates with hotspots: pooled panel (inflated) versus sub-district level.</caption>
+<thead><tr><th>Static variable</th><th>Panel r<sub>s</sub> (N = 1,320)</th><th>Sub-district r<sub>s</sub> (N = 11)</th><th>p</th><th>pBH</th></tr></thead>
+<tbody>
+<tr><td>Oil palm fraction</td><td>−0.124</td><td>−0.409</td><td>0.212</td><td>0.353</td></tr>
+<tr><td>Forest loss fraction 2015–2024</td><td>−0.267</td><td>−0.673</td><td>0.023</td><td>0.117</td></tr>
+<tr><td>Surface-water occurrence</td><td>−0.076</td><td>−0.200</td><td>0.555</td><td>0.555</td></tr>
+<tr><td>Population density</td><td>−0.233</td><td>−0.318</td><td>0.340</td><td>0.425</td></tr>
+<tr><td>NDVI trend (Landsat)</td><td>−0.158</td><td>−0.455</td><td>0.160</td><td>0.353</td></tr>
+</tbody></table></div>
+
+The static layers are also tangled with each other: oil palm fraction with NDVI trend (+0.81), forest loss with peat area (−0.67), peat area with mean depth (+0.55). With only eleven distinct values each, they largely describe one contrast, between peat-dominated island and coastal sub-districts and drier inland sub-districts with plantations and oil-field land. Their individual associations cannot be separated.
+
+### Oil palm and depth are not independent
+
+At polygon level (n = 208 peat polygons), the median oil palm fraction is highest on intermediate peat, about 0.32 at 100–200 cm and 0.31 at 200–300 cm, low at 300–500 cm (about 0.03) and 500–700 cm (about 0.05), and zero on peat deeper than 7 m. So oil palm sits on moderately deep peat and is nearly absent from the deepest, which means it cannot be treated as an independent driver alongside depth. The WorldCover cropland class turns out nearly empty in every class (medians near 0, maxima below 0.07), so the oil palm map is the more informative plantation layer here.[^descals24]
+
+## What this changes, and what it leaves open
+
+Depth and drainage fit together as an account of *where*: moderate and deep peat that has been drained and converted burns most, and the deepest, wettest domes least. The land-use variables are not reliable evidence for or against a plantation effect at this resolution. The thesis says the negative sign is best read as between-place confounding by peat, and that a within-peat analysis at finer resolution, of the kind done for canals in [the canal post](/blog/canals-fire-location-bengkalis), is needed to test land-use effects directly.
+
+Two further cautions from the thesis: the static covariates are partly computed over the whole 2015–2024 period, which introduces mild temporal leakage, and a model that uses them can end up using them as sub-district identifiers. That second point is the subject of [the ablation post](/blog/climate-vs-everything-else-ablation-bengkalis).
+
+*All numbers in this post come from Sections 4.3 and 4.6 and the related discussion of the thesis (Tables 4.6, 4.7, 4.18, 4.19 and Figures 4.19–4.21). Peat map clipped to the regency boundary (511,265 ha; 208 polygons). Oil palm: Descals et al. (2024). Land cover: ESA WorldCover.*
+
+[^hooijer10]: Hooijer, A. et al. (2010). Current and future CO₂ emissions from drained peatlands in Southeast Asia. *Biogeosciences* 7(5), 1505–1514. The thesis also cites Turetsky, M. R. et al. (2015), Global vulnerability of peatlands to fire and carbon loss, *Nature Geoscience* 8, 11–14.
+[^miettinen16]: Miettinen, J., Shi, C. & Liew, S. C. (2016). Land cover distribution in the peatlands of Peninsular Malaysia, Sumatra and Borneo in 2015 with changes since 1990. *Global Ecology and Conservation* 6, 67–78.
+[^syaufina18]: Syaufina, L. & Hafni, D. A. F. (2018). Variabilitas iklim dan kejadian kebakaran hutan dan lahan gambut di Kabupaten Bengkalis, Provinsi Riau. *Jurnal Silvikultur Tropika* 9(1), 60–68. [doi:10.29244/j-siltrop.9.1.60-68](https://doi.org/10.29244/j-siltrop.9.1.60-68).
+[^konecny16]: Konecny, K. et al. (2016). Variable carbon losses from recurrent fires in drained tropical peatlands. *Global Change Biology* 22(4), 1469–1480.
+[^sloan17]: Sloan, S., Locatelli, B., Wooster, M. J. & Gaveau, D. L. A. (2017). Fire activity in Borneo driven by industrial land conversion and drought during El Niño periods, 1982–2010. *Global Environmental Change* 47, 95–109. [doi:10.1016/j.gloenvcha.2017.10.001](https://doi.org/10.1016/j.gloenvcha.2017.10.001).
+[^descals24]: Descals, A., Gaveau, D. L. A., Wich, S., Szantoi, Z. & Meijaard, E. (2024). Global mapping of oil palm planting year from 1990 to 2021. *Earth System Science Data* 16(11), 5111–5129. [doi:10.5194/essd-16-5111-2024](https://doi.org/10.5194/essd-16-5111-2024).

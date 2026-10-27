@@ -1,0 +1,110 @@
+---
+title: "The Thesis in One Page: Five Questions About ENSO and Peat Fire in Bengkalis"
+subtitle: "Why Bengkalis, what was asked, how 3,402 hotspots became a 1,320-row panel, and a map of which post answers which question."
+date: "2026-10-28"
+author: "Muhammad Rifqy"
+tags: ["fire", "peatland", "ENSO", "methodology", "Bengkalis"]
+cluster: "thesis"
+chapter: "1, 2, 3"
+featured: true
+---
+
+import '../../styles/paper.css';
+import '../../styles/thesis.css';
+
+Tropical peatland fires in Riau recur almost every year and turn into regional haze disasters during strong droughts. The El Niño–Southern Oscillation (ENSO) is widely regarded as the dominant climatic driver. What is poorly quantified is how strong that signal is at the scale of a sub-district (*kecamatan*), how it interacts with local drought, and whether it is useful for early warning. This thesis, written for the Master of Disaster Management at Universitas Riau, tries to answer those three things for one regency. This post is the map to the rest of the cluster.
+
+<div class="pp-keys">
+  <div><b>11</b><span>sub-districts of Bengkalis Regency, with about 511 thousand hectares of mapped peat</span></div>
+  <div><b>3,402</b><span>quality-filtered hotspots, 2015–2024; 91.1% fall on peat</span></div>
+  <div><b>1,320</b><span>sub-district-months in the panel (11 × 120)</span></div>
+  <div><b>5</b><span>research questions, from patterns to early-warning skill</span></div>
+</div>
+
+## Why Bengkalis, and why now
+
+Drought determines when peat becomes flammable; land management, canal drainage and ignition sources determine where and whether it burns. Bengkalis contains about 511 thousand hectares of mapped peat spread across 11 sub-districts, including the islands of Rupat and Bengkalis and the oil-industry hub of Duri (Mandau). Among Riau's twelve regencies and cities it recorded 4,981 of the 30,988 MODIS detections (confidence 30% or more) in 2015–2024, second only to Pelalawan. Its sub-districts span island peat domes (Rupat, Rupat Utara), coastal mainland, and inland oil-palm and oil-field landscapes (Pinggir, Mandau, Bathin Solapan), which makes it a compact place to test whether the climate–fire relationship is uniform. The wider Riau picture is in [the regional hotspot decade](/blog/riau-hotspot-decade-12-regencies) and [the fire dashboard](/blog/riau-fire-dashboard).
+
+Three problems limit the direct use of ENSO in local disaster management, and each shapes a part of the thesis:
+
+1. **The signal is indirect.** ENSO reaches peat through local rainfall and evaporative demand, so its effect may be largely mediated.
+2. **The statistics are awkward.** Monthly hotspot counts are zero-inflated, over-dispersed and autocorrelated, so naive correlations overstate significance.
+3. **The response may vary in space** between sub-districts with different peat depth, land use and drainage.
+
+A fourth issue sits underneath: hotspots are a proxy for fire, not a measure of burned area, and low-confidence detections near industrial sites such as Duri can be heat sources that are not vegetation fires.
+
+## The gap, in the thesis's words
+
+Existing studies of ENSO and fire in Indonesia are mostly provincial or national in scale and rely on pooled correlations. They rarely (i) correct for autocorrelation and pseudo-replication, (ii) test spatial heterogeneity formally, (iii) validate machine-learning models against climatological baselines across unseen years, or (iv) verify ENSO-based warning rules against a seasonal-calendar reference. The thesis addresses these for Bengkalis, and does so at a scale that the regional disaster agency (BPBD) can use.
+
+## The five questions, and where to read the answers
+
+<div class="pp-table pp-left"><table>
+<caption>Research questions (Section 1.4) mapped to posts in this cluster.</caption>
+<thead><tr><th>Question</th><th>Where it is answered</th></tr></thead>
+<tbody>
+<tr><td><b>RQ1.</b> What are the spatial and temporal patterns of hotspots in 2015–2024, and how are they distributed across peat depth classes?</td><td><a href="/blog/behind-the-numbers-hotspot-filtering-checks">Filtering and checks</a>; <a href="/blog/space-time-structure-fire-bengkalis">space-time structure</a>; <a href="/blog/peat-depth-land-cover-bengkalis">peat depth and land use</a></td></tr>
+<tr><td><b>RQ2.</b> How strongly are monthly hotspots associated with ENSO (ONI), the IOD (DMI) and local drought (SPI-3, SPEI-3), and is the ENSO effect mediated by local water deficit?</td><td><a href="/blog/enso-spi3-peatland-fire-bengkalis">ENSO and SPI-3</a></td></tr>
+<tr><td><b>RQ3.</b> Does the response to ENSO differ significantly between sub-districts?</td><td><a href="/blog/enso-spi3-peatland-fire-bengkalis">ENSO and SPI-3</a>; <a href="/blog/climate-vs-everything-else-ablation-bengkalis">ablation</a></td></tr>
+<tr><td><b>RQ4.</b> What is the relative contribution of climatic, seasonal, biophysical and anthropogenic factors to predicting monthly fire occurrence, and how well do ML models generalise to unseen sub-districts and years?</td><td><a href="/blog/climate-vs-everything-else-ablation-bengkalis">Ablation</a></td></tr>
+<tr><td><b>RQ5.</b> Does an ENSO- and drought-based early-warning rule provide skill beyond a seasonal-calendar alarm, and what follows for disaster risk management?</td><td><a href="/blog/early-warning-skill-bengkalis">Early-warning skill</a>; <a href="/blog/thesis-recommendations-disaster-management-bengkalis">recommendations</a></td></tr>
+<tr><td><b>Cross-cutting.</b> Where does fire fall relative to drainage canals? Is a hotspot really a fire?</td><td><a href="/blog/canals-fire-location-bengkalis">Canals</a>; <a href="/blog/hotspot-vs-burned-area-validation-bengkalis">hotspots against burned area</a></td></tr>
+</tbody></table></div>
+
+## How the analysis is built
+
+The study is quantitative and observational, based on secondary geospatial data, processed in Python on Google Colab with Google Earth Engine. The unit of analysis is the sub-district-month, covering January 2015 to December 2024, with 2025 detections held back for an out-of-time check. The workflow has eight stages.
+
+1. **Acquisition and preprocessing** of hotspots, climate and ocean indices, the peat map, canals, land cover and burned-area products.
+2. **ENSO classification and drought indices.** Months are labelled El Niño or La Niña only if they belong to a run of at least five consecutive months with ONI at or beyond ±0.5 °C (the NOAA rule); otherwise Neutral. The result is 44 El Niño, 30 La Niña and 46 Neutral months. SPI-3 and SPEI-3 are fitted per calendar month on a 1991–2024 baseline, because ten years give only ten values per calendar month.
+3. **Hotspot filtering.** A confidence-anchored DBSCAN keeps detections of 70% confidence or more as anchors, rescues medium-confidence detections (50–69%) within 1.5 km of an anchor as probable smouldering peat fires, and discards the rest.
+4. **Panel construction.** Filtered hotspots are joined to sub-districts and counted per month: 11 sub-districts × 120 months = 1,320 rows.
+5. **Statistical and spatial analysis.** Rank tests, correlations with effective sample size, Poisson count models with fixed effects, heterogeneity tests, trend tests, Moran's I and ST-DBSCAN.
+6. **Non-climatic factors.** Oil palm, forest loss, surface water, population and NDVI trend.
+7. **Machine learning.** Random Forest with leave-one-sub-district-out and leave-one-year-out validation, ablation and SHAP.
+8. **Early-warning skill and proxy validation**, plus the canal analysis.
+
+<div class="pp-table"><table>
+<caption>How 205,215 FIRMS detections for Riau became 3,402 hotspots in the panel (Section 3.6).</caption>
+<thead><tr><th>Step</th><th>Points</th></tr></thead>
+<tbody>
+<tr><td>FIRMS MODIS detections for Riau</td><td>205,215</td></tr>
+<tr><td>Vegetation-fire type only (15,981 removed)</td><td>189,234</td></tr>
+<tr><td>Restricted to 2015–2024</td><td>33,759</td></tr>
+<tr><td>Within the Bengkalis boundary</td><td>5,386</td></tr>
+<tr><td>Retained by the confidence-anchored DBSCAN filter</td><td>3,402</td></tr>
+</tbody></table></div>
+
+The filtering is explored in depth in [the filtering post](/blog/behind-the-numbers-hotspot-filtering-checks), including how sensitive the results are to the choice of rule.
+
+### Datasets at a glance
+
+<div class="pp-table pp-left"><table>
+<caption>Datasets (Table 3.2, condensed).</caption>
+<thead><tr><th>Variable</th><th>Source</th><th>Use</th></tr></thead>
+<tbody>
+<tr><td>Fire hotspots</td><td>NASA FIRMS MODIS active fire (1 km pixel)</td><td>Target variable</td></tr>
+<tr><td>Precipitation</td><td>CHIRPS v2.0 (0.05°)</td><td>SPI-3, SPEI-3, predictor</td></tr>
+<tr><td>Air temperature</td><td>ERA5-Land monthly (0.1°)</td><td>PET, predictor</td></tr>
+<tr><td>ENSO, IOD</td><td>ONI and DMI (NOAA PSL)</td><td>Phase, predictor, confounder</td></tr>
+<tr><td>Peat depth</td><td>National peatland map, clipped to the regency (208 polygons)</td><td>Depth, peat area</td></tr>
+<tr><td>Land-use covariates</td><td>Oil palm (Descals et al. 2024), Hansen forest loss, JRC surface water, BPS population, Landsat and Sentinel-2 NDVI trend</td><td>Static covariates</td></tr>
+<tr><td>Burned area</td><td>MODIS MCD64A1 (500 m); Landsat dNBR and dATBI (30 m)</td><td>Proxy validation</td></tr>
+<tr><td>Land cover; canals</td><td>ESA WorldCover v200; Dadap et al. (2021)</td><td>Canal analysis</td></tr>
+</tbody></table></div>
+
+Climate data were not bias-corrected against local stations, because the nearest BMKG station identified (Karimun, about 120 km away across the Strait of Malacca) was judged unrepresentative. The hotspot product is MODIS-based throughout, so the confidence anchor and DBSCAN radius are defined for that sensor and would need recalibration for VIIRS.
+
+## What the thesis contributes
+
+Scientifically, it offers a reproducible workflow that combines density-based hotspot filtering, drought indices fitted per calendar month on a long baseline, dependence-aware inference (effective sample sizes, cluster-robust errors, block bootstrap), and blocked validation of machine-learning models against climatological baselines. Practically, it gives sub-district-level evidence on where and when fire risk concentrates, and an honest appraisal of what ENSO information can and cannot add to fire early warning in Bengkalis.
+
+The headline results, from the abstract: a 1 °C rise in ONI is associated with a 1.95-fold increase in monthly hotspot counts (IRR 1.95, 95% CI 1.36–2.81), but adding SPEI-3 reduces that to 1.29 (0.98–1.69). The ENSO response differs significantly between sub-districts (Wald χ² = 23.2 on 10 degrees of freedom, p = 0.010). A Random Forest reaches a pooled AUC of 0.79 under leave-one-sub-district-out validation and 0.81 under leave-one-year-out. A nested early-warning rule does not significantly improve on a seasonal calendar. Hotspots on non-forest peat sit significantly closer to drainage canals than expected by chance.
+
+The conclusion the thesis draws: ENSO is a meaningful but indirect, drought-mediated modulator of peat fire in Bengkalis, and operational warning should combine seasonal calendars, drought monitoring and spatial targeting of drained peat, not rely on ENSO alone. The practical version is in [the post on recommendations](/blog/thesis-recommendations-disaster-management-bengkalis). The thesis mind map on the [front page](/blog/) shows how all of this connects.
+
+## The literature behind it, briefly
+
+Chapter 2 of the thesis reviews nine topics: tropical peatlands and fire; climatic drivers (ENSO, IOD and drought); satellite hotspots as a fire proxy; anthropogenic and landscape drivers; statistical considerations for fire–climate analysis; machine learning and interpretability; early warning and forecast verification; the disaster-management framework; and the research gap above. Its policy section is the part most readers of a GIS blog will not have seen: it sets out Indonesia's three emergency statuses (alert, emergency response, transition to recovery), the role of the BPBD, and how provincial alert periods in Riau have typically run from February to the end of the second dry season, which is why a seasonal calendar is the right baseline for the early-warning test.
+
+*This post summarises Chapters 1 to 3 of the thesis. Figures come from the abstract and Sections 1.1–1.8, 2.8–2.9, 3.1–3.7 and Table 3.2.*

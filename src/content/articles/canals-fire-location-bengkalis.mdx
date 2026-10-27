@@ -1,0 +1,128 @@
+---
+title: "Fire Burns Near the Ditches: What Drainage Canals Say About Where Bengkalis's Peat Ignites"
+subtitle: "Of 3,100 hotspots on peat, 96% sit within a kilometre of a canal. But 79% of the peat does too, so how much does that prove? Four checks, and one place where the pattern flips."
+date: "2026-10-28"
+author: "Muhammad Rifqy"
+tags: ["fire", "peatland", "drainage", "remote-sensing", "Bengkalis"]
+cluster: "thesis"
+chapter: "4.9"
+---
+
+import '../../styles/paper.css';
+import '../../styles/thesis.css';
+import PairedBars from '../../components/thesis/PairedBars.jsx';
+
+Climate decides *when* peat can burn. Drainage is one of the things that decides *where*. A canal lowers the water table around it, the surface layers dry out, and dry peat ignites. That story is well established across Southeast Asia.[^dadap21] This post asks a narrower question, in a landscape that is already heavily drained: inside Bengkalis, are fires closer to canals than a random spot on the same peat?
+
+<div class="pp-keys">
+  <div><b>95.9<small>%</small></b><span>of the 3,100 hotspots on peat lie within 1 km of a mapped canal, against 79.4% of the peat area</span></div>
+  <div><b>172 <small>m</small></b><span>median hotspot distance to the nearest canal, versus 210 m for random points on peat</span></div>
+  <div><b>0.74</b><span>odds ratio per ten-fold increase in distance, after controlling for peat depth (95% CI 0.68–0.82)</span></div>
+  <div><b>0</b><span>hotspots beyond 4 km from a canal, a zone that covers almost 6% of the peat</span></div>
+</div>
+
+## The short version
+
+- **Fire does cluster near canals, but the effect is moderate.** A random hotspot is closer to a canal than a random peat point only 57% of the time (P = 0.568, where 0.5 would mean no difference).
+- **The pattern depends on what the land looked like before.** On peat that was not forest before the fire, the canal effect is clear (odds ratio 0.73). On pre-fire forest there is no effect (1.01), and the two differ significantly.
+- **It is not an artefact of the satellite.** Replacing hotspots with a Landsat burned-area outcome gives almost the same odds ratio (0.73).
+- **The canal map cannot separate drainage from access.** It labels some roads as canals, so "near a canal" also means "near a road, a plot, a person with a lighter".
+
+## How the comparison is built
+
+For each of the 3,100 filtered hotspots that fall on mapped peat, the analysis measures the distance to the nearest canal, using a canal map built from 2017 imagery.[^dadap21] That alone says nothing: fires are on peat, and peat is full of canals. So each hotspot is compared with 30,001 random "null" points drawn on peat, matched to the hotspots on peat-depth class. If canals mattered not at all, hotspots and null points would sit at the same distances.
+
+Two limits come with the data, and both shape how far the result can be pushed. The peat landscape of Bengkalis is densely cut by canals and roads: the median random point on peat is only about 209 m from a mapped line. And a MODIS hotspot is placed at the centre of a pixel about 1 km across, so distances of a few hundred metres are below the positional resolution of the hotspots. That is why the analysis leans on contrasts between distributions and on coarse distance classes, not on the distance of any single fire.
+
+## What the distance classes show
+
+<PairedBars
+  client:visible
+  scale={85}
+  rows={[
+    { label: 'Under 0.5 km', a: 82.58, b: 69.85, ratio: 1.18, note: 'Under 0.5 km: 2,560 hotspots (82.6%) on 69.9% of the peat area. Ratio 1.18.' },
+    { label: '0.5–1 km', a: 13.35, b: 9.51, ratio: 1.40, note: '0.5–1 km: 414 hotspots (13.4%) on 9.5% of the peat area. Ratio 1.40, the largest excess.' },
+    { label: '1–2 km', a: 3.35, b: 7.00, ratio: 0.48, note: '1–2 km: 104 hotspots (3.4%) on 7.0% of the peat area. Ratio 0.48.' },
+    { label: '2–4 km', a: 0.71, b: 7.69, ratio: 0.09, note: '2–4 km: 22 hotspots (0.7%) on 7.7% of the peat area. Ratio 0.09.' },
+    { label: 'Over 4 km', a: 0.0, b: 5.95, ratio: 0.0, note: 'Over 4 km: no hotspots, on 6.0% of the peat area.' },
+  ]}
+  caption="Share of hotspots (red) and of peat area (grey, from the 30,001 null points) by distance to the nearest canal. A ratio above 1 means over-representation. The goodness-of-fit test gives Cramér's V = 0.212."
+/>
+
+Two things stand out. The excess is largest in the 0.5–1 km class (ratio 1.40), not right next to the canal. And the deficit far from canals is stark: nothing burns beyond 4 km, and the 2–4 km class holds 7.7% of the peat but under 1% of the hotspots. The map in the thesis makes the geography clear: the canal network is very dense on the deep peat dome of Bukit Batu and Bandar Laksamana and on Rupat, while the core of the dome between Talang Muandau and Siak Kecil lies more than 3 km from any canal and has almost no hotspots. Fire accumulates on the canalised margins of the dome, not in its interior.
+
+Because roughly 70% of the peat is already within 0.5 km of a canal, distance only slightly separates hotspots from the background (ratio 1.18 in that class). The effect is moderate in size but very consistent: keeping one hotspot per 500 m cell to reduce clustering changes almost nothing (P = 0.570), and the odds of a location being a hotspot fall by a factor of 0.74 per ten-fold increase in distance once peat depth is controlled for.
+
+<div class="pp-callout"><div>
+<p><strong>What "per ten-fold distance" means.</strong> Moving from 100 m to 1 km from a canal multiplies the odds of being a hotspot by about 0.73–0.74. In relative terms, the thesis's table puts a non-forest location at 50 m from a canal about 9% above one at 100 m, and 39% below at 4 km. These relative odds are derived from the model coefficients, not separate outputs.</p>
+</div></div>
+
+## Does it hold up? Four checks
+
+**1. Is it just depth?** The null points are depth-matched, so depth cannot produce the contrast. Splitting by depth class does show that the effect is uneven:
+
+<div class="pp-table"><table>
+<caption>Hotspot distance to the nearest canal by peat depth class, against a null restricted to burnable land cover. P is the probability that a hotspot is closer than a null point; pBH is the Benjamini–Hochberg-corrected Mann–Whitney p.</caption>
+<thead><tr><th>Depth</th><th>Hotspots</th><th>Median hotspot (m)</th><th>Median null (m)</th><th>P</th><th>pBH</th></tr></thead>
+<tbody>
+<tr><td>Under 100 cm</td><td>130</td><td>121</td><td>207</td><td>0.632</td><td>9.9 × 10⁻⁷</td></tr>
+<tr><td>100–200 cm</td><td>742</td><td>142</td><td>154</td><td>0.512</td><td>0.329</td></tr>
+<tr><td>200–300 cm</td><td>219</td><td>104</td><td>119</td><td>0.546</td><td>0.038</td></tr>
+<tr><td>300–500 cm</td><td>645</td><td>191</td><td>187</td><td>0.511</td><td>0.363</td></tr>
+<tr><td>500–700 cm</td><td>1,308</td><td>227</td><td>215</td><td>0.528</td><td>0.002</td></tr>
+<tr><td>Over 700 cm</td><td>54</td><td>112</td><td>1,840</td><td>0.830</td><td>3.6 × 10⁻¹⁶</td></tr>
+</tbody></table></div>
+
+The effect is strongest on shallow peat (P = 0.632) and on the very deepest (P = 0.830), where hotspots sit 112 m from a canal while random points in that class have a median of 1.84 km: the burned peat deeper than 7 m is almost entirely the drained margin. There is no clear difference at 100–200 and 300–500 cm. With only 54 hotspots in the deepest class, the thesis cautions against generalising from it to all deep peat.
+
+**2. Is it just that fire needs something to burn?** Restricting the null to burnable land cover (tree, shrub, grass, cropland, bare, herbaceous wetland; 3,098 of 3,100 hotspots qualify) leaves the result unchanged: median 172 m versus 210 m, P = 0.568. Adding ESA WorldCover land cover to the model gives an odds ratio of 0.77 (0.69–0.84), in line with 0.74 without it.
+
+**3. Is the 2017 canal map a problem for fires from 2015 to 2024?** The map does not record canals built or blocked afterwards, including restoration canal blocks. Hotspots in 2016–2018 give an odds ratio of 0.66 and hotspots in other years 0.78. Same direction, both significant, and the strength does not fall clearly as the year moves away from the imagery. Temporal mismatch does not explain the result, though post-2017 canals could still be diluting it.
+
+**4. Is it just the satellite?** The last check replaces hotspots with burned area from Landsat (the dATBI index described in [the hotspot-validation post](/blog/hotspot-vs-burned-area-validation-bengkalis)), sampled at random points on peat. In 2015, 1.93% of points within 0.5 km of a canal burned, against 1.35% at 0.5–1 km, 0.42% at 1–2 km and 0.08% beyond 2 km, a steady decline. The pooled odds ratio is 0.73 (0.61–0.87), nearly the same as the hotspot estimates. The year 2019 does not follow: OR 0.94 (0.72–1.23). The thesis reads the yearly results as consistency of direction, not precise magnitudes, because the index is a lower bound on burned area.
+
+## Where the pattern flips: forest, and open land
+
+<div class="pp-table"><table>
+<caption>Canal-distance effect by pre-fire forest status (peat only; tree-cover threshold 30%; null points n = 28,676 non-forest and 1,325 forest).</caption>
+<thead><tr><th>Stratum</th><th>Hotspots</th><th>Median hotspot (m)</th><th>Median null (m)</th><th>P</th><th>OR per 10× distance</th></tr></thead>
+<tbody>
+<tr><td>Non-forest before the fire</td><td>2,911</td><td>167</td><td>209</td><td>0.573</td><td>0.73 (0.66–0.80)</td></tr>
+<tr><td>Forest before the fire</td><td>189</td><td>287</td><td>241</td><td>0.469</td><td>1.01 (0.69–1.48)</td></tr>
+</tbody></table></div>
+
+Hotspots are 1.4 times over-represented on pre-fire forest overall (6.1% of hotspots against 4.4% of null points). But that excess comes from forest more than about 70 m from a canal; on non-forest peat the fire is concentrated near canals. In a joint model the distance × forest interaction is +0.459 (p = 0.013), so the two strata genuinely differ, and the result is the same with a 50% tree-cover threshold.
+
+Land cover tells the same story from another angle. Hotspots are over-represented on grass (ratio 2.88) and shrub (1.83) and under-represented on trees (0.75). On tree cover, hotspots are closer to canals (OR 0.67); on open land there is no relationship, and the direction is even slightly reversed (OR 1.17, interval includes 1). The reading the thesis offers: canals are associated with fire on treed or newly cleared peat, where drainage has only recently begun to matter, whereas on land that is already open and dry, distance to a canal no longer discriminates.
+
+## How this sits with other studies
+
+The regional evidence points the same way on direction. Drainage affects at least 65% of Southeast Asian peatlands, and intensively drained areas subside about 3.2 times faster than undrained ones.[^dadap21] Across Sumatra and Kalimantan, drained peatlands had up to 13 times the annual hotspot density of undrained peat.[^salmayenti25] A study in the Riau peat hydrological unit of Gaung–Batang Tuaka found that canal density correlated with burned area in peatland forests but not within managed or unmanaged land considered separately.[^rossita23]
+
+The odds ratio here is not directly comparable with those area-based density ratios, which compare drained and undrained peat as a whole, whereas this study compares positions inside a landscape that is almost entirely drained.
+
+The one real disagreement is forest. The regional study found its largest contrast in forested peat; here there is no canal effect on pre-fire forest. The thesis lists four explanations that these data cannot separate:
+
+1. **Power.** Only 189 hotspots fall on pre-fire forest, so the interval (0.69–1.48) cannot exclude a modest effect either way.
+2. **Definition.** Hansen tree cover is a canopy measure for the year 2000 and counts loss in the fire year as forest, so a "forest" label may describe a recently burned or degraded canopy.
+3. **Scale.** The regional study uses canal density per area; here the predictor is distance to the nearest line, which saturates at a few hundred metres in a dense network.
+4. **Climate.** The drainage–fire link in that study was strongest in an ENSO-neutral year and weakest in the 2015 El Niño, when drought can overwhelm differences in drainage. Since 57% of Bengkalis's hotspots fall in 2015 and 2019, the pooled estimate is dominated by years in which the canal effect is expected to be weakest.
+
+The last point suggests the most informative next step: estimate the distance effect separately for neutral, El Niño and La Niña months. The thesis notes this is feasible with the existing hotspot file.
+
+## What it means, and what it does not
+
+<div class="pp-callout"><div>
+<p><strong>Read it as targeting, not proof of cause.</strong> The canal layer labels roads as canals in part, so distance to the network mixes drainage with access and human ignition, and the two cannot be separated here. The effect is real but modest compared with the effects of peat depth and climate in the other posts of this cluster.</p>
+</div></div>
+
+For disaster management the useful reading is spatial. The thesis recommends canal blocking, rewetting and patrols on non-forest peat within a few hundred metres of canals, in the sub-districts with the heaviest hotspot burden. It adds a reason to care beyond hotspot counts: in drained peat, burn depth and the chance of repeat fire rise towards canals, with carbon losses of 114, 64, 38 and 13 t C per hectare for the first to fourth fire,[^konecny16] so a fire near a canal is likely to cost more than a hotspot count suggests.
+
+Two caveats the thesis itself flags: canal blocks from restoration programmes are not in the 2017 map, and records of where and when blocks were built in Bengkalis were not available, so restoration cannot be entered as a covariate. For the full set of recommendations see [the post on what the thesis asks of BPBD and its partners](/blog/thesis-recommendations-disaster-management-bengkalis); for where this fits in the argument, see [the thesis overview](/blog/thesis-overview-enso-peat-fire-bengkalis).
+
+*All numbers in this post come from Section 4.9 of the thesis (Tables 4.30–4.37) and the related discussion. Hotspots: NASA FIRMS (MODIS), filtered with DBSCAN. Canal map: 2017 imagery. Land cover: ESA WorldCover 2021. Burned area: Landsat via Google Earth Engine.*
+
+[^dadap21]: Dadap, N. C. et al. (2021). Drainage canals in Southeast Asian peatlands increase carbon emissions. *AGU Advances* 2(1), e2020AV000321. The source of the 2017 canal map used in the thesis, and of the figures on drainage extent and subsidence quoted above.
+[^salmayenti25]: Salmayenti, R., Baird, A. J., Holden, J. & Spracklen, D. V. (2025). Drainage density and land cover interact to affect fire occurrence in Indonesian peatlands. *Environmental Research Letters* 20(5), 054036. [doi:10.1088/1748-9326/adc755](https://doi.org/10.1088/1748-9326/adc755).
+[^rossita23]: Rossita, A., Boer, R., Hein, L., Nurrochmat, D. & Riqqi, A. (2023). Peatland fire regime across Riau peat hydrological unit, Indonesia. *Forest and Society* 7(1), 76–94. [doi:10.24259/fs.v7i1.21996](https://doi.org/10.24259/fs.v7i1.21996).
+[^konecny16]: Konecny, K. et al. (2016). Variable carbon losses from recurrent fires in drained tropical peatlands. *Global Change Biology* 22(4), 1469–1480.

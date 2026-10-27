@@ -1,0 +1,116 @@
+---
+title: "Can ENSO Beat the Calendar? Testing an Early-Warning Rule for Bengkalis's Fire Season"
+subtitle: "A rule built on the Oceanic Niño Index and local drought was scored against the simplest alarm there is: ring the bell in every fire month. It did not win by enough to count."
+date: "2026-10-28"
+author: "Muhammad Rifqy"
+tags: ["fire", "peatland", "ENSO", "early-warning", "Bengkalis"]
+cluster: "thesis"
+chapter: "4.8"
+---
+
+import '../../styles/paper.css';
+import '../../styles/thesis.css';
+import SkillBars from '../../components/thesis/SkillBars.jsx';
+
+ENSO can be forecast months ahead, which makes it an attractive trigger for a fire early-warning system. The thesis tests that idea in the most direct way it can: build a rule from ENSO and drought, apply it to years it has never seen, and compare it with a baseline that needs no climate information at all. This post covers that test, and the descriptive alert levels that sit next to it.
+
+<div class="pp-keys">
+  <div><b>0.21</b><span>Peirce Skill Score of the ONI-plus-drought rule (nested leave-one-year-out)</span></div>
+  <div><b>0.16</b><span>Peirce Skill Score of the baseline: an alarm in every fire month</span></div>
+  <div><b>+0.034</b><span>bootstrap mean difference in PSS; 95% CI −0.039 to +0.102, so not significant</span></div>
+  <div><b>0</b><span>folds in which the drought condition was switched on by the rule's own tuning</span></div>
+</div>
+
+## The short version
+
+- **The climate rule did not significantly beat the seasonal calendar.** Its skill edge (PSS +0.034 on the bootstrap mean) has a confidence interval that spans zero.
+- **Tuned on training years, the rule collapsed to "fire season and not La Niña".** The drought condition was never selected, and the ONI threshold flipped between −0.5 and 0.0.
+- **The trade-off is real.** The rule raised 152 fewer false alarms than the calendar but missed 35 more fire months.
+- **That does not make ENSO useless.** It says the calendar already captures most of the predictable timing in Bengkalis, and ENSO is better used to escalate preparedness than to decide when to start.
+
+## What the rule is, and what it is scored against
+
+The candidate rule raises an alarm for a sub-district in a given month if three things hold: that month is an empirical fire month, the one-month-lagged ONI is above a threshold, and lagged drought is below a threshold. The fire months are worked out from the training years only, and so are the thresholds, so the year being tested never influences the rule. This is a nested leave-one-year-out design, repeated for each of the ten years.
+
+The reference is an alarm in every fire month. That sounds naive, but it is close to what already happens: provincial alert periods in Riau typically open in February and close at the end of the second dry season. In 2019 the governor declared an alert status from 19 February to 31 October; in 2026 the provincial status runs from 13 February to 30 November. That matches the two fire seasons the thesis documents, so in practice the status already works as a seasonal-calendar rule.
+
+Skill is scored with the standard yes/no forecast measures: probability of detection (POD, the share of fire months caught), false alarm ratio (FAR, the share of alarms that were wrong), probability of false detection (POFD) and the Critical Success Index (CSI). The headline measure is the Peirce Skill Score, PSS = POD − POFD, because it does not reward simply forecasting the more common category and does not depend on the base rate.[^hanssen65]
+
+## The result
+
+<div class="pp-table"><table>
+<caption>Early-warning skill under nested leave-one-year-out evaluation (1,309 sub-district-months: the 1,320 panel rows minus the first month of each of the 11 sub-districts, which is lost to the one-month lag).</caption>
+<thead><tr><th>Rule</th><th>POD</th><th>FAR</th><th>POFD</th><th>CSI</th><th>PSS</th><th>Alarms</th><th>Hits</th></tr></thead>
+<tbody>
+<tr><td>ONI + drought (nested)</td><td>0.416</td><td>0.616</td><td>0.211</td><td>0.250</td><td>0.205</td><td>341</td><td>131</td></tr>
+<tr><td>Alarm every fire month</td><td>0.527</td><td>0.686</td><td>0.364</td><td>0.245</td><td>0.163</td><td>528</td><td>166</td></tr>
+</tbody></table></div>
+
+Read as a trade-off, the table is easy to interpret. With about 315 fire months in the evaluation set, the climate rule produced 131 hits and 210 false alarms. The calendar produced 166 hits and 362 false alarms. The rule therefore missed 35 more fire months but raised 152 fewer false alarms. The false-detection probability fell from 0.36 to 0.21, while the CSI was almost identical (0.25), so the gain in false alarms was paid for in missed fires.
+
+The PSS improvement was +0.042 as a point estimate and +0.034 as a bootstrap mean, with a 95% year-bootstrap interval of −0.039 to +0.102. That interval includes zero, so the improvement is not significant.
+
+### Why the rule collapses
+
+The thresholds chosen in each fold show how little the climate inputs contribute. The ONI threshold alternated between −0.5 (four folds) and 0.0 (six folds). The drought condition was never activated: in every fold the tuning chose "no condition". Training PSS stayed between 0.22 and 0.30. In other words, within fire months the rule mostly suppresses alarms in La Niña conditions and otherwise rings the same bell as the calendar.
+
+The fire-month definition itself is slightly unstable at the edges. When 2015 is held out, July drops out of the fire months (leaving February, March, April and August); when 2016 is held out, April drops out, because a few extreme years dominate the monthly shares. Once either of those years is included, the definition is stable, which supports using it as the seasonal reference.
+
+### Where the rule works better and worse
+
+<SkillBars client:visible />
+
+PSS is positive everywhere, from 0.13 in Bukit Batu to 0.35 in Rupat Utara, but the false-alarm ratio swings widely: 0.16 in Bandar Laksamana against 0.90 in Mandau. Every sub-district received the same number of alarms (31) because the rule is applied uniformly in time, so the differences come from where fire occurred, not from how often the alarm sounded. Rupat, the sub-district with the most hotspots, has one of the lowest scores (POD 0.35), which fits its fires occurring in many months beyond those the rule flags.
+
+### A check on 2025
+
+Data from 2025 were held out of everything above. In the 132 sub-district-months of that year there were 8 fire months (6.1%), and the mean ONI was −0.28 (neutral to weak La Niña). The fitted model reached an AUC of 0.681 against 0.664 for monthly climatology, and a Brier score of 0.092 against 0.118, a Brier skill score of +0.225. Calibration improves substantially; discrimination hardly. With only eight positive events, the thesis says this should be read as consistent with the leave-one-year-out results, not as extra evidence.
+
+## What to make of it
+
+<div class="pp-callout"><div>
+<p><strong>The question is about cost.</strong> If a false alarm is cheap, such as an extra patrol, relative to a missed fire, the calendar's higher detection rate is preferable. If mobilisation is expensive, the climate rule's lower false-alarm rate matters more. Which is right is a decision for the agency, not something a skill score settles.</p>
+</div></div>
+
+The thesis draws three implications for Bengkalis. The seasonal calendar already captures most of the predictable timing. ENSO is best used as a seasonal intensifier that prompts escalated preparedness in fire months when El Niño is forecast. And the most effective risk reduction will come from spatial targeting (canal proximity, converted peat, high-hotspot sub-districts) combined with real-time FIRMS and drought monitoring.
+
+There is a reason to expect this. Predictability for Sumatra, including Riau, is shorter and depends more on the Indian Ocean Dipole than it does for Kalimantan, so a rule using only lagged ONI was not expected to beat the calendar by much.[^shawki17] The finding that local drought indices carry more information than ONI is also consistent with the design of Indonesia's national Fire Danger Rating System, in which a slowly responding drought index, the Drought Code, rather than an ocean index, is the haze indicator.[^degroot07]
+
+It also helps to be clear about scope. An early-warning system is more than a forecast: the standard formulation has four elements (risk knowledge, monitoring and warning service, dissemination and communication, response capability), and POD, FAR and PSS assess only the second.
+
+## Alert levels: a descriptive scheme, not a forecast
+
+Alongside the skill test, the thesis builds a descriptive alert table. The level for each sub-district is set by the lower bound of the 95% Wilson interval for the probability of a fire month during El Niño fire-season months, which is deliberately conservative where observations are few. A sub-district with fewer than 12 such months is labelled "insufficient data".
+
+<div class="pp-table"><table>
+<caption>Alert levels and thresholds (descriptive scheme, Table 4.25). Levels use Indonesian terms: Siaga = Alert, Waspada = Watch. The recommended-action column is cut off in the PDF of the thesis, so only the readable parts are paraphrased here.</caption>
+<thead><tr><th>Level</th><th>Lower 95% bound of P(fire month | El Niño fire season)</th><th>Action (as readable in the thesis)</th></tr></thead>
+<tbody>
+<tr><td>Siaga 1</td><td>0.60 or more</td><td>Mobilise suppression teams; check canal water levels</td></tr>
+<tr><td>Siaga 2</td><td>0.40 or more</td><td>Mobilise suppression teams; check canal water levels</td></tr>
+<tr><td>Siaga 3</td><td>0.25 or more</td><td>Prepare teams; daily hotspot monitoring (FIRMS)</td></tr>
+<tr><td>Waspada</td><td>0.10 or more</td><td>Monitor the monthly ONI (BMKG)</td></tr>
+<tr><td>Normal</td><td>under 0.10</td><td>Weekly FIRMS monitoring</td></tr>
+</tbody></table></div>
+
+Applied to Bengkalis, the probability of a fire month rises in every sub-district from "all months" to "El Niño months" to "El Niño months in the dry season", but the size of the jump differs a lot. Bandar Laksamana goes from 0.57 to 0.68 to 0.94; Rupat from 0.41 to 0.61 to 0.78; Mandau only from 0.06 to 0.09 to 0.22. The resulting levels: Bandar Laksamana at Alert 1 (2-month lag), Rupat at Alert 2 (0-month lag), Siak Kecil, Talang Muandau, Bengkalis and Pinggir at Alert 3, four sub-districts at Watch, and Mandau at Normal.
+
+The thesis is firm about how to read this. The probabilities come from few, autocorrelated El Niño months in three episodes (2015/16, 2018/19, 2023/24), so the intervals are optimistic. And because ONI adds no demonstrable skill over the calendar, the levels are descriptive priorities, not forecasts.
+
+### A companion ranking: composite vulnerability
+
+A separate time-invariant screening index combines climate sensitivity (40%), peat area and depth (40%) and exposure (20%), with hotspot counts left out to avoid circularity. Siak Kecil ranks first under both versions (0.70 primary, 0.71 extended), followed by Bandar Laksamana, Rupat and Talang Muandau. Rupat has the most hotspots but ranks third; Siak Kecil ranks first with the fifth-highest count. The index shows where large deep peat and climate sensitivity could combine into severe fire in a drought year, not where fire concentrated in this decade. Its weights were chosen by judgement, so it is a screening tool, not a risk assessment.
+
+## Limits worth keeping in mind
+
+- Ten years contain only two or three ENSO warm episodes (2015, 2019 with a positive IOD, and 2023), so any ENSO-based skill estimate is imprecise.
+- The 1,320 panel rows share one ONI series, which is why the evaluation relies on leave-one-year-out blocks and year-level bootstrap, not row-level tests.
+- Fire months and thresholds change from fold to fold, so the "rule" is really a family of similar rules.
+
+For what the thesis proposes to do with this result, see [the post on recommendations for disaster management](/blog/thesis-recommendations-disaster-management-bengkalis). For how much of the ENSO signal is really local drought, see [the ENSO and SPI-3 analysis](/blog/enso-spi3-peatland-fire-bengkalis).
+
+*All numbers in this post come from Sections 3.13, 4.7.6–4.8, 2.7–2.8 and 5.7 of the thesis (Tables 4.25–4.29). Fire months, thresholds and alert levels are derived from NASA FIRMS (MODIS) hotspots filtered with DBSCAN, ONI from NOAA, and SPEI-3 from CHIRPS and ERA5-Land.*
+
+[^hanssen65]: Hanssen, A. W. & Kuipers, W. J. A. (1965). On the relationship between the frequency of rain and various meteorological parameters. *Mededelingen en Verhandelingen*, Koninklijk Nederlands Meteorologisch Instituut 81, 2–15. The thesis also cites Wilks, D. S. (2011), *Statistical Methods in the Atmospheric Sciences*, 3rd edn, Academic Press, for the properties of the score.
+[^shawki17]: Shawki, D. et al. (2017), as discussed in the thesis (Section 2.7): CFSv2 Drought Code forecasts for the 2015 season had lead times of 180 days for southern Kalimantan but only up to 60 days for southern Sumatra. The inference about a lagged-ONI rule is the thesis's own.
+[^degroot07]: de Groot, W. J., Field, R. D., Brady, M. A., Roswintiarti, O. & Mohamad, M. (2007). Development of the Indonesian and Malaysian fire danger rating systems. *Mitigation and Adaptation Strategies for Global Change* 12(1), 165–180. [doi:10.1007/s11027-006-9043-8](https://doi.org/10.1007/s11027-006-9043-8).

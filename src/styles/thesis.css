@@ -48,3 +48,32 @@
 
 .th-abl { grid-template-columns: minmax(0, 1fr) 270px; }
 .th-note { max-width: 720px; margin: 2rem auto; padding: 0 2rem; }
+
+/* Paired bars: share of hotspots vs share of area, with a ratio column */
+.th-pair-head, .th-pair-row { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr) 3.6rem; gap: .9rem; align-items: center; }
+.th-pair-head { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); font-weight: 700; margin-bottom: .6rem; }
+.th-pair-head .th-pair-key { display: flex; gap: 1.1rem; flex-wrap: wrap; text-transform: none; letter-spacing: 0; font-weight: 500; font-size: .76rem; color: var(--text-muted); }
+.th-pair-key i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: .4rem; vertical-align: -1px; }
+.th-pair-row { padding: .45rem 0; border-bottom: 1px solid var(--border); outline: none; }
+.th-pair-row:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.th-pair-row.dim { opacity: .45; }
+.th-pair-label { font-size: .84rem; color: var(--text); }
+.th-pair-label small { display: block; color: var(--text-dim); font-size: .7rem; }
+.th-pair-bars { display: grid; gap: 3px; }
+.th-pair-bars .th-bar { height: 16px; }
+.th-pair-ratio { text-align: right; font-family: var(--font-display); font-size: 1.05rem; color: var(--text-bright); font-variant-numeric: tabular-nums; }
+.th-pair-ratio.hi { color: var(--coral); }
+.th-pair-ratio.lo { color: var(--teal); }
+@media (max-width: 640px) { .th-pair-head, .th-pair-row { grid-template-columns: 5.6rem minmax(0, 1fr) 3rem; gap: .5rem; } .th-pair-label { font-size: .74rem; } }
+
+/* Skill bars (PSS per sub-district) */
+.th-skill-row { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr) 3.6rem; gap: .9rem; align-items: center; padding: .4rem 0; border-bottom: 1px solid var(--border); outline: none; }
+.th-skill-row:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.th-skill-track { position: relative; height: 16px; background: var(--bg-subtle); border-radius: 2px; }
+.th-skill-track > div { height: 100%; border-radius: 2px; min-width: 2px; }
+.th-skill-ref { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--gold); }
+@media (max-width: 640px) { .th-skill-row { grid-template-columns: 5.6rem minmax(0, 1fr) 3rem; gap: .5rem; } }
+
+/* Text-heavy tables: keep every column left-aligned */
+.pp-table.pp-left td, .pp-table.pp-left th { text-align: left !important; vertical-align: top; }
+.pp-table.pp-left { max-width: 860px; }
