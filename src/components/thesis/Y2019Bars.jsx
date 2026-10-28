@@ -5,7 +5,7 @@ export default function Y2019Bars() {
   const [sortBy, setSortBy] = useState('mcd');
   const rows = Object.entries(Y2019).sort((a, b) => (sortBy === 'hs' ? b[1][0] - a[1][0] : sortBy === 'mcd' ? b[1][1] - a[1][1] : b[1][2] - a[1][2]));
   const mx = [Math.max(...rows.map((r) => r[1][0])), Math.max(...rows.map((r) => r[1][1])), Math.max(...rows.map((r) => r[1][2]))];
-  const cols = ['#f0bc2e', '#e8533a', '#1cc8aa'];
+  const cols = ['var(--c-gold)', 'var(--c-coral)', 'var(--c-teal)'];
   const names = ['Hotspots', 'MCD64A1 ha', 'dATBI ha'];
   return (
     <figure className="pp-fig pp-wide">
@@ -19,7 +19,7 @@ export default function Y2019Bars() {
             ))}
           </div>
         ))}
-        <div className="th-grid3-row th-grid3-head"><span /> {names.map((n, i) => <span key={n} style={{ color: cols[i] }}>{n}</span>)}</div>
+        <div className="th-grid3-row th-grid3-head"><span /> {names.map((n, i) => <span key={n} style={{ color: ['var(--gold)', 'var(--coral)', 'var(--teal)'][i] }}>{n}</span>)}</div>
       </div>
       <figcaption>2019, by kecamatan. Each column is scaled to its own maximum. Rupat leads on all three measures. The disagreements are the interesting rows: Bukit Batu has no hotspots but 571 ha of MODIS burned area, and Rupat Utara has 5 hotspots against 1,488 ha. Landsat dATBI finds little in either (9.7 and 37.7 ha), so those MODIS-only areas are unresolved, not confirmed fires.</figcaption>
     </figure>

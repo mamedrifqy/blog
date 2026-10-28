@@ -24,15 +24,15 @@ export default function OddsForest({ caption }) {
     <figure className="pp-fig">
       <svg viewBox={`0 0 ${W} ${H}`} className="th-svg" role="img" aria-label="Odds ratios of the canal-distance logistic regression with 95% confidence intervals">
         {[0.1, 0.25, 0.5, 1, 2, 4].map((t) => (
-          <g key={t}><line x1={x(t)} x2={x(t)} y1={PT - 6} y2={H - 28} stroke={t === 1 ? 'rgba(255,255,255,.4)' : 'rgba(255,255,255,.08)'} /><text className="th-ax" x={x(t)} y={H - 12} textAnchor="middle">{t}</text></g>
+          <g key={t}><line x1={x(t)} x2={x(t)} y1={PT - 6} y2={H - 28} stroke={t === 1 ? 'rgb(var(--ink-rgb) / .4)' : 'rgb(var(--ink-rgb) / .08)'} /><text className="th-ax" x={x(t)} y={H - 12} textAnchor="middle">{t}</text></g>
         ))}
-        <text className="th-ax" x={x(1)} y={14} textAnchor="middle" fill="#b8b2a6">odds ratio (log scale); 1 = no effect</text>
+        <text className="th-ax" x={x(1)} y={14} textAnchor="middle" fill="var(--text-muted)">odds ratio (log scale); 1 = no effect</text>
         {rows.map((r, i) => {
           const cy = PT + i * ROW + ROW / 2;
-          const c = r.odds_ratio < 1 ? '#1cc8aa' : '#f0bc2e';
+          const c = r.odds_ratio < 1 ? 'var(--c-teal)' : 'var(--c-gold)';
           return (
             <g key={r.k} tabIndex={0} role="button" aria-label={NAMES[r.k]} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(null)} onFocus={() => setHov(i)} onBlur={() => setHov(null)}>
-              <rect x={0} y={cy - ROW / 2} width={W} height={ROW} fill={hov === i ? 'rgba(255,255,255,.04)' : 'transparent'} />
+              <rect x={0} y={cy - ROW / 2} width={W} height={ROW} fill={hov === i ? 'rgb(var(--ink-rgb) / .04)' : 'transparent'} />
               <text className="th-lab-s" x={PL - 14} y={cy + 4} textAnchor="end">{NAMES[r.k]}</text>
               <line x1={x(r.ci95_low)} x2={x(r.ci95_high)} y1={cy} y2={cy} stroke={c} strokeWidth="2.5" />
               <line x1={x(r.ci95_low)} x2={x(r.ci95_low)} y1={cy - 5} y2={cy + 5} stroke={c} strokeWidth="2" />

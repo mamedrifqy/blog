@@ -13,7 +13,7 @@ export default function ThesisMap({ fills, dashed = [], selected, onSelect, cont
       <div className="pp-map-grid">
         <svg viewBox={`-60 -10 ${D.w + 120} ${D.h + 20}`} role="img" aria-label={label}>
           {KEC.map((n) => (
-            <path key={n} d={D.kec[n].d} fill={fills[n]} stroke={active === n ? '#f2ede4' : 'rgba(255,255,255,.28)'} strokeWidth={active === n ? 2.2 : 0.8}
+            <path key={n} d={D.kec[n].d} fill={fills[n]} stroke={active === n ? 'var(--text-bright)' : 'rgb(var(--ink-rgb) / .28)'} strokeWidth={active === n ? 2.2 : 0.8}
               strokeDasharray={dashed.includes(n) ? '5 4' : undefined} className="pp-kec" tabIndex={0} aria-label={n}
               onMouseEnter={() => setHov(n)} onMouseLeave={() => setHov(null)} onFocus={() => setHov(n)} onBlur={() => setHov(null)}
               onClick={() => onSelect(n)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSelect(n)} />

@@ -12,6 +12,7 @@
  */
 
 import { useEffect, useRef } from 'react';
+import { useTheme, palette, ink } from '../lib/theme.js';
 
 const FILTER_COLORS = {
   anchors:   '#3ab06e',
@@ -20,6 +21,7 @@ const FILTER_COLORS = {
 };
 
 export default function DbscanChart({ data = {}, title = '' }) {
+  const theme = useTheme();
   const canvasRef = useRef(null);
   const chartRef  = useRef(null);
 
@@ -27,6 +29,7 @@ export default function DbscanChart({ data = {}, title = '' }) {
     async function build() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
+      const P = palette();
       if (chartRef.current) chartRef.current.destroy();
 
       const { anchors = 0, rescued = 0, discarded = 0 } = data;
@@ -51,17 +54,17 @@ export default function DbscanChart({ data = {}, title = '' }) {
             legend: {
               position: 'bottom',
               labels: {
-                color:    '#8a9e8f',
+                color:    P.muted,
                 font:     { family: "'Source Sans 3', sans-serif", size: 11 },
                 boxWidth: 14,
                 padding:  16,
               },
             },
             tooltip: {
-              backgroundColor: 'rgba(12,26,16,0.95)',
-              titleColor: '#f0ece0',
-              bodyColor: '#8a9e8f',
-              borderColor: 'rgba(255,255,255,0.07)',
+              backgroundColor: P.pop,
+              titleColor: P.bright,
+              bodyColor: P.muted,
+              borderColor: ink(0.07),
               borderWidth: 1,
               padding: 12,
               callbacks: {
@@ -76,12 +79,12 @@ export default function DbscanChart({ data = {}, title = '' }) {
             const { ctx, width, height } = chart;
             ctx.save();
             ctx.font = "900 1.6rem 'Playfair Display', serif";
-            ctx.fillStyle = '#f0ece0';
+            ctx.fillStyle = P.bright;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(total.toLocaleString(), width / 2, height / 2 - 10);
             ctx.font = "400 0.7rem 'Source Sans 3', sans-serif";
-            ctx.fillStyle = '#8a9e8f';
+            ctx.fillStyle = P.muted;
             ctx.fillText('total raw detections', width / 2, height / 2 + 14);
             ctx.restore();
           },
@@ -91,7 +94,7 @@ export default function DbscanChart({ data = {}, title = '' }) {
 
     build();
     return () => chartRef.current?.destroy();
-  }, [data]);
+  }, [data, theme]);
 
   return (
     <div style={{
@@ -103,12 +106,12 @@ export default function DbscanChart({ data = {}, title = '' }) {
     }}>
       {title && (
         <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.05rem',
-          color: '#f0ece0', marginBottom: '1.25rem' }}>{title}</h4>
+          color: 'var(--text-bright)', marginBottom: '1.25rem' }}>{title}</h4>
       )}
       <div style={{ height: 300, position: 'relative' }}>
         <canvas ref={canvasRef} />
       </div>
-      <p style={{ fontSize: '0.72rem', color: '#4a5e50', marginTop: '0.75rem', marginBottom: 0 }}>
+      <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.75rem', marginBottom: 0 }}>
         Source: MODIS C6.1 FIRMS archive · DBSCAN spatial filter (eps = 1.5 km) · Bengkalis Regency, 2015–2024
       </p>
     </div>

@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import raw from '../../data/dbscan-points.json';
 import { D, fmt, MN } from './shared.js';
+import { useTheme, cssVar, ink, palette, getTheme } from '../../lib/theme.js';
 import { prepare, analyze, at, curve } from './dbscan.js';
 
 // projection constants of the kecamatan outlines (same as KecMap)
 const PROJ = { minx: 100.96788273000004, maxy: 2.125813735000065, k: 0.9996463924649783, S: 649.5602740212846 };
 const KM = PROJ.S / 111.19; // map units per km
 const proj = (lon, lat) => [(lon - PROJ.minx) * PROJ.k * PROJ.S, (PROJ.maxy - lat) * PROJ.S];
-const C = { anchor: '#1cc8aa', medium: '#f0bc2e', low: '#6c7480', drop: '#e8533a' };
+// CSS variables, so DOM/SVG legends follow the theme; the canvas resolves them at draw time with rc().
+const C = { anchor: 'var(--c-teal)', medium: 'var(--c-gold)', low: '#6c7480', drop: 'var(--c-coral)' };
+const rc = (c) => (c.startsWith('var(--') ? cssVar(c.slice(4, -1)) : c);
 const HUES = [190, 285, 38, 150, 330, 215, 80, 260, 170, 60];
-const clColor = (k) => `hsl(${HUES[k % HUES.length]} 70% ${k < 10 ? 58 : 66}%)`;
+const clColor = (k) => { const light = getTheme() === 'light'; return `hsl(${HUES[k % HUES.length]} 70% ${k < 10 ? (light ? 42 : 58) : (light ? 50 : 66)}%)`; };
 const STEPS = [
   ['Raw detections', 'raw'],
   ['Sort by confidence', 'conf'],
@@ -20,6 +23,7 @@ const STEPS = [
 const EPSG = Array.from({ length: 20 }, (_, i) => (i + 1) * 0.25);
 
 export default function DbscanExplorer() {
+  const theme = useTheme();
   const P = useMemo(() => prepare(raw), []);
   const XY = useMemo(() => P.lon.map((lo, i) => proj(lo, P.lat[i])), [P]);
   const [step, setStep] = useState(1);
@@ -60,7 +64,7 @@ export default function DbscanExplorer() {
       const dpr = window.devicePixelRatio || 1; c.width = size * dpr; c.height = H * dpr;
       const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, size, H);
       x.save(); x.translate(size / 2 - view.cx * sc, H / 2 - view.cy * sc); x.scale(sc, sc);
-      x.fillStyle = '#16191b'; x.strokeStyle = 'rgba(255,255,255,.22)'; x.lineWidth = 1 / sc;
+      x.fillStyle = cssVar('--bg-card'); x.strokeStyle = ink(0.22); x.lineWidth = 1 / sc;
       for (const p of paths.current) { x.fill(p); x.stroke(p); }
       x.restore();
       // draw dim points first so the kept ones sit on top
@@ -68,17 +72,17 @@ export default function DbscanExplorer() {
       order.sort((a, b) => a[1].a - b[1].a);
       for (const [i, l] of order) {
         const [px, py] = toScr(XY[i][0], XY[i][1]); if (px < -6 || py < -6 || px > size + 6 || py > H + 6) continue;
-        x.globalAlpha = l.a; x.fillStyle = l.c; x.beginPath(); x.arc(px, py, l.r * (view.z > 8 ? 1.5 : 1), 0, 6.2832); x.fill();
-        if (step === 3 && S.tier[i] === 1 && R.rescued[i]) { x.globalAlpha = 0.9; x.strokeStyle = '#fff'; x.lineWidth = 0.8; x.stroke(); }
+        x.globalAlpha = l.a; x.fillStyle = rc(l.c); x.beginPath(); x.arc(px, py, l.r * (view.z > 8 ? 1.5 : 1), 0, 6.2832); x.fill();
+        if (step === 3 && S.tier[i] === 1 && R.rescued[i]) { x.globalAlpha = 0.9; x.strokeStyle = palette().bright; x.lineWidth = 0.8; x.stroke(); }
       }
       x.globalAlpha = 1;
       const m = mouse.current;
       if (m && (step === 2 || step === 3)) { // eps ring: this is the reach of one anchor
-        x.strokeStyle = '#f2ede4'; x.setLineDash([4, 3]); x.lineWidth = 1; x.beginPath(); x.arc(m[0], m[1], eps * KM * sc, 0, 6.2832); x.stroke(); x.setLineDash([]);
+        x.strokeStyle = palette().bright; x.setLineDash([4, 3]); x.lineWidth = 1; x.beginPath(); x.arc(m[0], m[1], eps * KM * sc, 0, 6.2832); x.stroke(); x.setLineDash([]);
       }
     });
     return () => cancelAnimationFrame(raf.current);
-  }, [P, XY, S, R, step, size, view, eps, hover]);
+  }, [P, XY, S, R, step, size, view, eps, hover, theme]);
 
   const onMove = (e) => {
     const r = cv.current.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
@@ -153,7 +157,7 @@ export default function DbscanExplorer() {
         </aside>
       </div>
       <div className="pp-db-count" aria-label="Counts at each stage">
-        {[['Detections', P.n, C.medium], ['Anchors', S.A.length, C.anchor], ['Candidates', S.M.length, C.medium], ['Rescued', R.nRescued, C.medium], ['Kept', R.kept, '#f2ede4'], ['Discarded', R.discarded, C.drop]].map(([l, v, c]) => (
+        {[['Detections', P.n, C.medium], ['Anchors', S.A.length, C.anchor], ['Candidates', S.M.length, C.medium], ['Rescued', R.nRescued, C.medium], ['Kept', R.kept, 'var(--text-bright)'], ['Discarded', R.discarded, C.drop]].map(([l, v, c]) => (
           <div key={l}><b style={{ color: c }}>{fmt(v)}</b><span>{l}</span></div>
         ))}
         <div><b>{fmt(R.clusters)}</b><span>Clusters</span></div>
@@ -196,12 +200,12 @@ function Sens({ crv, eps, thr, setEps }) {
       <h5>How much does the radius matter? (anchors at {thr}%)</h5>
       <svg viewBox={`0 0 ${W} ${H}`} className="pp-db-chart pp-db-click" onClick={pick} role="img" aria-label="Kept points and cluster count as a function of the radius. Click to set the radius.">
         <polyline points={crv.map((d) => `${x(d.eps)},${yc(d.clusters)}`).join(' ')} fill="none" stroke={C.medium} strokeWidth="2" strokeDasharray="4 3" />
-        <polyline points={crv.map((d) => `${x(d.eps)},${yk(d.kept)}`).join(' ')} fill="none" stroke="#f2ede4" strokeWidth="2.2" />
+        <polyline points={crv.map((d) => `${x(d.eps)},${yk(d.kept)}`).join(' ')} fill="none" stroke="var(--text-bright)" strokeWidth="2.2" />
         <line x1={x(eps)} x2={x(eps)} y1={T - 4} y2={H - B} className="pp-db-mark" />
         {[1, 2, 3, 4, 5].map((t) => <text key={t} x={x(t)} y={H - 6} textAnchor="middle" className="pp-tick">{t} km</text>)}
-        <text x="2" y={yk(kmax) + 4} className="pp-tick" fill="#f2ede4">{fmt(kmax)}</text><text x="2" y={yk(kmin) + 4} className="pp-tick" fill="#f2ede4">{fmt(kmin)}</text>
+        <text x="2" y={yk(kmax) + 4} className="pp-tick" fill="var(--text-bright)">{fmt(kmax)}</text><text x="2" y={yk(kmin) + 4} className="pp-tick" fill="var(--text-bright)">{fmt(kmin)}</text>
       </svg>
-      <p className="pp-legend"><span><i style={{ background: '#f2ede4' }} />points kept</span><span><i style={{ background: C.medium }} />clusters ({fmt(crv[0].clusters)} at 0.25 km, {crv[crv.length - 1].clusters} at 5 km)</span></p>
+      <p className="pp-legend"><span><i style={{ background: 'var(--text-bright)' }} />points kept</span><span><i style={{ background: C.medium }} />clusters ({fmt(crv[0].clusters)} at 0.25 km, {crv[crv.length - 1].clusters} at 5 km)</span></p>
     </div>
   );
 }

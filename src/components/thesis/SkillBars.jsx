@@ -24,15 +24,15 @@ export default function SkillBars() {
   return (
     <figure className="pp-fig">
       <div className="pp-legend">
-        <span><i style={{ background: '#1cc8aa' }} />Peirce Skill Score, ONI + drought rule</span>
-        <span><i className="pp-line" style={{ background: '#f0bc2e' }} />Regency-wide PSS of the every-fire-month alarm (0.163)</span>
+        <span><i style={{ background: 'var(--c-teal)' }} />Peirce Skill Score, ONI + drought rule</span>
+        <span><i className="pp-line" style={{ background: 'var(--c-gold)' }} />Regency-wide PSS of the every-fire-month alarm (0.163)</span>
       </div>
       {ROWS.map((r, i) => (
         <div key={r.name} className="th-skill-row" tabIndex={0}
           onMouseEnter={() => setH(i)} onMouseLeave={() => setH(null)} onFocus={() => setH(i)} onBlur={() => setH(null)}>
           <span className="th-pair-label">{r.name}</span>
           <div className="th-skill-track">
-            <div style={{ width: (r.pss / MAX) * 100 + '%', background: '#1cc8aa' }} />
+            <div style={{ width: (r.pss / MAX) * 100 + '%', background: 'var(--c-teal)' }} />
             <span className="th-skill-ref" style={{ left: (REF / MAX) * 100 + '%' }} aria-hidden="true" />
           </div>
           <b className="th-pair-ratio">{r.pss.toFixed(2)}</b>

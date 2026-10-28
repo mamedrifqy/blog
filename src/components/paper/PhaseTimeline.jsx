@@ -1,21 +1,24 @@
 import { useEffect, useRef } from 'react';
-import { D, PH, PHK, monthLabel } from './shared.js';
+import { useTheme, palette, ink } from '../../lib/theme.js';
+import { D, PH, PHK, monthLabel, phaseColors } from './shared.js';
 
 export default function PhaseTimeline() {
+  const theme = useTheme();
   const ref = useRef(null);
   useEffect(() => {
     let chart;
     (async () => {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
-      Chart.defaults.color = '#7a8089'; Chart.defaults.font.family = "'Plus Jakarta Sans', system-ui, sans-serif";
+      const P = palette();
+      Chart.defaults.color = P.muted; Chart.defaults.borderColor = ink(0.1); Chart.defaults.font.family = "'Plus Jakarta Sans', system-ui, sans-serif";
       chart = new Chart(ref.current, {
         data: {
           labels: D.months,
           datasets: [
             { type: 'bar', label: 'Hotspots (all 11 kecamatan)', data: D.regency, yAxisID: 'y', barPercentage: 1, categoryPercentage: 0.9,
-              backgroundColor: D.phase.map((p) => PH[PHK[p]]) },
-            { type: 'line', label: 'ONI (°C)', data: D.oni, yAxisID: 'y1', borderColor: '#f0bc2e', borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 3, tension: 0.25 },
+              backgroundColor: D.phase.map((p) => phaseColors(P)[PHK[p]]) },
+            { type: 'line', label: 'ONI (°C)', data: D.oni, yAxisID: 'y1', borderColor: P.cGold, borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 3, tension: 0.25 },
           ],
         },
         options: {
@@ -26,14 +29,14 @@ export default function PhaseTimeline() {
           },
           scales: {
             x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: false, callback: (v, i) => (D.months[i].endsWith('-01') ? D.months[i].slice(0, 4) : '') } },
-            y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,.05)' }, title: { display: true, text: 'Hotspots per month' } },
+            y: { beginAtZero: true, grid: { color: ink(0.05) }, title: { display: true, text: 'Hotspots per month' } },
             y1: { position: 'right', grid: { display: false }, min: -2, max: 3, title: { display: true, text: 'ONI (°C)' } },
           },
         },
       });
     })();
     return () => chart && chart.destroy();
-  }, []);
+  }, [theme]);
   return (
     <figure className="pp-fig pp-wide">
       <div className="pp-legend">

@@ -12,6 +12,7 @@
  */
 
 import { useEffect, useRef } from 'react';
+import { useTheme, palette, ink } from '../lib/theme.js';
 
 const STATUS_COLORS = {
   'Under-represented': 'rgba(55,138,221,0.75)',
@@ -20,6 +21,7 @@ const STATUS_COLORS = {
 };
 
 export default function PeatDepthChart({ data = [], title = '' }) {
+  const theme = useTheme();
   const canvasRef = useRef(null);
   const chartRef  = useRef(null);
 
@@ -27,6 +29,7 @@ export default function PeatDepthChart({ data = [], title = '' }) {
     async function build() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
+      const P = palette();
       if (chartRef.current) chartRef.current.destroy();
       if (!data.length) return;
 
@@ -50,11 +53,11 @@ export default function PeatDepthChart({ data = [], title = '' }) {
               label: 'Area (×10,000 ha)',
               data: sorted.map(d => +(d.area_ha / 10000).toFixed(1)),
               type: 'line',
-              borderColor: '#8a9e8f',
+              borderColor: P.muted,
               backgroundColor: 'transparent',
               borderWidth: 2,
               pointRadius: 4,
-              pointBackgroundColor: '#f0ece0',
+              pointBackgroundColor: P.bright,
               tension: 0.3,
               yAxisID: 'y1',
             },
@@ -67,20 +70,20 @@ export default function PeatDepthChart({ data = [], title = '' }) {
           scales: {
             x: {
               stacked: false,
-              ticks: { color: '#f0ece0', font: { size: 10 } },
-              grid: { color: 'rgba(255,255,255,0.03)' },
-              title: { display: true, text: 'GBT peat depth class', color: '#4a5e50', font: { size: 10 } },
+              ticks: { color: P.bright, font: { size: 10 } },
+              grid: { color: ink(0.03) },
+              title: { display: true, text: 'GBT peat depth class', color: P.muted, font: { size: 10 } },
             },
             y: {
               position: 'left',
-              title: { display: true, text: 'Hotspot count', color: '#4a5e50', font: { size: 11 } },
-              ticks: { color: '#4a5e50', font: { size: 10 } },
-              grid: { color: 'rgba(255,255,255,0.04)' },
+              title: { display: true, text: 'Hotspot count', color: P.muted, font: { size: 11 } },
+              ticks: { color: P.muted, font: { size: 10 } },
+              grid: { color: ink(0.04) },
             },
             y1: {
               position: 'right',
-              title: { display: true, text: 'Area (×10k ha)', color: '#8a9e8f', font: { size: 10 } },
-              ticks: { color: '#8a9e8f', font: { size: 10 } },
+              title: { display: true, text: 'Area (×10k ha)', color: P.muted, font: { size: 10 } },
+              ticks: { color: P.muted, font: { size: 10 } },
               grid: { drawOnChartArea: false },
             },
           },
@@ -88,17 +91,17 @@ export default function PeatDepthChart({ data = [], title = '' }) {
             legend: {
               position: 'bottom',
               labels: {
-                color: '#8a9e8f',
+                color: P.muted,
                 font: { family: "'Source Sans 3', sans-serif", size: 11 },
                 boxWidth: 12,
                 padding: 14,
               },
             },
             tooltip: {
-              backgroundColor: 'rgba(12,26,16,0.95)',
-              titleColor: '#f0ece0',
-              bodyColor: '#8a9e8f',
-              borderColor: 'rgba(255,255,255,0.07)',
+              backgroundColor: P.pop,
+              titleColor: P.bright,
+              bodyColor: P.muted,
+              borderColor: ink(0.07),
               borderWidth: 1,
               padding: 12,
               callbacks: {
@@ -122,7 +125,7 @@ export default function PeatDepthChart({ data = [], title = '' }) {
 
     build();
     return () => chartRef.current?.destroy();
-  }, [data]);
+  }, [data, theme]);
 
   return (
     <div style={{
@@ -134,7 +137,7 @@ export default function PeatDepthChart({ data = [], title = '' }) {
     }}>
       {title && (
         <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.05rem',
-          color: '#f0ece0', marginBottom: '1.25rem' }}>{title}</h4>
+          color: 'var(--text-bright)', marginBottom: '1.25rem' }}>{title}</h4>
       )}
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
         <StatusChip color="rgba(55,138,221,0.2)" textColor="#378add" label="Under-represented" />
@@ -144,7 +147,7 @@ export default function PeatDepthChart({ data = [], title = '' }) {
       <div style={{ height: 320, position: 'relative' }}>
         <canvas ref={canvasRef} />
       </div>
-      <p style={{ fontSize: '0.72rem', color: '#4a5e50', marginTop: '0.75rem', marginBottom: 0 }}>
+      <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.75rem', marginBottom: 0 }}>
         Source: MODIS C6.1 × GBT peat depth (GlobPeat) · DBSCAN filtered · Bengkalis Regency, 2015–2024
       </p>
     </div>

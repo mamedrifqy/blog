@@ -1,9 +1,11 @@
-export const LO = [38, 44, 48];
+// Sequential ramp from the theme's low colour to a chart colour. Returned as a CSS colour so it follows the light/dark theme
+// without any JS (no re-render, no hydration mismatch) and also works inside linear-gradient().
+export const LO = 'var(--ramp-lo)';
 export const mix = (t, hi, lo = LO) => {
   const k = Math.max(0, Math.min(1, t));
-  return 'rgb(' + lo.map((c, i) => Math.round(c + (hi[i] - c) * k)).join(',') + ')';
+  return `color-mix(in srgb, ${hi} ${(k * 100).toFixed(1)}%, ${lo})`;
 };
-export const TEAL = [28, 200, 170], CORAL = [232, 83, 58], GOLD = [240, 188, 46], BLUE = [79, 155, 232];
+export const TEAL = 'var(--c-teal)', CORAL = 'var(--c-coral)', GOLD = 'var(--c-gold)', BLUE = 'var(--c-blue)';
 export const f2 = (v) => v.toFixed(2);
 export const f3 = (v) => v.toFixed(3);
 export const sg = (v, d = 2) => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(d);

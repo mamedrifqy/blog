@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
+import { useTheme, palette, ink } from '../lib/theme.js';
 
 const CLIMATE_FEATURES = [
   'SPEI-3', 'Rainfall', 'ONI', 'Dry season', 'Temperature', 'SPI-3', 'Peat depth'
 ];
 
 export default function ShapChart({ data = [], title = '' }) {
+  const theme = useTheme();
   const canvasRef = useRef(null);
   const chartRef  = useRef(null);
 
@@ -12,6 +14,7 @@ export default function ShapChart({ data = [], title = '' }) {
     async function build() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
+      const P = palette();
       if (chartRef.current) chartRef.current.destroy();
       if (!data.length) return;
 
@@ -39,22 +42,22 @@ export default function ShapChart({ data = [], title = '' }) {
           indexAxis: 'y',
           scales: {
             x: {
-              title: { display: true, text: 'Mean |SHAP value|', color: '#4a5e50', font: { size: 11 } },
-              ticks: { color: '#4a5e50', font: { size: 10 } },
-              grid:  { color: 'rgba(255,255,255,0.04)' },
+              title: { display: true, text: 'Mean |SHAP value|', color: P.muted, font: { size: 11 } },
+              ticks: { color: P.muted, font: { size: 10 } },
+              grid:  { color: ink(0.04) },
             },
             y: {
-              ticks: { color: '#f0ece0', font: { size: 10 } },
-              grid:  { color: 'rgba(255,255,255,0.03)' },
+              ticks: { color: P.bright, font: { size: 10 } },
+              grid:  { color: ink(0.03) },
             },
           },
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: 'rgba(12,26,16,0.95)',
-              titleColor: '#f0ece0',
-              bodyColor: '#8a9e8f',
-              borderColor: 'rgba(255,255,255,0.07)',
+              backgroundColor: P.pop,
+              titleColor: P.bright,
+              bodyColor: P.muted,
+              borderColor: ink(0.07),
               borderWidth: 1,
               padding: 12,
               callbacks: {
@@ -67,7 +70,7 @@ export default function ShapChart({ data = [], title = '' }) {
     }
     build();
     return () => chartRef.current?.destroy();
-  }, [data]);
+  }, [data, theme]);
 
   return (
     <div style={{
@@ -81,7 +84,7 @@ export default function ShapChart({ data = [], title = '' }) {
         <h4 style={{
           fontFamily: "'Playfair Display', serif",
           fontSize: '1.05rem',
-          color: '#f0ece0',
+          color: 'var(--text-bright)',
           marginBottom: '1.25rem',
         }}>{title}</h4>
       )}
@@ -89,14 +92,14 @@ export default function ShapChart({ data = [], title = '' }) {
         <canvas ref={canvasRef} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginTop: '0.75rem' }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#8a9e8f' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
           <span style={{ width: 12, height: 12, borderRadius: 2, background: 'rgba(58,176,110,0.85)' }} /> Climate variable
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#8a9e8f' }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
           <span style={{ width: 12, height: 12, borderRadius: 2, background: 'rgba(224,92,40,0.75)' }} /> Non-climate variable
         </span>
       </div>
-      <p style={{ fontSize: '0.72rem', color: '#4a5e50', marginTop: '0.75rem', marginBottom: 0 }}>
+      <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.75rem', marginBottom: 0 }}>
         Source: SHAP TreeExplainer (Lundberg &amp; Lee, 2017) · XGBoost · Bengkalis Regency
       </p>
     </div>

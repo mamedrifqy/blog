@@ -4,11 +4,11 @@
 .mm-switch:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .mm-switch-track { width: 34px; height: 20px; border-radius: 999px; background: var(--bg-subtle); border: 1px solid var(--border-md); position: relative; transition: background .2s; flex-shrink: 0; }
 .mm-switch-knob { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--text-muted); transition: transform .2s, background .2s; }
-.mm-switch[aria-checked="true"] .mm-switch-track { background: rgba(28,200,170,.25); border-color: var(--teal); }
+.mm-switch[aria-checked="true"] .mm-switch-track { background: rgb(var(--teal-rgb) / .25); border-color: var(--teal); }
 .mm-switch[aria-checked="true"] .mm-switch-knob { transform: translateX(14px); background: var(--teal); }
 
 .mm-dialog { padding: 0; border: 1px solid var(--border-md); border-radius: 8px; background: var(--bg); color: var(--text); width: min(1240px, 96vw); height: min(88vh, 940px); max-width: none; max-height: none; overflow: hidden; }
-.mm-dialog::backdrop { background: rgba(5,6,7,.72); backdrop-filter: blur(2px); }
+.mm-dialog::backdrop { background: var(--backdrop); backdrop-filter: blur(2px); }
 .mm-dialog[open] { display: block; }
 .mm-frame { display: flex; flex-direction: column; height: 100%; }
 .mm-head { display: flex; gap: 1.5rem; justify-content: space-between; align-items: flex-start; padding: 1.1rem 1.4rem 1rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
@@ -39,7 +39,7 @@
 .mm-li > .mm-ul::before { content: ''; position: absolute; left: 0; top: 50%; width: 15px; border-top: 1.5px solid var(--border-md); }
 
 .mm-node { display: flex; flex-direction: column; align-items: flex-start; gap: .3rem; width: 15.5rem; flex-shrink: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: .55rem .7rem; }
-.mm-node.has-post { border-color: rgba(28,200,170,.45); }
+.mm-node.has-post { border-color: rgb(var(--teal-rgb) / .45); }
 .mm-node.mm-root { width: 17rem; border-color: var(--gold); background: linear-gradient(180deg, var(--bg-card), var(--bg-subtle)); padding: .8rem .9rem; }
 .mm-node.mm-root .mm-label { font-family: var(--font-display); font-size: 1.05rem; color: var(--text-bright); }
 .mm-node.mm-branch { border-left: 3px solid var(--teal); }
