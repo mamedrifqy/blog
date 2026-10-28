@@ -12,6 +12,7 @@
  */
 
 import { useEffect, useRef } from 'react';
+import { useTheme, palette, ink } from '../lib/theme.js';
 
 const LAG_COLORS = {
   'Lag 0': 'rgba(224,92,40,0.85)',   /* immediate — warm orange */
@@ -21,6 +22,7 @@ const LAG_COLORS = {
 };
 
 export default function LagDecayChart({ data = [], title = '' }) {
+  const theme = useTheme();
   const canvasRef = useRef(null);
   const chartRef  = useRef(null);
 
@@ -28,6 +30,7 @@ export default function LagDecayChart({ data = [], title = '' }) {
     async function build() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
+      const P = palette();
       if (chartRef.current) chartRef.current.destroy();
       if (!data.length) return;
 
@@ -51,30 +54,30 @@ export default function LagDecayChart({ data = [], title = '' }) {
           interaction: { mode: 'index', intersect: false },
           scales: {
             x: {
-              ticks: { color: '#4a5e50', font: { size: 9 }, maxRotation: 55 },
-              grid:  { color: 'rgba(255,255,255,0.03)' },
+              ticks: { color: P.muted, font: { size: 9 }, maxRotation: 55 },
+              grid:  { color: ink(0.03) },
             },
             y: {
-              title: { display: true, text: 'Spearman ρ', color: '#4a5e50', font: { size: 11 } },
-              ticks: { color: '#4a5e50', font: { size: 10 } },
-              grid:  { color: 'rgba(255,255,255,0.04)' },
+              title: { display: true, text: 'Spearman ρ', color: P.muted, font: { size: 11 } },
+              ticks: { color: P.muted, font: { size: 10 } },
+              grid:  { color: ink(0.04) },
             },
           },
           plugins: {
             legend: {
               position: 'bottom',
               labels: {
-                color:    '#8a9e8f',
+                color:    P.muted,
                 font:     { family: "'Source Sans 3', sans-serif", size: 11 },
                 boxWidth: 12,
                 padding:  14,
               },
             },
             tooltip: {
-              backgroundColor: 'rgba(12,26,16,0.95)',
-              titleColor:      '#f0ece0',
-              bodyColor:       '#8a9e8f',
-              borderColor:     'rgba(255,255,255,0.07)',
+              backgroundColor: P.pop,
+              titleColor:      P.bright,
+              bodyColor:       P.muted,
+              borderColor:     ink(0.07),
               borderWidth:     1,
               padding:         12,
               callbacks: {
@@ -88,7 +91,7 @@ export default function LagDecayChart({ data = [], title = '' }) {
 
     build();
     return () => chartRef.current?.destroy();
-  }, [data]);
+  }, [data, theme]);
 
   return (
     <div style={{
@@ -102,14 +105,14 @@ export default function LagDecayChart({ data = [], title = '' }) {
         <h4 style={{
           fontFamily: "'Playfair Display', serif",
           fontSize: '1.05rem',
-          color: '#f0ece0',
+          color: 'var(--text-bright)',
           marginBottom: '1.25rem',
         }}>{title}</h4>
       )}
       <div style={{ height: 320, position: 'relative' }}>
         <canvas ref={canvasRef} />
       </div>
-      <p style={{ fontSize: '0.72rem', color: '#4a5e50', marginTop: '0.75rem', marginBottom: 0 }}>
+      <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.75rem', marginBottom: 0 }}>
         Source: ONI (NOAA CPC) × MODIS hotspot (FIRMS C6.1) · Spearman ρ per kecamatan, 2015–2024
       </p>
     </div>

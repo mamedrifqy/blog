@@ -2,16 +2,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ── Design tokens ──────────────────────────────────────────── */
-:root {
+/* Two themes. <html data-theme="dark|light"> is set by the inline script in BaseLayout before first paint
+   (saved choice, else the OS setting). Dark is also the no-JS fallback.
+   Rule for new code: never hard-code a neutral colour; use a token, or rgb(var(--ink-rgb) / .08) for a translucent overlay. */
+:root,
+:root[data-theme="dark"],
+:root[data-theme="light"] .dark-island {   /* .dark-island: a region that keeps the dark look in light mode */
+  color-scheme: dark;
+
   /* Backgrounds — warm-dark, like mamed/rifqy maps */
   --bg:         #0d0e0f;
   --bg-card:    #141618;
   --bg-hover:   #1c1f22;
   --bg-subtle:  #191c1f;
 
-  /* Borders */
-  --border:     rgba(255,255,255,0.06);
-  --border-md:  rgba(255,255,255,0.12);
+  /* Overlays: --ink-rgb is the colour of "ink" at low alpha (hairlines, grid, hover tints) */
+  --ink-rgb:    255 255 255;
+  --border:     rgb(var(--ink-rgb) / 0.06);
+  --border-md:  rgb(var(--ink-rgb) / 0.12);
 
   /* Text */
   --text:       #d4cfc6;
@@ -20,13 +28,38 @@
   --text-bright:#f2ede4;
 
   /* Brand palette — from your maps */
+  --teal-rgb:   28 200 170;
+  --coral-rgb:  232 83 58;
+  --gold-rgb:   240 188 46;
   --teal:       #1cc8aa;
-  --teal-dim:   rgba(28,200,170,0.12);
+  --teal-dim:   rgb(var(--teal-rgb) / 0.12);
   --coral:      #e8533a;
-  --coral-dim:  rgba(232,83,58,0.12);
+  --coral-dim:  rgb(var(--coral-rgb) / 0.12);
   --gold:       #f0bc2e;
-  --gold-dim:   rgba(240,188,46,0.12);
+  --gold-dim:   rgb(var(--gold-rgb) / 0.12);
   --accent:     var(--teal);
+  --violet:     #9b7fff;
+  --sky:        #5ab0f0;
+  --on-accent:  #0d0e0f;   /* text/icons sitting on a teal/gold/coral fill */
+
+  /* Chart marks (bars, dots, lines, choropleth ends). Brighter than the text colours above in dark; in light they are
+     darkened to >=3:1 against the paper. Use var(--teal) etc. for text, var(--c-*) for marks. */
+  --c-teal:     #1cc8aa;
+  --c-coral:    #e8533a;
+  --c-gold:     #f0bc2e;
+  --c-blue:     #4f9be8;
+  --blue-text:  #4f9be8;
+  --ramp-lo:    rgb(38 44 48);   /* low end of sequential choropleth ramps */
+
+  /* Surfaces for map and chart panels, floating UI */
+  --map-bg:     #101213;
+  --nav-bg:     rgba(13,14,15,0.9);
+  --overlay-bg: rgba(13,14,15,0.94);
+  --pop-bg:     #141618;
+  --backdrop:   rgba(5,6,7,0.72);
+  --halo:       #0d0e0f;   /* outline behind text on maps */
+  --shadow:     rgba(0,0,0,0.6);
+  --figure-bg:  #ffffff;   /* raster figures are made on white */
 
   /* Typography */
   --font-display: 'Fraunces', Georgia, serif;
@@ -37,6 +70,53 @@
   --max-w:    1320px;
   --col-text: 700px;
   --nav-h:    64px;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg:         #f6f2ea;
+  --bg-card:    #fffdf8;
+  --bg-hover:   #ece6d9;
+  --bg-subtle:  #f0ebdf;
+
+  --ink-rgb:    40 32 16;
+  --border:     rgb(var(--ink-rgb) / 0.10);
+  --border-md:  rgb(var(--ink-rgb) / 0.20);
+
+  --text:       #2b2a27;
+  --text-muted: #5a5951;
+  --text-dim:   #67665f;
+  --text-bright:#14130f;
+
+  /* Brand colours darkened so links and labels reach WCAG AA (4.5:1) on the paper background */
+  --teal-rgb:   10 122 104;
+  --coral-rgb:  184 52 28;
+  --gold-rgb:   125 87 0;
+  --teal:       #0a7a68;
+  --teal-dim:   rgb(var(--teal-rgb) / 0.10);
+  --coral:      #b8341c;
+  --coral-dim:  rgb(var(--coral-rgb) / 0.10);
+  --gold:       #7d5700;
+  --gold-dim:   rgb(var(--gold-rgb) / 0.12);
+  --violet:     #6d4fd6;
+  --sky:        #1f6fb5;
+  --on-accent:  #ffffff;
+
+  --c-teal:     #0e8f79;
+  --c-coral:    #d9492c;
+  --c-gold:     #b98200;
+  --c-blue:     #2f7fc8;
+  --blue-text:  #1f6fb5;
+  --ramp-lo:    rgb(226 220 204);
+
+  --map-bg:     #e9e4d8;
+  --nav-bg:     rgba(246,242,234,0.9);
+  --overlay-bg: rgba(255,253,248,0.95);
+  --pop-bg:     #fffdf8;
+  --backdrop:   rgba(30,26,18,0.45);
+  --halo:       #f6f2ea;
+  --shadow:     rgba(60,45,10,0.22);
 }
 
 /* ── Reset ──────────────────────────────────────────────────── */
@@ -100,7 +180,7 @@ blockquote {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  background: rgba(13,14,15,0.9);
+  background: var(--nav-bg);
   backdrop-filter: blur(14px) saturate(160%);
   border-bottom: 1px solid var(--border);
 }
@@ -108,7 +188,7 @@ blockquote {
 /* Top accent stripe */
 .nav-stripe {
   height: 3px;
-  background: linear-gradient(90deg, var(--teal) 0%, var(--gold) 50%, var(--coral) 100%);
+  background: linear-gradient(90deg, var(--c-teal) 0%, var(--c-gold) 50%, var(--c-coral) 100%);
 }
 
 .nav-inner {
@@ -144,7 +224,7 @@ blockquote {
 .nav-logo-mark svg {
   width: 18px;
   height: 18px;
-  fill: #0d0e0f;
+  fill: var(--on-accent);
 }
 
 .nav-logo-word {
@@ -213,7 +293,7 @@ blockquote {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #0d0e0f;
+  color: var(--on-accent);
   background: var(--teal);
   padding: 0.45rem 1rem;
   border-radius: 4px;
@@ -224,9 +304,22 @@ blockquote {
 
 .nav-cta:hover {
   background: var(--gold);
-  color: #0d0e0f;
+  color: var(--on-accent);
   transform: translateY(-1px);
 }
+
+/* Theme toggle: shows the icon of the theme you would switch to */
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; padding: 0; margin-left: 0.35rem; flex: none;
+  color: var(--text-muted); background: transparent; border: 1px solid var(--border-md); border-radius: 4px;
+  cursor: pointer; transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+.theme-toggle:hover { color: var(--text-bright); background: var(--bg-hover); }
+.theme-toggle:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.theme-toggle .ico-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .ico-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .ico-moon { display: block; }
 
 /* Nav on narrow screens: it used to overflow because nothing here shrank.
    <=900px drop the tagline; <=600px tighten and hide the GitHub button (it is in the footer);
@@ -241,9 +334,11 @@ blockquote {
   .nav-link { font-size: .74rem; padding: .4rem .5rem; }
   .nav-cta { display: none; }
 }
+@media (max-width: 520px) {
+  .nav-logo-word { display: none; }
+}
 @media (max-width: 360px) {
   .nav-inner { padding: 0 .75rem; }
-  .nav-logo-word { display: none; }
   .nav-link { padding: .4rem .4rem; }
 }
 
@@ -259,25 +354,25 @@ blockquote {
   border-radius: 3px;
   background: var(--teal-dim);
   color: var(--teal);
-  border: 1px solid rgba(28,200,170,0.2);
+  border: 1px solid rgb(var(--teal-rgb) / 0.2);
 }
 
-.tag.fire    { background: var(--coral-dim); color: var(--coral); border-color: rgba(232,83,58,0.2); }
-.tag.ml      { background: var(--gold-dim);  color: var(--gold);  border-color: rgba(240,188,46,0.2); }
-.tag.sar     { background: rgba(130,100,255,0.1); color: #9b7fff; border-color: rgba(130,100,255,0.2); }
-.tag.remote-sensing { background: rgba(40,140,220,0.1); color: #5ab0f0; border-color: rgba(40,140,220,0.2); }
+.tag.fire    { background: var(--coral-dim); color: var(--coral); border-color: rgb(var(--coral-rgb) / 0.2); }
+.tag.ml      { background: var(--gold-dim);  color: var(--gold);  border-color: rgb(var(--gold-rgb) / 0.2); }
+.tag.sar     { background: color-mix(in srgb, var(--violet) 10%, transparent); color: var(--violet); border-color: color-mix(in srgb, var(--violet) 22%, transparent); }
+.tag.remote-sensing { background: color-mix(in srgb, var(--sky) 10%, transparent); color: var(--sky); border-color: color-mix(in srgb, var(--sky) 22%, transparent); }
 
 /* ── MapLibre overrides ─────────────────────────────────────── */
 .maplibregl-ctrl-attrib { font-size: 10px !important; }
 .maplibregl-popup-content {
-  background: #141618 !important;
+  background: var(--pop-bg) !important;
   color: var(--text) !important;
   border: 1px solid var(--border-md) !important;
   border-radius: 6px !important;
   padding: 0.75rem 1rem !important;
   font-family: var(--font-sans) !important;
   font-size: 0.82rem !important;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.6) !important;
+  box-shadow: 0 12px 40px var(--shadow) !important;
 }
 .maplibregl-popup-tip { display: none !important; }
 

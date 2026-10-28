@@ -5,6 +5,7 @@
  */
 
 import { useEffect, useRef } from 'react';
+import { useTheme, palette, ink } from '../lib/theme.js';
 
 const CLASS_COLORS = {
   'Class 1 — Highly suitable':   '#3ab06e',
@@ -15,6 +16,7 @@ const CLASS_COLORS = {
 };
 
 export default function SuitabilityChart({ data = [], title = '' }) {
+  const theme = useTheme();
   const canvasRef = useRef(null);
   const chartRef  = useRef(null);
 
@@ -22,6 +24,7 @@ export default function SuitabilityChart({ data = [], title = '' }) {
     async function build() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
+      const P = palette();
       if (chartRef.current) chartRef.current.destroy();
 
       const labels   = data.map(d => d.polygon);
@@ -46,33 +49,33 @@ export default function SuitabilityChart({ data = [], title = '' }) {
           scales: {
             x: {
               stacked: true,
-              ticks:   { color: '#4a5e50', font: { size: 9 }, maxRotation: 60 },
-              grid:    { color: 'rgba(255,255,255,0.03)' },
-              title:   { display: true, text: 'Polygon ID', color: '#4a5e50', font: { size: 10 } },
+              ticks:   { color: P.muted, font: { size: 9 }, maxRotation: 60 },
+              grid:    { color: ink(0.03) },
+              title:   { display: true, text: 'Polygon ID', color: P.muted, font: { size: 10 } },
             },
             y: {
               stacked: true,
-              ticks:   { color: '#4a5e50', font: { size: 10 },
+              ticks:   { color: P.muted, font: { size: 10 },
                          callback: v => v + ' ha' },
-              grid:    { color: 'rgba(255,255,255,0.04)' },
-              title:   { display: true, text: 'Area (ha)', color: '#4a5e50', font: { size: 10 } },
+              grid:    { color: ink(0.04) },
+              title:   { display: true, text: 'Area (ha)', color: P.muted, font: { size: 10 } },
             },
           },
           plugins: {
             legend: {
               position: 'bottom',
               labels: {
-                color:    '#8a9e8f',
+                color:    P.muted,
                 font:     { family: "'Source Sans 3', sans-serif", size: 11 },
                 boxWidth: 12,
                 padding:  14,
               },
             },
             tooltip: {
-              backgroundColor: 'rgba(12,26,16,0.95)',
-              titleColor:      '#f0ece0',
-              bodyColor:       '#8a9e8f',
-              borderColor:     'rgba(255,255,255,0.07)',
+              backgroundColor: P.pop,
+              titleColor:      P.bright,
+              bodyColor:       P.muted,
+              borderColor:     ink(0.07),
               borderWidth:     1,
               padding:         12,
               callbacks: {
@@ -86,7 +89,7 @@ export default function SuitabilityChart({ data = [], title = '' }) {
 
     build();
     return () => chartRef.current?.destroy();
-  }, [data]);
+  }, [data, theme]);
 
   return (
     <div style={{
@@ -98,12 +101,12 @@ export default function SuitabilityChart({ data = [], title = '' }) {
     }}>
       {title && (
         <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.05rem',
-          color: '#f0ece0', marginBottom: '1.25rem' }}>{title}</h4>
+          color: 'var(--text-bright)', marginBottom: '1.25rem' }}>{title}</h4>
       )}
       <div style={{ height: 300, position: 'relative' }}>
         <canvas ref={canvasRef} />
       </div>
-      <p style={{ fontSize: '0.72rem', color: '#4a5e50', marginTop: '0.75rem', marginBottom: 0 }}>
+      <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.75rem', marginBottom: 0 }}>
         Source: GEE analysis · Sentinel-1 SAR + Sentinel-2 + FABDEM · PRM_2026_Riau_349Ha (31 polygons)
       </p>
     </div>

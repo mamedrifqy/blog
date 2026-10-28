@@ -104,9 +104,9 @@ The remaining 16,534 discarded detections were classified as false positives. Th
   client:visible
 />
 
-<div style="background:#1a1a2e;border-left:4px solid #22c55e;padding:1rem 1.25rem;margin:1.5rem 0;border-radius:0 8px 8px 0;">
-  <p style="margin:0 0 0.5rem 0;font-weight:700;color:#22c55e;font-size:0.9rem;">⚠ The Duri gas flare problem</p>
-  <p style="margin:0;color:#d1d5db;font-size:0.9rem;line-height:1.6;">
+<div style="background:var(--bg-card);border-left:4px solid #22c55e;padding:1rem 1.25rem;margin:1.5rem 0;border-radius:0 8px 8px 0;">
+  <p style="margin:0 0 0.5rem 0;font-weight:700;color:var(--teal);font-size:0.9rem;">⚠ The Duri gas flare problem</p>
+  <p style="margin:0;color:var(--text);font-size:0.9rem;line-height:1.6;">
     The Duri oil field in Mandau sub-district is one of the oldest and most active petroleum extraction zones in Riau Province. Its gas flare stacks produce continuous thermal emissions that MODIS registers as repeated hotspot detections, often with medium confidence (50–69%). Without spatial filtering, these industrial signatures inflate Mandau's fire count and corrupt the ENSO correlation analysis — gas flares operate on production schedules, not climate cycles. The DBSCAN pipeline with a 1.5 km rescue radius effectively isolates these industrial clusters: because gas flares produce dense spatial clusters of repeated detections, the medium-confidence points cluster around the anchor flares and are retained as a coherent industrial group. The critical filtering step is the subsequent removal of these industrial clusters during the peatland intersection — points that do not overlap with the peatland mask (derived from the Indonesian Peatland Restoration Agency, BRG, 1:250,000 peat depth map) are discarded regardless of confidence level. This dual filter (spatial clustering + land-cover masking) is what produces the near-zero ONI correlation that identifies Mandau as a structural anomaly.
   </p>
 </div>
@@ -212,7 +212,7 @@ No analysis is complete without a transparent accounting of its limitations. The
 
 <div style="background:#1a1a2e;border-left:4px solid #f59e0b;padding:1rem 1.25rem;margin:1.5rem 0;border-radius:0 8px 8px 0;">
   <p style="margin:0 0 0.5rem 0;font-weight:700;color:#f59e0b;font-size:0.9rem;">📋 Planned extensions</p>
-  <p style="margin:0;color:#d1d5db;font-size:0.9rem;line-height:1.6;">
+  <p style="margin:0;color:var(--text);font-size:0.9rem;line-height:1.6;">
     A 20-year backfill using ERA5 (1940–present) is in progress, which will add three additional El Niño cycles and enable robust intensity-stratified analysis. Sentinel-2 near-real-time fire detection will be integrated for the 2025 dry season to cross-validate MODIS detections at 10 m resolution. Field campaigns are planned in collaboration with BRG (Peatland Restoration Agency) for drone-based thermal verification and post-fire peat depth profiling across the six depth classes described in Section 4.
   </p>
 </div>

@@ -280,3 +280,7 @@ html { scroll-padding-top: 124px; }
 .rpf.rpf #data .downloads a:hover { background: var(--teal); border-color: var(--teal); color: #0d0e0f; }
 
 .rpf.rpf .rpf-source { margin: 0; padding-top: 1.5rem; border-top: 1px solid var(--border-md); font-size: .8rem; line-height: 1.6; color: var(--text-muted); max-width: 90ch; }
+
+/* The explorer is drawn by a standalone script (public/riau-peatland-fire/assets/app.js: canvas, Chart.js, hand-coloured SVG)
+   that reads its colours once at start-up, so in light mode it stays a dark "instrument panel" instead of switching live. */
+:root[data-theme="light"] .rpf.dark-island { background: var(--bg); color: var(--text); border-radius: 8px; padding: 0 clamp(14px, 3vw, 32px) 1px; margin: 1.5rem 0; }

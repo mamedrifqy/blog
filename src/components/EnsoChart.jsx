@@ -11,6 +11,7 @@
  */
 
 import { useEffect, useRef } from 'react';
+import { useTheme, palette, ink } from '../lib/theme.js';
 
 const ENSO_COLORS = {
   el_nino:  '#e05c28',
@@ -19,6 +20,7 @@ const ENSO_COLORS = {
 };
 
 export default function EnsoChart({ data = [], title = 'ENSO vs Hotspot Count' }) {
+  const theme = useTheme();
   const canvasRef = useRef(null);
   const chartRef  = useRef(null);
 
@@ -26,6 +28,7 @@ export default function EnsoChart({ data = [], title = 'ENSO vs Hotspot Count' }
     async function buildChart() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
+      const P = palette();
 
       if (chartRef.current) {
         chartRef.current.destroy();
@@ -67,12 +70,12 @@ export default function EnsoChart({ data = [], title = 'ENSO vs Hotspot Count' }
               data:  oni,
               borderColor: ctx => {
                 const v = oni[ctx.dataIndex];
-                return v > 0.5 ? ENSO_COLORS.el_nino : v < -0.5 ? ENSO_COLORS.la_nina : '#8a9e8f';
+                return v > 0.5 ? ENSO_COLORS.el_nino : v < -0.5 ? ENSO_COLORS.la_nina : P.muted;
               },
               segment: {
                 borderColor: ctx => {
                   const v = oni[ctx.p0DataIndex];
-                  return v > 0.5 ? ENSO_COLORS.el_nino : v < -0.5 ? ENSO_COLORS.la_nina : '#8a9e8f';
+                  return v > 0.5 ? ENSO_COLORS.el_nino : v < -0.5 ? ENSO_COLORS.la_nina : P.muted;
                 },
               },
               backgroundColor: 'transparent',
@@ -106,17 +109,17 @@ export default function EnsoChart({ data = [], title = 'ENSO vs Hotspot Count' }
           plugins: {
             legend: {
               labels: {
-                color:    '#8a9e8f',
+                color:    P.muted,
                 font:     { family: "'Source Sans 3', sans-serif", size: 12 },
                 boxWidth: 14,
                 padding:  16,
               }
             },
             tooltip: {
-              backgroundColor: 'rgba(12,26,16,0.95)',
-              titleColor:      '#f0ece0',
-              bodyColor:       '#8a9e8f',
-              borderColor:     'rgba(255,255,255,0.07)',
+              backgroundColor: P.pop,
+              titleColor:      P.bright,
+              bodyColor:       P.muted,
+              borderColor:     ink(0.07),
               borderWidth:     1,
               padding:         12,
               callbacks: {
@@ -130,23 +133,23 @@ export default function EnsoChart({ data = [], title = 'ENSO vs Hotspot Count' }
           scales: {
             x: {
               ticks: {
-                color:         '#4a5e50',
+                color:         P.muted,
                 font:          { size: 10 },
                 maxRotation:   45,
                 maxTicksLimit: 24,
               },
-              grid: { color: 'rgba(255,255,255,0.03)' },
+              grid: { color: ink(0.03) },
             },
             y: {
               position:  'left',
-              title:     { display: true, text: 'Hotspot count', color: '#4a5e50', font: { size: 11 } },
-              ticks:     { color: '#4a5e50', font: { size: 10 } },
-              grid:      { color: 'rgba(255,255,255,0.04)' },
+              title:     { display: true, text: 'Hotspot count', color: P.muted, font: { size: 11 } },
+              ticks:     { color: P.muted, font: { size: 10 } },
+              grid:      { color: ink(0.04) },
             },
             y1: {
               position:  'right',
-              title:     { display: true, text: 'ONI Index', color: '#4a5e50', font: { size: 11 } },
-              ticks:     { color: '#4a5e50', font: { size: 10 } },
+              title:     { display: true, text: 'ONI Index', color: P.muted, font: { size: 11 } },
+              ticks:     { color: P.muted, font: { size: 10 } },
               grid:      { drawOnChartArea: false },
               min: -2.5,
               max:  3.0,
@@ -159,7 +162,7 @@ export default function EnsoChart({ data = [], title = 'ENSO vs Hotspot Count' }
 
     buildChart();
     return () => chartRef.current?.destroy();
-  }, [data]);
+  }, [data, theme]);
 
   return (
     <div style={{
@@ -173,7 +176,7 @@ export default function EnsoChart({ data = [], title = 'ENSO vs Hotspot Count' }
         <h4 style={{
           fontFamily: "'Playfair Display', serif",
           fontSize:   '1.05rem',
-          color:      '#f0ece0',
+          color:      'var(--text-bright)',
           marginBottom: '0.4rem',
         }}>{title}</h4>
       )}
@@ -184,7 +187,7 @@ export default function EnsoChart({ data = [], title = 'ENSO vs Hotspot Count' }
       <div style={{ height: 280, position: 'relative' }}>
         <canvas ref={canvasRef} />
       </div>
-      <p style={{ fontSize: '0.72rem', color: '#4a5e50', marginTop: '0.75rem', marginBottom: 0 }}>
+      <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.75rem', marginBottom: 0 }}>
         Source: NOAA ONI data × MODIS/VIIRS hotspot archive · Riau Province
       </p>
     </div>

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTheme, palette, ink } from '../lib/theme.js';
 
 /**
  * ScrollyMap — sticky map + scrolling step cards + live chart overlay
@@ -19,7 +20,7 @@ import { useEffect, useRef, useState } from 'react';
  *   highlightRegency?: string   highlight a specific regency name
  * }
  */
-export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.geojson' }) {
+function ScrollyMapInner({ theme, steps = [], dataUrl = '/data/riau_hotspots.geojson' }) {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const chartRef = useRef(null);
@@ -46,7 +47,7 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
     import('maplibre-gl').then(({ default: maplibregl }) => {
       map = new maplibregl.Map({
         container: mapContainer.current,
-        style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+        style: theme === 'light' ? 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json' : 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
         center: [101.5, 0.3],
         zoom: 7,
         bearing: 0,
@@ -78,7 +79,7 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
               0.2, 'rgba(232,130,12,0.3)',
               0.5, 'rgba(232,130,12,0.7)',
               0.8, 'rgba(200, 60, 20, 0.9)',
-              1,   'rgba(255,230,180,1)',
+              1,   theme === 'light' ? 'rgba(120,28,8,1)' : 'rgba(255,230,180,1)',
             ],
             'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 5, 30, 10, 60],
             'heatmap-opacity': 0.85,
@@ -106,7 +107,7 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
             ],
             'circle-opacity': 0.85,
             'circle-stroke-width': 1.5,
-            'circle-stroke-color': 'rgba(255,255,255,0.2)',
+            'circle-stroke-color': ink(0.25),
           },
         });
 
@@ -123,7 +124,7 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
             ],
             'circle-color': 'transparent',
             'circle-stroke-width': 2.5,
-            'circle-stroke-color': '#fff',
+            'circle-stroke-color': palette().bright,
             'circle-opacity': 1,
           },
         });
@@ -194,7 +195,7 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
               type: 'line',
               label: 'ONI (ENSO)',
               data: ONI_DATA.oni,
-              borderColor: '#fff',
+              borderColor: palette().bright,
               borderWidth: 1.5,
               pointRadius: 3,
               pointBackgroundColor: ONI_DATA.oni.map(v =>
@@ -214,17 +215,17 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
             legend: {
               display: true,
               labels: {
-                color: '#8a8472',
+                color: palette().muted,
                 font: { family: "'JetBrains Mono', monospace", size: 10 },
                 boxWidth: 10,
                 padding: 10,
               },
             },
             tooltip: {
-              backgroundColor: 'rgba(20,20,16,0.95)',
-              titleColor: '#e6e0cc',
-              bodyColor: '#8a8472',
-              borderColor: 'rgba(232,224,204,0.1)',
+              backgroundColor: palette().pop,
+              titleColor: palette().bright,
+              bodyColor: palette().muted,
+              borderColor: ink(0.1),
               borderWidth: 1,
               titleFont: { family: "'Fraunces', serif", size: 13 },
               bodyFont: { family: "'JetBrains Mono', monospace", size: 11 },
@@ -239,24 +240,24 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
           },
           scales: {
             x: {
-              ticks: { color: '#5a564a', font: { family: "'JetBrains Mono', monospace", size: 9 } },
-              grid: { color: 'rgba(255,255,255,0.04)' },
+              ticks: { color: palette().muted, font: { family: "'JetBrains Mono', monospace", size: 9 } },
+              grid: { color: ink(0.04) },
             },
             y: {
               position: 'left',
               ticks: {
-                color: '#5a564a',
+                color: palette().muted,
                 font: { family: "'JetBrains Mono', monospace", size: 9 },
                 callback: v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v,
               },
-              grid: { color: 'rgba(255,255,255,0.04)' },
+              grid: { color: ink(0.04) },
             },
             y1: {
               position: 'right',
               min: -2,
               max: 3,
               ticks: {
-                color: '#5a564a',
+                color: palette().muted,
                 font: { family: "'JetBrains Mono', monospace", size: 9 },
                 callback: v => v.toFixed(1),
               },
@@ -446,9 +447,9 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
           position: absolute;
           top: 16px;
           left: 16px;
-          background: rgba(12,12,10,0.85);
+          background: var(--overlay-bg);
           backdrop-filter: blur(8px);
-          border: 1px solid rgba(232,224,204,0.08);
+          border: 1px solid rgb(var(--ink-rgb) / 0.08);
           border-radius: 8px;
           padding: 10px 14px;
           display: flex;
@@ -462,7 +463,7 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
           gap: 8px;
           font-family: 'JetBrains Mono', monospace;
           font-size: 11px;
-          color: #8a8472;
+          color: var(--text-muted);
         }
 
         .dot {
@@ -480,7 +481,7 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
 
         .step-num {
           font-size: 11px;
-          color: rgba(232,224,204,0.3);
+          color: rgb(var(--ink-rgb) / 0.3);
           letter-spacing: 0.1em;
         }
 
@@ -489,16 +490,16 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
           bottom: 16px;
           left: 16px;
           right: 16px;
-          background: rgba(10,10,8,0.88);
+          background: var(--overlay-bg);
           backdrop-filter: blur(10px);
-          border: 1px solid rgba(232,224,204,0.08);
+          border: 1px solid rgb(var(--ink-rgb) / 0.08);
           border-radius: 10px;
           padding: 14px 16px;
         }
 
         .chart-title {
           font-size: 10px;
-          color: #5a564a;
+          color: var(--text-muted);
           letter-spacing: 0.08em;
           text-transform: uppercase;
           margin-bottom: 10px;
@@ -517,9 +518,9 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
         }
 
         .step-card {
-          background: rgba(20,20,16,0.92);
+          background: var(--overlay-bg);
           backdrop-filter: blur(12px);
-          border: 1px solid rgba(232,224,204,0.08);
+          border: 1px solid rgb(var(--ink-rgb) / 0.08);
           border-radius: 12px;
           padding: 2rem;
           width: 100%;
@@ -528,13 +529,13 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
 
         .scrolly-step.is-active .step-card {
           border-color: rgba(232,130,12,0.3);
-          box-shadow: 0 0 0 1px rgba(232,130,12,0.1), 0 16px 48px rgba(0,0,0,0.5);
+          box-shadow: 0 0 0 1px rgba(232,130,12,0.1), 0 16px 48px var(--shadow);
         }
 
         .step-index {
           display: block;
           font-size: 10px;
-          color: #5a564a;
+          color: var(--text-muted);
           letter-spacing: 0.12em;
           margin-bottom: 0.25rem;
         }
@@ -554,14 +555,14 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
           font-family: 'Fraunces', serif;
           font-size: 1.15rem;
           font-weight: 600;
-          color: #e6e0cc;
+          color: var(--text-bright);
           line-height: 1.3;
           margin-bottom: 0.75rem;
         }
 
         .step-text {
           font-size: 0.9rem;
-          color: #8a8472;
+          color: var(--text-muted);
           line-height: 1.75;
           margin: 0;
         }
@@ -569,7 +570,7 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
         .step-stat {
           margin-top: 1.25rem;
           padding-top: 1.25rem;
-          border-top: 1px solid rgba(232,224,204,0.06);
+          border-top: 1px solid rgb(var(--ink-rgb) / 0.06);
           display: flex;
           flex-direction: column;
           gap: 4px;
@@ -583,7 +584,7 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
 
         .stat-label {
           font-size: 0.78rem;
-          color: #5a564a;
+          color: var(--text-muted);
           letter-spacing: 0.04em;
         }
 
@@ -596,4 +597,11 @@ export default function ScrollyMap({ steps = [], dataUrl = '/data/riau_hotspots.
       `}</style>
     </div>
   );
+}
+
+
+// Remounted when the theme flips, so the basemap (dark-matter / positron), layer colours and chart palette are rebuilt cleanly.
+export default function ScrollyMap(props) {
+  const theme = useTheme();
+  return <ScrollyMapInner key={theme} theme={theme} {...props} />;
 }

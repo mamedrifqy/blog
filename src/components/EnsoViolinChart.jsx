@@ -16,6 +16,7 @@
  */
 
 import { useEffect, useRef } from 'react';
+import { useTheme, palette, ink } from '../lib/theme.js';
 
 const PHASE_COLORS = {
   'El Niño': { bg: 'rgba(224,92,40,0.85)',  border: '#e05c28' },
@@ -51,7 +52,7 @@ function createBoxplotPlugin(sorted) {
         const q1y = yScale.getPixelForValue(item.q1);
         const q3y = yScale.getPixelForValue(item.q3);
         ctx.save();
-        ctx.strokeStyle = 'rgba(240,236,224,0.55)';
+        ctx.strokeStyle = ink(0.55);
         ctx.lineWidth   = 1.5;
         ctx.strokeRect(x - halfBar / 2, q3y, halfBar, q1y - q3y);
 
@@ -65,7 +66,7 @@ function createBoxplotPlugin(sorted) {
         ctx.beginPath();
         ctx.moveTo(x - halfBar / 2, medY);
         ctx.lineTo(x + halfBar / 2, medY);
-        ctx.strokeStyle = '#f0ece0';
+        ctx.strokeStyle = palette().bright;
         ctx.lineWidth   = 2.5;
         ctx.stroke();
 
@@ -77,7 +78,7 @@ function createBoxplotPlugin(sorted) {
         ctx.lineTo(x, maxY);
         ctx.moveTo(x, q1y);
         ctx.lineTo(x, minY);
-        ctx.strokeStyle = 'rgba(240,236,224,0.35)';
+        ctx.strokeStyle = ink(0.35);
         ctx.lineWidth   = 1;
         ctx.stroke();
 
@@ -88,7 +89,7 @@ function createBoxplotPlugin(sorted) {
         ctx.lineTo(x + capW, maxY);
         ctx.moveTo(x - capW, minY);
         ctx.lineTo(x + capW, minY);
-        ctx.strokeStyle = 'rgba(240,236,224,0.35)';
+        ctx.strokeStyle = ink(0.35);
         ctx.lineWidth   = 1;
         ctx.stroke();
 
@@ -99,6 +100,7 @@ function createBoxplotPlugin(sorted) {
 }
 
 export default function EnsoViolinChart({ data = DEFAULT_DATA, title = 'Hotspot Distribution by ENSO Phase' }) {
+  const theme = useTheme();
   const canvasRef = useRef(null);
   const chartRef  = useRef(null);
 
@@ -106,6 +108,7 @@ export default function EnsoViolinChart({ data = DEFAULT_DATA, title = 'Hotspot 
     async function buildChart() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
+      const P = palette();
 
       if (chartRef.current) {
         chartRef.current.destroy();
@@ -148,10 +151,10 @@ export default function EnsoViolinChart({ data = DEFAULT_DATA, title = 'Hotspot 
               display: false,
             },
             tooltip: {
-              backgroundColor: 'rgba(12,26,16,0.95)',
-              titleColor:      '#f0ece0',
-              bodyColor:       '#8a9e8f',
-              borderColor:     'rgba(255,255,255,0.07)',
+              backgroundColor: P.pop,
+              titleColor:      P.bright,
+              bodyColor:       P.muted,
+              borderColor:     ink(0.07),
               borderWidth:     1,
               padding:         12,
               bodyFont:        { family: "'Source Sans 3', sans-serif", size: 12 },
@@ -177,26 +180,26 @@ export default function EnsoViolinChart({ data = DEFAULT_DATA, title = 'Hotspot 
           scales: {
             x: {
               ticks: {
-                color:  '#8a9e8f',
+                color:  P.muted,
                 font:   { family: "'Source Sans 3', sans-serif", size: 13, weight: '600' },
               },
-              grid: { color: 'rgba(255,255,255,0.03)' },
-              border: { color: 'rgba(255,255,255,0.06)' },
+              grid: { color: ink(0.03) },
+              border: { color: ink(0.06) },
             },
             y: {
               beginAtZero: true,
               title: {
                 display: true,
                 text:    'Monthly hotspot count',
-                color:   '#4a5e50',
+                color:   P.muted,
                 font:    { family: "'Source Sans 3', sans-serif", size: 11 },
               },
               ticks: {
-                color: '#4a5e50',
+                color: P.muted,
                 font:  { size: 10 },
               },
-              grid:  { color: 'rgba(255,255,255,0.04)' },
-              border: { color: 'rgba(255,255,255,0.06)' },
+              grid:  { color: ink(0.04) },
+              border: { color: ink(0.06) },
             },
           },
         },
@@ -206,7 +209,7 @@ export default function EnsoViolinChart({ data = DEFAULT_DATA, title = 'Hotspot 
 
     buildChart();
     return () => chartRef.current?.destroy();
-  }, [data]);
+  }, [data, theme]);
 
   return (
     <div style={{
@@ -220,7 +223,7 @@ export default function EnsoViolinChart({ data = DEFAULT_DATA, title = 'Hotspot 
         <h4 style={{
           fontFamily:  "'Playfair Display', serif",
           fontSize:    '1.05rem',
-          color:       '#f0ece0',
+          color:       'var(--text-bright)',
           marginBottom: '0.4rem',
         }}>{title}</h4>
       )}
@@ -239,19 +242,19 @@ export default function EnsoViolinChart({ data = DEFAULT_DATA, title = 'Hotspot 
 
       {/* Annotation */}
       <div style={{ display: 'flex', gap: '1.25rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '0.72rem', color: '#4a5e50', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
           <span style={{
             display: 'inline-block', width: 18, height: 2,
-            background: '#f0ece0', borderRadius: 1,
+            background: 'var(--text-bright)', borderRadius: 1,
           }} /> Median
         </span>
-        <span style={{ fontSize: '0.72rem', color: '#4a5e50', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
           <span style={{
             display: 'inline-block', width: 18, height: 10,
             border: '1px solid rgba(240,236,224,0.55)', borderRadius: 1,
           }} /> IQR (Q1–Q3)
         </span>
-        <span style={{ fontSize: '0.72rem', color: '#4a5e50', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
           <span style={{
             display: 'inline-block', width: 18, height: 0,
             borderTop: '1px dashed rgba(240,236,224,0.5)',
@@ -259,7 +262,7 @@ export default function EnsoViolinChart({ data = DEFAULT_DATA, title = 'Hotspot 
         </span>
       </div>
 
-      <p style={{ fontSize: '0.72rem', color: '#4a5e50', marginTop: '0.5rem', marginBottom: 0 }}>
+      <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.5rem', marginBottom: 0 }}>
         Source: NOAA ONI data × MODIS/VIIRS hotspot archive · Bengkalis Regency 2015–2024
       </p>
     </div>
