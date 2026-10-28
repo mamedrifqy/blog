@@ -9,6 +9,7 @@ export interface Props {
   publishedTime?: string;
 }
 
+import '../styles/terms.css';
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 const {
   title,
@@ -116,6 +117,8 @@ const fullTitle = `${title} — medrifmaps`;
         <div class="footer-col">
           <h6>Work</h6>
           <a href={`${BASE}/about`}>About</a>
+          <a href={`${BASE}/data`}>Data</a>
+          <a href={`${BASE}/glossary`}>Methods glossary</a>
           <a href="https://github.com/mamedrifqy" target="_blank">GitHub</a>
         </div>
       </div>
@@ -126,6 +129,7 @@ const fullTitle = `${title} — medrifmaps`;
     </div>
   </footer>
 
+  <script>import '../scripts/terms.js';</script>
 </body>
 </html>
 

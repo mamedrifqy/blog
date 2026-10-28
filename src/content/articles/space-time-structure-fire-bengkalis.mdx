@@ -15,6 +15,7 @@ import TrendMap from '../../components/thesis/TrendMap.jsx';
 import EmergingGrid from '../../components/thesis/EmergingGrid.jsx';
 import EventTimeline from '../../components/thesis/EventTimeline.jsx';
 import SimpsonDots from '../../components/thesis/SimpsonDots.jsx';
+import Term from '../../components/Term.astro';
 
 Earlier posts here mostly ask how each kecamatan's fire record correlates with ENSO. A thesis on *spatiotemporal* fire has to say more: is fire getting better or worse, does it cluster in space, does it burst in identifiable events, and how far ahead can the climate tell you? The revised notebook adds a battery of tests for exactly these questions. This post goes through them, including the ones that returned nothing.
 
@@ -28,9 +29,9 @@ Earlier posts here mostly ask how each kecamatan's fire record correlates with E
 ## The short version
 
 - **Fire declined over the decade, but the decade starts with its worst year.** 32% of all filtered hotspots fall in 2015 alone.
-- **There is no hotspot cluster to find.** Global Moran's I is negative (neighbours differ), no kecamatan has a significant local cluster label over the whole decade, and no kecamatan is a persistent, intensifying or diminishing hotspot.
+- **There is no hotspot cluster to find.** Global <Term id="morans-i">Moran's I</Term> is negative (neighbours differ), no kecamatan has a significant local cluster label over the whole decade, and no kecamatan is a persistent, intensifying or diminishing hotspot.
 - **Fire arrives in bursts.** Large events last from days to weeks, and most of the biggest begin in the Feb–Mar dry spell, not at the main June–September peak.
-- **Lead times differ by place.** Rupat and Rupat Utara respond to ONI immediately; Talang Muandau and Mandau at the longest lag tested. Local drought (SPEI-3) is often the tighter and faster signal.
+- **Lead times differ by place.** Rupat and Rupat Utara respond to <Term id="oni-phases">ONI</Term> immediately; Talang Muandau and Mandau at the longest lag tested. Local drought (<Term id="spei-3">SPEI-3</Term>) is often the tighter and faster signal.
 
 ## Is fire fading?
 
@@ -38,7 +39,7 @@ Ten years of annual totals tell the first part of the story.
 
 <AnnualBars client:visible />
 
-2015 holds 32% of the decade's hotspots, 2019 another 25%, and no year after 2020 exceeds 150 (2021: 148; 2022: 23; 2023: 83; 2024: 88). For scale, regional modelling put fire carbon emissions in maritime Southeast Asia in 2015 at the highest level since 1997.[^huijnen16] The formal test is a **seasonal Mann-Kendall** trend test,[^hirsch84] an extension of Mann's rank-based trend test,[^mann45] on each kecamatan's 120 monthly counts, which compares each month with the same calendar month in other years, so the dry-season cycle does not masquerade as a trend. Switch the map below to the trend view.
+2015 holds 32% of the decade's hotspots, 2019 another 25%, and no year after 2020 exceeds 150 (2021: 148; 2022: 23; 2023: 83; 2024: 88). For scale, regional modelling put fire carbon emissions in maritime Southeast Asia in 2015 at the highest level since 1997.[^huijnen16] The formal test is a **seasonal <Term id="mann-kendall">Mann-Kendall</Term>** trend test,[^hirsch84] an extension of Mann's rank-based trend test,[^mann45] on each kecamatan's 120 monthly counts, which compares each month with the same calendar month in other years, so the dry-season cycle does not masquerade as a trend. Switch the map below to the trend view.
 
 <TrendMap client:visible />
 
@@ -54,7 +55,7 @@ That last point matters for early warning. If ENSO phase alone set the level of 
 
 The standard tool is Moran's I,[^moran50] which asks whether neighbouring kecamatan have similar fire levels. The answer, for mean monthly hotspots, is **I = −0.45 (p = 0.037)**: a significant tendency for neighbours to *differ*, not to resemble each other. With eleven units, two of them an island pair, that is a statement about contrast between kecamatan, not about clusters. The same test on the strength of each kecamatan's ONI correlation gives I = +0.17 (p = 0.20).
 
-**Local Moran's I (LISA)**[^anselin95] classifies each kecamatan as part of a high-high cluster, a low-low cluster, or a spatial outlier. For the whole decade none is significant (all p ≥ 0.36). The earlier run had flagged Rupat Utara as low-high; with the final hotspot list it does not survive. In the neighbour structure used here, Rupat and Rupat Utara are each other's *only* neighbours, so the pair can only ever say "these two island kecamatan differ a lot", and there is no cluster of hot places around them.
+**<Term id="lisa">Local Moran</Term>'s I (LISA)**[^anselin95] classifies each kecamatan as part of a high-high cluster, a low-low cluster, or a spatial outlier. For the whole decade none is significant (all p ≥ 0.36). The earlier run had flagged Rupat Utara as low-high; with the final hotspot list it does not survive. In the neighbour structure used here, Rupat and Rupat Utara are each other's *only* neighbours, so the pair can only ever say "these two island kecamatan differ a lot", and there is no cluster of hot places around them.
 
 Splitting the months by ENSO phase does not reveal one either. Moran's I is −0.25 in El Niño (44 months, p = 0.26), +0.09 in La Niña (30 months, p = 0.25) and −0.14 in neutral months (46, p = 0.49). The spatial structure of fire does not measurably change with the phase.
 
@@ -68,7 +69,7 @@ Six of 55 kecamatan-periods carry a significant label, and they do not repeat. T
 
 ## Fire arrives in events
 
-Monthly counts blur what happens on the ground. **ST-DBSCAN**[^birant07] clusters hotspots that are close in both space and time, extending the density-based DBSCAN algorithm:[^ester96] here within 1.5 km and 30 days of each other, in groups of at least 3. It was run on the 2,292 high-confidence hotspots (confidence ≥ 70%), a cut that sits inside the product's "nominal" class (30–79%), whose class boundaries the user guide defines at 30 and 80.[^modisguide]
+Monthly counts blur what happens on the ground. **<Term id="st-dbscan">ST-DBSCAN</Term>**[^birant07] clusters hotspots that are close in both space and time, extending the density-based <Term id="dbscan">DBSCAN</Term> algorithm:[^ester96] here within 1.5 km and 30 days of each other, in groups of at least 3. It was run on the 2,292 high-confidence hotspots (confidence ≥ 70%), a cut that sits inside the product's "nominal" class (30–79%), whose class boundaries the user guide defines at 30 and 80.[^modisguide]
 
 It finds **136 events** and puts 90.3% of the hotspots into one. The remaining 222 are singletons. 30 events have 20 or more hotspots. The ten largest are shown here against the ENSO phase of each month.
 

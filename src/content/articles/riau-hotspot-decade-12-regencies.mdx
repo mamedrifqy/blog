@@ -11,6 +11,7 @@ chapter: "1.3"
 import '../../styles/paper.css';
 import RiauYears from '../../components/paper/RiauYears.jsx';
 import ConfidenceTable from '../../components/paper/ConfidenceTable.jsx';
+import Term from '../../components/Term.astro';
 
 Riau holds most of Sumatra's peat and most of its smoke. This post summarises a regional report that compares monthly hotspots, rainfall, land surface temperature and the Oceanic Niño Index across all twelve regencies and cities from 2015 to 2024. The full interactive version, with a map, per-regency charts and the correlation statistics, is on the companion site.
 
@@ -50,7 +51,7 @@ Pooling the eleven regencies other than Pekanbaru (1,320 regency-months), hotspo
 
 <div class="pp-table">
 <table>
-<caption>Spearman correlation with monthly hotspot counts, pooled over eleven regencies (n = 1,320). All p-values are below 0.001.</caption>
+<caption><Term id="spearman">Spearman</Term> correlation with monthly hotspot counts, pooled over eleven regencies (n = 1,320). All p-values are below 0.001.</caption>
 <thead><tr><th>Variable</th><th>ρ</th></tr></thead>
 <tbody>
 <tr><td>Rainfall</td><td>−0.48</td></tr>
@@ -65,7 +66,7 @@ Local rainfall is the strongest single correlate, and the ocean index the weakes
 
 ### Reading the correlations with care
 
-**The p-values overstate the evidence.** The 1,320 regency-months are not 1,320 independent observations. Neighbouring regencies share weather, and ONI is a single series copied into every regency, so for ONI the effective sample is closer to 120 months than to 1,320. Treating dependent observations as replicates is the pseudoreplication problem,[^hurlbert84] and with n this large almost any correlation reaches p below 0.001. The coefficients are still informative as effect sizes; the significance statements are not. Pooling can also hide opposite behaviour inside units, the pattern known as Simpson's paradox,[^simpson51] and no within-regency check is reported for these twelve regencies.
+**The p-values overstate the evidence.** The 1,320 regency-months are not 1,320 independent observations. Neighbouring regencies share weather, and <Term id="oni-phases">ONI</Term> is a single series copied into every regency, so for ONI the effective sample is closer to 120 months than to 1,320. Treating dependent observations as replicates is the pseudoreplication problem,[^hurlbert84] and with n this large almost any correlation reaches p below 0.001. The coefficients are still informative as effect sizes; the significance statements are not. Pooling can also hide opposite behaviour inside units, the pattern known as Simpson's paradox,[^simpson51] and no within-regency check is reported for these twelve regencies.
 
 **The "SPI proxy" is a proxy for good reason.** The WMO user guide for the Standardized Precipitation Index recommends a record of at least thirty years, and the programme's summary says as little as twenty can be used.[^svoboda12] A ten-year record standardised against itself is dominated by 2015 and 2019, so the proxy measures anomalies relative to a decade that includes two extreme seasons.
 

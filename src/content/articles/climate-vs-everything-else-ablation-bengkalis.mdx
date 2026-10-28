@@ -13,6 +13,7 @@ import '../../styles/thesis.css';
 import AblationChart from '../../components/thesis/AblationChart.jsx';
 import ShapShare from '../../components/thesis/ShapShare.jsx';
 import LokoMap from '../../components/thesis/LokoMap.jsx';
+import Term from '../../components/Term.astro';
 
 A fire model with 14 predictors can tell you how well it does. It cannot, on its own, tell you where its skill comes from. The revised thesis notebook asks it directly: how much of the prediction is climate, and how much is everything else (peat, land use, people)? It answers by removing features in groups and re-scoring the model each time, with a validation scheme designed so that the answer cannot be flattered by spatial leakage.
 
@@ -25,10 +26,10 @@ A fire model with 14 predictors can tell you how well it does. It cannot, on its
 
 ## The short version
 
-- **Climate carries most of the skill.** Five climate variables alone reach a pooled AUC of 0.727. Removing them from the full model drops it to 0.703, the largest loss of any group, and the model gets worse in all 11 kecamatan.
+- **Climate carries most of the skill.** Five climate variables alone reach a pooled <Term id="auc">AUC</Term> of 0.727. Removing them from the full model drops it to 0.703, the largest loss of any group, and the model gets worse in all 11 kecamatan.
 - **Static features cannot say *when*.** Peat area, depth, oil-palm fraction and the like are constant in a kecamatan, so they cannot rank months within it. Their per-fold AUC is exactly 0.500 by construction.
 - **Adding all non-climate features to climate and season buys little.** The pooled gain is 0.054, but within kecamatan it is 0.004 and not significant (6 of 11 kecamatan improve, p = 0.47).
-- **Mandau is not climate-independent.** An earlier reading of this study called it so. The held-out model predicts it better than any other kecamatan (AUC 0.89), and climate carries 61% of the SHAP weight there.
+- **Mandau is not climate-independent.** An earlier reading of this study called it so. The held-out model predicts it better than any other kecamatan (AUC 0.89), and climate carries 61% of the <Term id="shap">SHAP</Term> weight there.
 
 ## How the test is built
 
@@ -61,14 +62,14 @@ Reading it from the top:
 
 **Dropping a group shows how much the others can cover.** Removing the biophysical-static group changes nothing (0.799, a slight gain). Removing the anthropogenic group costs 0.045 pooled but only 0.002 per-fold. Removing climate costs 0.092 pooled and 0.135 per-fold. No other group comes close.
 
-**ONI adds little on top of the local drought variables.** The full model without ONI scores 0.786, against 0.795 with it. The difference is small (+0.009), and within kecamatan only eight of eleven do better with it (p = 0.054).
+**<Term id="oni-phases">ONI</Term> adds little on top of the local drought variables.** The full model without ONI scores 0.786, against 0.795 with it. The difference is small (+0.009), and within kecamatan only eight of eleven do better with it (p = 0.054).
 
 **The simple model is close to the forest.** Logistic regression on all features reaches a pooled 0.806, nominally above the forest (−0.012 for the forest, interval spanning zero), although within kecamatan the forest is ahead in 10 of 11 (+0.023 on average). With 11 kecamatan, the case for a more flexible model is weak.
 
 ### Which differences are real?
 
 <div class="pp-table"><table>
-<caption>Paired differences between configurations (A − B). Pooled: bootstrap over kecamatan. Per-fold: paired across the 11 kecamatan, Wilcoxon test.</caption>
+<caption>Paired differences between configurations (A − B). Pooled: bootstrap over kecamatan. Per-fold: paired across the 11 kecamatan, <Term id="wilcoxon">Wilcoxon</Term> test.</caption>
 <thead><tr><th>A</th><th>B</th><th>Pooled Δ AUC</th><th>95% CI</th><th>Per-fold Δ</th><th>Better in</th><th>p</th></tr></thead>
 <tbody>
 <tr><td>All features</td><td>all minus climate</td><td>+0.092</td><td>[+0.038, +0.151]</td><td>+0.135</td><td>11/11</td><td>0.001</td></tr>
@@ -98,7 +99,7 @@ Three results drive that change:
 
 - **A model that never saw Mandau predicts it well.** Held out, Mandau scores AUC 0.894, the highest of the 11 (below). A fire regime unrelated to climate would be unlikely to be forecast by a model trained on the other ten.
 - **SHAP weight is the same as elsewhere.** 61% climate in Mandau, against 59% overall.
-- **The weak ONI correlation has a mundane cause.** Mandau has only 22 filtered hotspots in ten years. With so few events, a bivariate correlation with ONI (ρ = +0.16, p = 0.08) has little power. Its correlation with the SPEI-3 drought index is −0.25 (p = 0.006), weaker than most but inside the range of the other kecamatan (−0.17 to −0.43).
+- **The weak ONI correlation has a mundane cause.** Mandau has only 22 filtered hotspots in ten years. With so few events, a bivariate correlation with ONI (ρ = +0.16, p = 0.08) has little power. Its correlation with the <Term id="spei-3">SPEI-3</Term> drought index is −0.25 (p = 0.006), weaker than most but inside the range of the other kecamatan (−0.17 to −0.43).
 
 <LokoMap client:visible />
 
@@ -112,7 +113,7 @@ Leave-one-kecamatan-out is a good defence against one kind of leakage. It is wor
 
 Holding out a kecamatan removes spatial dependence between train and test. Ploton and colleagues found that large-scale ecological mapping models performed poorly once validated spatially,[^ploton20] which is why the spatial block is the right default. But it leaves temporal dependence untouched. The ten training kecamatan lived through the same months as the held-out one. ONI is a single series shared by every kecamatan, and gridded rainfall and temperature are likely to be very similar across neighbouring units. A forest can therefore learn that the climate values of September 2015 mean fire, and apply that to the eleventh kecamatan in the same September.
 
-That is a legitimate test of whether the model transfers *across space*. It is a weaker test of whether the model would warn of an episode it has not seen, so the v3 notebook adds the missing run: **leave-one-year-out**, with every prediction made for a year the model never saw. Judged against a climatology baseline (the typical fire rate of that kecamatan and calendar month), the result is sobering. Climate plus season without lags reaches a pooled AUC of 0.724 against 0.679 for climatology, a Brier skill score of only 0.08. Adding lagged climate does not help (0.715). The best variant, which also feeds in the previous month's fire state and the static kecamatan features, reaches 0.814 (Brier skill 0.21), but its static features act as a kecamatan label and two of them were computed on the whole decade, so the notebook flags a mild temporal leak. Year by year the best model beats climatology in seven of ten years. Holding out year and kecamatan together gives AUC 0.793 against 0.524 for climatology, which is more encouraging. The honest reading: the model transfers well across space, and it clearly beats the calendar, but how much of that is climate that can be forecast, rather than persistence of fire from the month before, is not established.
+That is a legitimate test of whether the model transfers *across space*. It is a weaker test of whether the model would warn of an episode it has not seen, so the v3 notebook adds the missing run: **<Term id="loko-loyo">leave-one-year-out</Term>**, with every prediction made for a year the model never saw. Judged against a climatology baseline (the typical fire rate of that kecamatan and calendar month), the result is sobering. Climate plus season without lags reaches a pooled AUC of 0.724 against 0.679 for climatology, a <Term id="brier">Brier skill score</Term> of only 0.08. Adding lagged climate does not help (0.715). The best variant, which also feeds in the previous month's fire state and the static kecamatan features, reaches 0.814 (Brier skill 0.21), but its static features act as a kecamatan label and two of them were computed on the whole decade, so the notebook flags a mild temporal leak. Year by year the best model beats climatology in seven of ten years. Holding out year and kecamatan together gives AUC 0.793 against 0.524 for climatology, which is more encouraging. The honest reading: the model transfers well across space, and it clearly beats the calendar, but how much of that is climate that can be forecast, rather than persistence of fire from the month before, is not established.
 
 ### AUC and the base rate
 
@@ -120,7 +121,7 @@ Lobo and colleagues list the limits of AUC: it ignores the predicted probability
 
 ### Correlated predictors
 
-The five climate variables are not independent. SPI-3 and SPEI-3 are both built around accumulated rainfall, and SPEI differs by adding temperature-driven evaporative demand.[^vicente10] Strobl and colleagues proposed a conditional scheme for random-forest variable importance precisely because standard importance is distorted by correlated predictors.[^strobl08] Group ablation sidesteps that problem: removing the whole group asks whether any climate information is needed, instead of dividing credit among near-duplicates. By the same logic, "ONI adds little" is a statement about its contribution *given* local drought variables. That is what one expects if ENSO acts through local rainfall, as in the El Niño-induced drought that drove 2015,[^field16] and it leaves ONI's value as an upstream indicator untouched.
+The five climate variables are not independent. <Term id="spi-3">SPI-3</Term> and SPEI-3 are both built around accumulated rainfall, and SPEI differs by adding temperature-driven evaporative demand.[^vicente10] Strobl and colleagues proposed a conditional scheme for random-forest variable importance precisely because standard importance is distorted by correlated predictors.[^strobl08] Group ablation sidesteps that problem: removing the whole group asks whether any climate information is needed, instead of dividing credit among near-duplicates. By the same logic, "ONI adds little" is a statement about its contribution *given* local drought variables. That is what one expects if ENSO acts through local rainfall, as in the El Niño-induced drought that drove 2015,[^field16] and it leaves ONI's value as an upstream indicator untouched.
 
 ### Windows and nonlinearity
 
@@ -156,7 +157,7 @@ fire hotspots in Bengkalis Regency, 2015–2024 (v3 re-run, 15 Oct 2026).
 Master's Programme in Disaster Management, Universitas Riau.</pre>
 </div>
 
-*Climate: CHIRPS v2.0 (rainfall), ERA5-Land (temperature), NOAA ONI. Static layers: national peatland map, Hansen Global Forest Change, ESA WorldCover, JRC Global Surface Water, BPS population. Hotspots: NASA FIRMS (MODIS), DBSCAN-filtered.*
+*Climate: CHIRPS v2.0 (rainfall), ERA5-Land (temperature), NOAA ONI. Static layers: national peatland map, Hansen Global Forest Change, ESA WorldCover, JRC Global Surface Water, BPS population. Hotspots: NASA FIRMS (MODIS), <Term id="dbscan">DBSCAN</Term>-filtered.*
 
 [^breiman01]: Breiman, L. (2001). Random forests. *Machine Learning* 45(1), 5–32. [doi:10.1023/A:1010933404324](https://doi.org/10.1023/A:1010933404324).
 [^roberts17]: Roberts, D. R. et al. (2017). Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure. *Ecography* 40(8), 913–929. [doi:10.1111/ecog.02881](https://doi.org/10.1111/ecog.02881). Shows that random cross-validation can badly underestimate prediction error when data are dependent, and recommends blocked cross-validation whenever dependence exists.

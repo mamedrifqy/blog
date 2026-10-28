@@ -14,6 +14,7 @@ import PairedBars from '../../components/thesis/PairedBars.jsx';
 import FireLandscapeMap from '../../components/thesis/FireLandscapeMap.jsx';
 import CanalDistanceChart from '../../components/thesis/CanalDistanceChart.jsx';
 import OddsForest from '../../components/thesis/OddsForest.jsx';
+import Term from '../../components/Term.astro';
 
 Climate decides *when* peat can burn. Drainage is one of the things that decides *where*. A canal lowers the water table around it, the surface layers dry out, and dry peat ignites. That story is well established across Southeast Asia.[^dadap21] This post asks a narrower question, in a landscape that is already heavily drained: inside Bengkalis, are fires closer to canals than a random spot on the same peat?
 
@@ -72,7 +73,7 @@ Two things stand out. The excess is largest in the 0.5–1 km class (ratio 1.40)
 Because roughly 70% of the peat is already within 0.5 km of a canal, distance only slightly separates hotspots from the background (ratio 1.18 in that class). The effect is moderate in size but very consistent: keeping one hotspot per 500 m cell to reduce clustering changes almost nothing (P = 0.570), and the odds of a location being a hotspot fall by a factor of 0.74 per ten-fold increase in distance once peat depth is controlled for.
 
 <div class="pp-callout"><div>
-<p><strong>What "per ten-fold distance" means.</strong> Moving from 100 m to 1 km from a canal multiplies the odds of being a hotspot by about 0.73–0.74. In relative terms, the thesis's table puts a non-forest location at 50 m from a canal about 9% above one at 100 m, and 39% below at 4 km. These relative odds are derived from the model coefficients, not separate outputs.</p>
+<p><strong>What "<Term id="canal-logit">per ten-fold distance</Term>" means.</strong> Moving from 100 m to 1 km from a canal multiplies the odds of being a hotspot by about 0.73–0.74. In relative terms, the thesis's table puts a non-forest location at 50 m from a canal about 9% above one at 100 m, and 39% below at 4 km. These relative odds are derived from the model coefficients, not separate outputs.</p>
 </div></div>
 
 <OddsForest
@@ -85,7 +86,7 @@ Because roughly 70% of the peat is already within 0.5 km of a canal, distance on
 **1. Is it just depth?** The null points are depth-matched, so depth cannot produce the contrast. Splitting by depth class does show that the effect is uneven:
 
 <div class="pp-table"><table>
-<caption>Hotspot distance to the nearest canal by peat depth class, against a null restricted to burnable land cover. P is the probability that a hotspot is closer than a null point; pBH is the Benjamini–Hochberg-corrected Mann–Whitney p.</caption>
+<caption>Hotspot distance to the nearest canal by peat depth class, against a null restricted to burnable land cover. P is the probability that a hotspot is closer than a null point; pBH is the <Term id="benjamini-hochberg">Benjamini–Hochberg</Term>-corrected <Term id="mann-whitney">Mann–Whitney</Term> p.</caption>
 <thead><tr><th>Depth</th><th>Hotspots</th><th>Median hotspot (m)</th><th>Median null (m)</th><th>P</th><th>pBH</th></tr></thead>
 <tbody>
 <tr><td>Under 100 cm</td><td>130</td><td>121</td><td>207</td><td>0.632</td><td>9.9 × 10⁻⁷</td></tr>
@@ -161,7 +162,7 @@ Two caveats the thesis itself flags: canal blocks from restoration programmes ar
 <p class="th-alldata"><a href="/blog/data">All tables, map layers and figures</a></p>
 </div>
 
-*All numbers in this post come from Section 4.9 of the thesis (Tables 4.30–4.37) and the related discussion. Hotspots: NASA FIRMS (MODIS), filtered with DBSCAN. Canal map: 2017 imagery. Land cover: ESA WorldCover 2021. Burned area: Landsat via Google Earth Engine.*
+*All numbers in this post come from Section 4.9 of the thesis (Tables 4.30–4.37) and the related discussion. Hotspots: NASA FIRMS (MODIS), filtered with <Term id="dbscan">DBSCAN</Term>. Canal map: 2017 imagery. Land cover: ESA WorldCover 2021. Burned area: Landsat via Google Earth Engine.*
 
 [^dadap21]: Dadap, N. C. et al. (2021). Drainage canals in Southeast Asian peatlands increase carbon emissions. *AGU Advances* 2(1), e2020AV000321. The source of the 2017 canal map used in the thesis, and of the figures on drainage extent and subsidence quoted above.
 [^salmayenti25]: Salmayenti, R., Baird, A. J., Holden, J. & Spracklen, D. V. (2025). Drainage density and land cover interact to affect fire occurrence in Indonesian peatlands. *Environmental Research Letters* 20(5), 054036. [doi:10.1088/1748-9326/adc755](https://doi.org/10.1088/1748-9326/adc755).

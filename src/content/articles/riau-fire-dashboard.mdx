@@ -12,6 +12,7 @@ import '../../styles/paper.css';
 import '../../styles/thesis.css';
 import '../../styles/dashboard.css';
 import FireDashboard from '../../components/dashboard/FireDashboard.jsx';
+import Term from '../../components/Term.astro';
 
 The other posts on this blog each take one question about Riau's fires and follow it through. This one is the overview: every number in one place, with two filters on top. Pick an **area** (all of Riau, or any of its twelve regencies and cities) and a **year**. The map, rankings, tiles and charts re-cut to match; click a regency on the map, or a bar in any chart, to filter by it.
 
@@ -28,8 +29,8 @@ Three different quantities share this dashboard, and they are not interchangeabl
 - **Landsat dATBI** is an independent burn index built from reflectance alone, at 30 m, applied for 2015, 2019 and 2023 only.[^bilal25] That is why the Landsat tile reads "n/a" for the other seven years.
 
 <div class="pp-callout note"><div>
-<p><strong>Two hotspot filters are in use, on purpose.</strong> The Bengkalis panels use the thesis series: MODIS points of type 0, quality-filtered with DBSCAN, 3,402 in all. The Riau panel at the bottom uses the regional report's series: all MODIS detections with confidence of at least 30%, 30,988 in all across twelve regencies. Bengkalis has 4,981 under the second filter and 3,402 under the first, so do not compare numbers across the two views.</p>
-<p>The ENSO strip under the monthly chart uses the thesis ONI series in every view. The regional report's series classifies nine of the 120 months differently (August to November 2016, for example, is La Niña there and Neutral in the thesis), so the strip can differ from phase labels taken from the regional report.</p>
+<p><strong>Two hotspot filters are in use, on purpose.</strong> The Bengkalis panels use the thesis series: MODIS points of type 0, quality-filtered with <Term id="dbscan">DBSCAN</Term>, 3,402 in all. The Riau panel at the bottom uses the regional report's series: all MODIS detections with confidence of at least 30%, 30,988 in all across twelve regencies. Bengkalis has 4,981 under the second filter and 3,402 under the first, so do not compare numbers across the two views.</p>
+<p>The ENSO strip under the monthly chart uses the thesis <Term id="oni-phases">ONI</Term> series in every view. The regional report's series classifies nine of the 120 months differently (August to November 2016, for example, is La Niña there and Neutral in the thesis), so the strip can differ from phase labels taken from the regional report.</p>
 </div></div>
 
 ## What stands out

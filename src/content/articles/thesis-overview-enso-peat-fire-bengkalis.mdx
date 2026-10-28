@@ -14,6 +14,7 @@ import '../../styles/thesis.css';
 import FireLandscapeMap from '../../components/thesis/FireLandscapeMap.jsx';
 import OniHotspotSeries from '../../components/thesis/OniHotspotSeries.jsx';
 import SeasonCalendar from '../../components/thesis/SeasonCalendar.jsx';
+import Term from '../../components/Term.astro';
 
 Tropical peatland fires in Riau recur almost every year and turn into regional haze disasters during strong droughts. The El Niño–Southern Oscillation (ENSO) is widely regarded as the dominant climatic driver. What is poorly quantified is how strong that signal is at the scale of a sub-district (*kecamatan*), how it interacts with local drought, and whether it is useful for early warning. This thesis, written for the Master of Disaster Management at Universitas Riau, tries to answer those three things for one regency. This post is the map to the rest of the cluster.
 
@@ -65,12 +66,12 @@ Existing studies of ENSO and fire in Indonesia are mostly provincial or national
 The study is quantitative and observational, based on secondary geospatial data, processed in Python on Google Colab with Google Earth Engine. The unit of analysis is the sub-district-month, covering January 2015 to December 2024, with 2025 detections held back for an out-of-time check. The workflow has eight stages.
 
 1. **Acquisition and preprocessing** of hotspots, climate and ocean indices, the peat map, canals, land cover and burned-area products.
-2. **ENSO classification and drought indices.** Months are labelled El Niño or La Niña only if they belong to a run of at least five consecutive months with ONI at or beyond ±0.5 °C (the NOAA rule); otherwise Neutral. The result is 44 El Niño, 30 La Niña and 46 Neutral months. SPI-3 and SPEI-3 are fitted per calendar month on a 1991–2024 baseline, because ten years give only ten values per calendar month.
-3. **Hotspot filtering.** A confidence-anchored DBSCAN keeps detections of 70% confidence or more as anchors, rescues medium-confidence detections (50–69%) within 1.5 km of an anchor as probable smouldering peat fires, and discards the rest.
+2. **ENSO classification and drought indices.** Months are labelled El Niño or La Niña only if they belong to a run of at least five consecutive months with <Term id="oni-phases">ONI</Term> at or beyond ±0.5 °C (the NOAA rule); otherwise Neutral. The result is 44 El Niño, 30 La Niña and 46 Neutral months. <Term id="spi-3">SPI-3</Term> and <Term id="spei-3">SPEI-3</Term> are fitted per calendar month on a 1991–2024 baseline, because ten years give only ten values per calendar month.
+3. **Hotspot filtering.** A confidence-anchored <Term id="dbscan">DBSCAN</Term> keeps detections of 70% confidence or more as anchors, rescues medium-confidence detections (50–69%) within 1.5 km of an anchor as probable smouldering peat fires, and discards the rest.
 4. **Panel construction.** Filtered hotspots are joined to sub-districts and counted per month: 11 sub-districts × 120 months = 1,320 rows.
-5. **Statistical and spatial analysis.** Rank tests, correlations with effective sample size, Poisson count models with fixed effects, heterogeneity tests, trend tests, Moran's I and ST-DBSCAN.
+5. **Statistical and spatial analysis.** Rank tests, correlations with <Term id="effective-sample-size">effective sample size</Term>, Poisson count models with fixed effects, heterogeneity tests, trend tests, <Term id="morans-i">Moran's I</Term> and <Term id="st-dbscan">ST-DBSCAN</Term>.
 6. **Non-climatic factors.** Oil palm, forest loss, surface water, population and NDVI trend.
-7. **Machine learning.** Random Forest with leave-one-sub-district-out and leave-one-year-out validation, ablation and SHAP.
+7. **Machine learning.** <Term id="random-forest">Random Forest</Term> with <Term id="loko-loyo">leave-one-sub-district-out</Term> and leave-one-year-out validation, ablation and <Term id="shap">SHAP</Term>.
 8. **Early-warning skill and proxy validation**, plus the canal analysis.
 
 <div class="pp-table"><table>
@@ -118,9 +119,9 @@ Climate data were not bias-corrected against local stations, because the nearest
 
 ## What the thesis contributes
 
-Scientifically, it offers a reproducible workflow that combines density-based hotspot filtering, drought indices fitted per calendar month on a long baseline, dependence-aware inference (effective sample sizes, cluster-robust errors, block bootstrap), and blocked validation of machine-learning models against climatological baselines. Practically, it gives sub-district-level evidence on where and when fire risk concentrates, and an honest appraisal of what ENSO information can and cannot add to fire early warning in Bengkalis.
+Scientifically, it offers a reproducible workflow that combines density-based hotspot filtering, drought indices fitted per calendar month on a long baseline, dependence-aware inference (effective sample sizes, cluster-robust errors, <Term id="block-bootstrap">block bootstrap</Term>), and blocked validation of machine-learning models against climatological baselines. Practically, it gives sub-district-level evidence on where and when fire risk concentrates, and an honest appraisal of what ENSO information can and cannot add to fire early warning in Bengkalis.
 
-The headline results, from the abstract: a 1 °C rise in ONI is associated with a 1.95-fold increase in monthly hotspot counts (IRR 1.95, 95% CI 1.36–2.81), but adding SPEI-3 reduces that to 1.29 (0.98–1.69). The ENSO response differs significantly between sub-districts (Wald χ² = 23.2 on 10 degrees of freedom, p = 0.010). A Random Forest reaches a pooled AUC of 0.79 under leave-one-sub-district-out validation and 0.81 under leave-one-year-out. A nested early-warning rule does not significantly improve on a seasonal calendar. Hotspots on non-forest peat sit significantly closer to drainage canals than expected by chance.
+The headline results, from the abstract: a 1 °C rise in ONI is associated with a 1.95-fold increase in monthly hotspot counts (<Term id="irr">IRR</Term> 1.95, 95% CI 1.36–2.81), but adding SPEI-3 reduces that to 1.29 (0.98–1.69). The ENSO response differs significantly between sub-districts (<Term id="wald-test">Wald</Term> χ² = 23.2 on 10 degrees of freedom, p = 0.010). A Random Forest reaches a pooled <Term id="auc">AUC</Term> of 0.79 under leave-one-sub-district-out validation and 0.81 under leave-one-year-out. A nested early-warning rule does not significantly improve on a seasonal calendar. Hotspots on non-forest peat sit significantly closer to drainage canals than expected by chance.
 
 The conclusion the thesis draws: ENSO is a meaningful but indirect, drought-mediated modulator of peat fire in Bengkalis, and operational warning should combine seasonal calendars, drought monitoring and spatial targeting of drained peat, not rely on ENSO alone. The practical version is in [the post on recommendations](/blog/thesis-recommendations-disaster-management-bengkalis). The thesis mind map on the [front page](/blog/) shows how all of this connects.
 
