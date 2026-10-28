@@ -1,0 +1,28 @@
+@import 'katex/dist/katex.min.css';
+
+/* Inline methods term */
+a.term { color: inherit; text-decoration: underline dotted var(--teal); text-decoration-thickness: 1.5px; text-underline-offset: 3px; cursor: help; transition: color .15s, background .15s; border-radius: 2px; }
+a.term:hover, a.term[aria-expanded="true"] { color: var(--teal); background: rgba(28, 200, 170, .1); }
+a.term:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* Card (popup and glossary page share the .tc-* inner styles) */
+.term-pop { position: absolute; z-index: 1000; width: min(430px, calc(100vw - 24px)); max-height: min(72vh, 580px); overflow: auto; background: var(--bg-card); border: 1px solid var(--border-md); border-top: 2px solid var(--teal); border-radius: 4px; box-shadow: 0 14px 40px rgba(0, 0, 0, .55); padding: 1rem 1.1rem 1rem; font-size: .84rem; line-height: 1.55; color: var(--text); }
+.term-pop[hidden] { display: none; }
+.term-pop h4 { font-family: var(--font-display); font-size: 1.05rem; line-height: 1.3; margin: 0 1.6rem .6rem 0; color: var(--text-bright); }
+.tc-close { position: absolute; top: .45rem; right: .55rem; width: 1.8rem; height: 1.8rem; font-size: 1.3rem; line-height: 1; color: var(--text-muted); background: transparent; border: 0; border-radius: 4px; cursor: pointer; }
+.tc-close:hover { color: var(--text-bright); background: var(--bg-hover); }
+.term-pop p, .term-card p { max-width: none; padding: 0; margin: 0 0 .65rem; }
+.tc-what { color: var(--text); }
+.tc-math { margin: .5rem 0 .7rem; padding: .35rem .7rem; background: var(--bg-subtle); border-radius: 3px; overflow-x: auto; }
+.tc-math .katex-display { margin: .45em 0; }
+.tc-math .katex { font-size: 1.02em; color: var(--text-bright); }
+.tc-where { margin: 0 0 .7rem; display: grid; gap: .25rem; font-size: .8rem; }
+.tc-where > div { display: grid; grid-template-columns: minmax(5.5rem, max-content) 1fr; gap: .6rem; align-items: baseline; }
+.tc-where dt { color: var(--text-bright); white-space: nowrap; }
+.tc-where dd { margin: 0; color: var(--text-muted); }
+.tc-thesis { padding-left: .7rem !important; border-left: 2px solid var(--teal); color: var(--text); }
+.tc-thesis b { color: var(--teal); font-weight: 700; }
+.tc-note { font-size: .76rem; font-style: italic; color: var(--text-dim); }
+.tc-ref { font-size: .72rem; letter-spacing: .02em; color: var(--text-dim); margin-bottom: 0 !important; }
+.tc-more { margin: .7rem 0 0 !important; padding-top: .6rem !important; border-top: 1px solid var(--border); font-size: .76rem; }
+@media (max-width: 560px) { .tc-where > div { grid-template-columns: 1fr; gap: 0; } }

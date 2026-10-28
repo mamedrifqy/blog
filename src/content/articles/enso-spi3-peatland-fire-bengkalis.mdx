@@ -16,11 +16,12 @@ import SeasonProfile from '../../components/paper/SeasonProfile.jsx';
 import PhaseBars from '../../components/paper/PhaseBars.jsx';
 import CorrelationDots from '../../components/paper/CorrelationDots.jsx';
 import DbscanExplorer from '../../components/paper/DbscanExplorer.jsx';
+import Term from '../../components/Term.astro';
 
 Bengkalis Regency sits on one of the largest peat landscapes in Riau, and in the last decade it has burned in pulses: a catastrophic 2015,[^field16][^huijnen16] a heavy 2019,[^iskandar22] and long quiet stretches in between. This post walks through what a ten-year record of satellite hotspots can and cannot say about why. It follows the manuscript, adds interactive versions of its figures, and states plainly where the evidence is strong and where it is thin.
 
 <div class="pp-callout"><div>
-<p><strong>Updated 16 October 2026.</strong> All numbers were recomputed with the current thesis pipeline. It drops detections flagged as non-vegetation fire (type ≠ 0), so the raw count is 5,386 and the analysed set is 3,402 hotspots, where the draft manuscript had 5,603 and 3,536. SPI-3 now uses a 1991–2024 baseline. The qualitative picture holds; several figures moved, and the claim that Mandau is a clear anomaly no longer stands (see below).</p>
+<p><strong>Updated 16 October 2026.</strong> All numbers were recomputed with the current thesis pipeline. It drops detections flagged as non-vegetation fire (type ≠ 0), so the raw count is 5,386 and the analysed set is 3,402 hotspots, where the draft manuscript had 5,603 and 3,536. <Term id="spi-3">SPI-3</Term> now uses a 1991–2024 baseline. The qualitative picture holds; several figures moved, and the claim that Mandau is a clear anomaly no longer stands (see below).</p>
 </div></div>
 
 <div class="pp-keys">
@@ -34,7 +35,7 @@ Bengkalis Regency sits on one of the largest peat landscapes in Riau, and in the
 
 - **El Niño months carry most of the fire.** Mean hotspots per kecamatan-month are 0.5 in La Niña, 1.8 in Neutral and 4.8 in El Niño. The median is zero in all three, so the effect lives in the tail: a few extreme months do the damage.
 - **The signal is real but modest.** ENSO phase explains about 6% of the variance. Peat condition, drainage and ignition sources matter too, and this study does not measure them.
-- **A local drought index tracks fire better than the Pacific index.** SPI-3 (3-month standardized precipitation) correlates more strongly with hotspots than ONI does in nearly every kecamatan.
+- **A local drought index tracks fire better than the Pacific index.** SPI-3 (3-month standardized precipitation) correlates more strongly with hotspots than <Term id="oni-phases">ONI</Term> does in nearly every kecamatan.
 - **Two kecamatan are only weakly tied to ENSO.** Mandau and Pinggir show no significant ONI link after correction. Pinggir, with 353 hotspots, is the clearest case, and the only one where SPI-3 fails as well.
 
 ## Where the data comes from
@@ -48,7 +49,7 @@ Hotspots are NASA FIRMS MODIS detections for 2015–2024 inside Bengkalis, 5,386
   <div class="row"><span>Kept for analysis</span><div class="track"><div class="fill final" style="width:63.2%"></div></div><b>3,402</b></div>
 </div>
 
-Anchors are grouped with DBSCAN (1.5 km radius, haversine distance), giving 137 fire clusters.[^ester96] A medium-confidence point is kept only if it lies within 1.5 km of an anchor cluster, on the reasoning that smouldering peat produces weaker, patchier detections right next to confirmed fire. Everything else, 1,984 points, is discarded.
+Anchors are grouped with <Term id="dbscan">DBSCAN</Term> (1.5 km radius, haversine distance), giving 137 fire clusters.[^ester96] A medium-confidence point is kept only if it lies within 1.5 km of an anchor cluster, on the reasoning that smouldering peat produces weaker, patchier detections right next to confirmed fire. Everything else, 1,984 points, is discarded.
 
 The filter is a judgement call, and the numbers move with it. Keeping everything with confidence of at least 30% gives 4,795 points; at least 50% gives 3,655; at least 80% gives only 1,648. The anchor-plus-rescue rule sits between the permissive and strict extremes. The conclusions below use the 3,402-point set.
 
@@ -86,7 +87,7 @@ Hotspots peak twice: February to April, and again in July and August. Roughly 54
 
 ## Does ENSO sort the months?
 
-The test is a Kruskal-Wallis comparison of monthly hotspot counts across the three ENSO phases,[^kw52] using the NOAA rule (ONI at or beyond ±0.5 °C for at least five consecutive months). ONI is built from the ERSST.v5 sea-surface-temperature product.[^huang17] Counts are zero-inflated and heavily skewed, which is why a rank-based test is used instead of ANOVA.
+The test is a <Term id="kruskal-wallis">Kruskal-Wallis</Term> comparison of monthly hotspot counts across the three ENSO phases,[^kw52] using the NOAA rule (ONI at or beyond ±0.5 °C for at least five consecutive months). ONI is built from the ERSST.v5 sea-surface-temperature product.[^huang17] Counts are zero-inflated and heavily skewed, which is why a rank-based test is used instead of ANOVA.
 
 <PhaseBars client:visible />
 
@@ -94,7 +95,7 @@ The overall test is decisive (H = 77.90, p ≈ 1 × 10⁻¹⁷, n = 1,320 kecama
 
 <div class="pp-table">
 <table>
-<caption>Dunn's post-hoc test on pooled ranks with tie correction, Benjamini-Hochberg adjusted.</caption>
+<caption>Dunn's post-hoc test on pooled ranks with tie correction, <Term id="benjamini-hochberg">Benjamini-Hochberg</Term> adjusted.</caption>
 <thead><tr><th>Comparison</th><th>p (raw)</th><th>p (BH-adjusted)</th></tr></thead>
 <tbody>
 <tr><td>La Niña vs Neutral</td><td>7.2 × 10⁻⁷</td><td>1.1 × 10⁻⁶</td></tr>
@@ -104,7 +105,7 @@ The overall test is decisive (H = 77.90, p ≈ 1 × 10⁻¹⁷, n = 1,320 kecama
 </table>
 </div>
 
-A technical point worth knowing: 76% of kecamatan-months record zero hotspots, so ranks are heavily tied. Dunn's test has to use the tie-corrected variance, and without it the p-values come out far too large. With the correction, all three phase pairs differ.[^dunn64][^dinno15][^bh95]
+A technical point worth knowing: 76% of kecamatan-months record zero hotspots, so ranks are heavily tied. <Term id="dunn">Dunn's test</Term> has to use the tie-corrected variance, and without it the p-values come out far too large. With the correction, all three phase pairs differ.[^dunn64][^dinno15][^bh95]
 
 Splitting by season changes the story slightly. The ONI-hotspot association holds in both the June–September dry season (ρ = +0.24, η² = 0.034) and the rest of the year (ρ = +0.23, η² = 0.079). ENSO phase explains proportionally more of the variation outside the dry season. A plausible reading is that El Niño works partly by switching off the rainy season's normal suppression of fire, rather than only by deepening the dry season.
 
@@ -128,7 +129,7 @@ Pinggir is different. With 353 hotspots there is plenty to analyse, yet neither 
 
 Four points from published work sharpen how the numbers above should be read. They are context for the findings, not part of the manuscript's own analysis.
 
-**The dryness–fire link is nonlinear, which a rank correlation understates.** A study of Indonesia from 1997 to 2015 attributes the nonlinear rainfall–fire relationship to longer rain-free spells in extremely dry years.[^fanin17] Fire on degraded peat has been shown to stay nonlinearly sensitive to dry conditions, including in 2015.[^field16] A Borneo analysis found fire frequency jumping when monthly rainfall fell below roughly 200 mm.[^sloan17] That fits what this post found: medians of zero in every ENSO phase, and an effect that lives in the tail. A Spearman coefficient and an η² summarise average association, so they will read "modest" for a process that behaves like a threshold. A natural next step is to test exceedance models, for example the probability of a fire month once accumulated rainfall drops below a regionally estimated level, and to compare accumulation windows rather than fixing SPI-3.
+**The dryness–fire link is nonlinear, which a rank correlation understates.** A study of Indonesia from 1997 to 2015 attributes the nonlinear rainfall–fire relationship to longer rain-free spells in extremely dry years.[^fanin17] Fire on degraded peat has been shown to stay nonlinearly sensitive to dry conditions, including in 2015.[^field16] A Borneo analysis found fire frequency jumping when monthly rainfall fell below roughly 200 mm.[^sloan17] That fits what this post found: medians of zero in every ENSO phase, and an effect that lives in the tail. A <Term id="spearman">Spearman</Term> coefficient and an η² summarise average association, so they will read "modest" for a process that behaves like a threshold. A natural next step is to test exceedance models, for example the probability of a fire month once accumulated rainfall drops below a regionally estimated level, and to compare accumulation windows rather than fixing SPI-3.
 
 **Fire does not need an ENSO year.** Fires in central Sumatra in June 2013 burned an estimated 163,336 ha, 84% of it peatland and about 82% on deforested land, in a year that was wetter than average and after only a two-month dry spell.[^gaveau14] The 2019 season, which this post flags as the second wave despite a weak ENSO signal, coincided with a strong positive Indian Ocean Dipole that cut rainfall across Indonesia and raised hotspot numbers in southern Sumatra.[^iskandar22] An earlier South Sumatra study found the largest hotspot counts in 1995–2016 in the 2006 positive-dipole year and in 2015.[^putra19] The Pacific index cannot see this. The standard Indian Ocean index is the dipole mode index defined in the original dipole-mode paper,[^saji99] and adding it as a second climate covariate is a direct test of whether 2019 is explained.
 

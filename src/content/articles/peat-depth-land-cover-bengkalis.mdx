@@ -14,6 +14,7 @@ import FireLandscapeMap from '../../components/thesis/FireLandscapeMap.jsx';
 import DataTable from '../../components/thesis/DataTable.jsx';
 import REPORT from '../../data/thesis-report.json';
 import PairedBars from '../../components/thesis/PairedBars.jsx';
+import Term from '../../components/Term.astro';
 
 Climate sets the clock; the land sets the map. This post looks at the land side of the thesis: how fire relates to peat depth, and whether oil palm, forest loss and other land-use variables explain where hotspots fall. The first question gets a clear answer. The second gets an honest "not with this design".
 
@@ -29,7 +30,7 @@ Climate sets the clock; the land sets the map. This post looks at the land side 
 - **Fire prefers moderate-to-deep peat, and avoids the deepest.** Peat of 100–200 cm and 500–700 cm is over-represented by about a third; shallow peat (under 100 cm) and very deep peat (over 700 cm) are under-represented.
 - **The effect is real but smaller than an early draft suggested.** Using the wrong area denominator inflated the 500–700 cm ratio to 3.25; the corrected value is 1.33. The qualitative conclusion survived, the size did not.
 - **Land-use variables point the "wrong" way, and that is a warning, not a finding.** Forest loss and oil palm correlate negatively with hotspots, which mostly reflects the contrast between peat-dominated island sub-districts and drier inland ones.
-- **Climate still outranks everything static.** Rainfall and SPEI-3 are the strongest correlates of monthly hotspots.
+- **Climate still outranks everything static.** Rainfall and <Term id="spei-3">SPEI-3</Term> are the strongest correlates of monthly hotspots.
 
 ## Where fire falls on the depth scale
 
@@ -71,11 +72,11 @@ An earlier study of Bengkalis reported that most hotspots fell on very deep Hemi
 
 ### A correction that changed the size of the result
 
-An earlier draft of the analysis computed the area shares from all 4,070 national peat polygons instead of the 511,265 ha of peat inside Bengkalis. That inflated the ratio for the 500–700 cm class to 3.25. With the right denominator it is 1.33. The goodness-of-fit test rejects proportionality either way, so the finding that fire is not spread evenly over depth stands, but the effect is about a third, not threefold. The details are in [the post on filtering and checks](/blog/behind-the-numbers-hotspot-filtering-checks).
+An earlier draft of the analysis computed the area shares from all 4,070 national peat polygons instead of the 511,265 ha of peat inside Bengkalis. That inflated the ratio for the 500–700 cm class to 3.25. With the right denominator it is 1.33. The <Term id="chi-square-peat">goodness-of-fit</Term> test rejects proportionality either way, so the finding that fire is not spread evenly over depth stands, but the effect is about a third, not threefold. The details are in [the post on filtering and checks](/blog/behind-the-numbers-hotspot-filtering-checks).
 
 ### Sub-district level: peat endowment is not the whole story
 
-Hotspot counts are not proportional to peat area. Rupat holds 15% of the peat but 29% of the hotspots, whereas Bukit Batu and Siak Kecil, with deep peat, hold 10% and 16% of the peat but 3% and 8% of the hotspots. Between sub-districts, the fire-weighted depth was unrelated to hotspot numbers (Spearman r = −0.09, p = 0.79).
+Hotspot counts are not proportional to peat area. Rupat holds 15% of the peat but 29% of the hotspots, whereas Bukit Batu and Siak Kecil, with deep peat, hold 10% and 16% of the peat but 3% and 8% of the hotspots. Between sub-districts, the fire-weighted depth was unrelated to hotspot numbers (<Term id="spearman">Spearman</Term> r = −0.09, p = 0.79).
 
 Comparing each sub-district's mean peat depth with the depth at which its fires occurred shows who burns deeper than their landscape average. Bantan, Bengkalis, Pinggir, Mandau, Bathin Solapan and Rupat Utara sit above the 1:1 line; Rupat, Bandar Laksamana, Siak Kecil and Talang Muandau sit below it, and Bukit Batu close to it. Rupat, with by far the most hotspots, burns mainly on peat that is relatively shallow for its own landscape. The thesis also notes that more than 90% of hotspots fall on mapped peat in eight sub-districts; the lowest shares are in Talang Muandau (56%), Bandar Laksamana (82%) and Rupat Utara (85%), and the data do not identify the land cover of the off-peat hotspots.
 
@@ -107,7 +108,7 @@ The thesis extracts static land-use variables per sub-district: oil palm fractio
 ### The predictor ranking
 
 <div class="pp-table"><table>
-<caption>Predictors ranked by absolute Spearman correlation with monthly hotspot counts (pooled panel, N = 1,320; all Benjamini–Hochberg-adjusted p below 0.01). Static variables repeat one value across 120 months, so their panel p-values are inflated and the ranking is indicative only.</caption>
+<caption>Predictors ranked by absolute Spearman correlation with monthly hotspot counts (pooled panel, N = 1,320; all <Term id="benjamini-hochberg">Benjamini–Hochberg</Term>-adjusted p below 0.01). Static variables repeat one value across 120 months, so their panel p-values are inflated and the ranking is indicative only.</caption>
 <thead><tr><th>Rank</th><th>Variable</th><th>r<sub>s</sub></th><th>r<sub>s</sub>²</th></tr></thead>
 <tbody>
 <tr><td>1</td><td>Precipitation (CHIRPS)</td><td>−0.322</td><td>0.103</td></tr>
@@ -121,7 +122,7 @@ The thesis extracts static land-use variables per sub-district: oil palm fractio
 <tr><td>9</td><td>Mean peat depth (static)</td><td>+0.074</td><td>0.005</td></tr>
 </tbody></table></div>
 
-Local rainfall and drought come first, ahead of ONI and every static variable. That matches the main message of [the ENSO and SPI-3 analysis](/blog/enso-spi3-peatland-fire-bengkalis).
+Local rainfall and drought come first, ahead of <Term id="oni-phases">ONI</Term> and every static variable. That matches the main message of [the ENSO and SPI-3 analysis](/blog/enso-spi3-peatland-fire-bengkalis).
 
 ### Why the negative signs are not a protective effect
 

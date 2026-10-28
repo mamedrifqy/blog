@@ -13,6 +13,7 @@ import '../../styles/thesis.css';
 import SeasonCalendar from '../../components/thesis/SeasonCalendar.jsx';
 import EnsoHeterogeneity from '../../components/thesis/EnsoHeterogeneity.jsx';
 import EwsAlertMap from '../../components/thesis/EwsAlertMap.jsx';
+import Term from '../../components/Term.astro';
 
 A thesis in a disaster-management programme has to end with something an agency can act on. This post collects the final chapters of the thesis: what the five research questions found, what follows for preparedness in Bengkalis, who would do what, and what the author says still needs to be done. It is also a good place to start if you only have a few minutes, because every other post in this cluster feeds into it.
 
@@ -40,7 +41,7 @@ A thesis in a disaster-management programme has to end with something an agency 
 
 The discussion chapter spends as much effort on how to read the numbers as on the numbers. A few of its points matter for anyone planning around them.
 
-**ENSO acts through local drought.** Adding SPEI-3 to the count model cuts the ONI effect from 1.95 to 1.29, and each unit increase in SPEI-3 lowers expected hotspots by about 65% (IRR 0.35). The thesis calls this attenuation, not a formal mediation analysis, and uses "mediated" as shorthand. In practice, a local drought indicator carries more of the actionable information than ENSO itself, while ENSO remains valuable as a long-lead precursor of drought. The total ENSO effect held up under year-clustered errors and a year-level wild bootstrap, but its direct effect after drought was not significant under year-level inference.
+**ENSO acts through local drought.** Adding <Term id="spei-3">SPEI-3</Term> to the count model cuts the <Term id="oni-phases">ONI</Term> effect from 1.95 to 1.29, and each unit increase in SPEI-3 lowers expected hotspots by about 65% (<Term id="irr">IRR</Term> 0.35). The thesis calls this attenuation, not a formal mediation analysis, and uses "mediated" as shorthand. In practice, a local drought indicator carries more of the actionable information than ENSO itself, while ENSO remains valuable as a long-lead precursor of drought. The total ENSO effect held up under year-clustered errors and a year-level <Term id="wild-bootstrap">wild bootstrap</Term>, but its direct effect after drought was not significant under year-level inference.
 
 **The fire season is bimodal.** February–April contributes more hotspots than June–September (the abstract gives February–March 43.4% and June–September 38.4%). The conventional dry-season framing, June to September, misses the early-year peak that follows the northeast monsoon and can be severe in El Niño years such as 2015 and 2019.
 
@@ -49,21 +50,21 @@ The discussion chapter spends as much effort on how to read the numbers as on th
   caption="Share of hotspots by calendar month, 2015–2024. The teal months are the empirical fire months behind the proposed two-window calendar."
 />
 
-**Landscape decides where climate-driven risk is realised.** The significant heterogeneity of the ENSO response, the concentration of hotspots in Rupat and Bandar Laksamana, the over-representation of moderately deep peat and the canal result all point the same way. The thesis also uses Mandau as a lesson in why formal testing matters: with little peat (5,655 ha), a high oil palm fraction and only 22 hotspots, its weak ONI correlation reflects low power, and a model that never saw Mandau predicted it well (AUC 0.89).
+**Landscape decides where climate-driven risk is realised.** The significant heterogeneity of the ENSO response, the concentration of hotspots in Rupat and Bandar Laksamana, the over-representation of moderately deep peat and the canal result all point the same way. The thesis also uses Mandau as a lesson in why formal testing matters: with little peat (5,655 ha), a high oil palm fraction and only 22 hotspots, its weak ONI correlation reflects low power, and a model that never saw Mandau predicted it well (<Term id="auc">AUC</Term> 0.89).
 
 <EnsoHeterogeneity
   client:visible
   caption="Incidence rate ratio of monthly hotspots per +1 °C of ONI, by sub-district (Table 4.17 of the thesis), with 95% confidence intervals and marker size showing hotspot counts. Every estimate is above 1, so the direction of the response is uniform; what differs is its strength (Wald test of a common slope, p = 0.010). Bandar Laksamana, Rupat and Siak Kecil, which together hold 56% of the hotspots, respond most strongly."
 />
 
-**Machine learning adds less than it appears to.** Under spatial validation, climate carries the model (pooled AUC falls from 0.795 to 0.703 when climate is removed; a static-only model reaches 0.624). Under temporal validation, the largest gains come from static sub-district features and fire persistence, which act largely as sub-district identifiers. On held-out predictions climate variables carried 59.1% of the mean absolute SHAP value, against 21.8% for anthropogenic, 9.7% for biophysical-static and 9.3% for seasonal features. The thesis stresses that SHAP is a second view of the same model, not an independent test.
+**Machine learning adds less than it appears to.** Under spatial validation, climate carries the model (pooled AUC falls from 0.795 to 0.703 when climate is removed; a static-only model reaches 0.624). Under temporal validation, the largest gains come from static sub-district features and fire persistence, which act largely as sub-district identifiers. On held-out predictions climate variables carried 59.1% of the mean absolute <Term id="shap">SHAP</Term> value, against 21.8% for anthropogenic, 9.7% for biophysical-static and 9.3% for seasonal features. The thesis stresses that SHAP is a second view of the same model, not an independent test.
 
 ## Five recommendations
 
 1. **Adopt a two-window preparedness calendar** (February–April and July–August) for Bengkalis, instead of a single June–September dry season.
 2. **Use ONI forecasts to escalate preparedness** in fire months when El Niño is expected, and monitor SPEI-3 (or a groundwater-level proxy) as the near-term trigger.
 3. **Prioritise canal blocking, rewetting and patrols** in the sub-districts with the highest hotspot burden (Rupat, Bandar Laksamana, Bengkalis, Pinggir) and on non-forest peat within a few hundred metres of canals.
-4. **Integrate daily FIRMS monitoring with the DBSCAN-based filter** to reduce false alarms from industrial sources around Duri.
+4. **Integrate daily FIRMS monitoring with the <Term id="dbscan">DBSCAN</Term>-based filter** to reduce false alarms from industrial sources around Duri.
 5. **Communicate model skill honestly.** Risk maps and alert levels should state their uncertainty and their performance relative to a seasonal baseline.
 
 The fifth is the one that is easiest to skip and probably the most important. The skill test in [the early-warning post](/blog/early-warning-skill-bengkalis) is the reason: a warning that looks sophisticated but does no better than the calendar should be labelled as such.

@@ -15,6 +15,7 @@ import MonthlyBurn from '../../components/thesis/MonthlyBurn.jsx';
 import LiftExplorer from '../../components/thesis/LiftExplorer.jsx';
 import Y2019Bars from '../../components/thesis/Y2019Bars.jsx';
 import ExplainedShare from '../../components/thesis/ExplainedShare.jsx';
+import Term from '../../components/Term.astro';
 
 Every result in this study rests on one assumption: that a satellite *hotspot* is a fair stand-in for a peat fire. A hotspot is a heat anomaly in a pixel roughly a kilometre across, seen at one moment.[^giglio16] It is not a burn scar. Reviewers of the thesis asked, reasonably, what evidence there is that the two line up. This post is the answer the revised analysis gives, and it is a mixed one.
 
@@ -27,10 +28,10 @@ Every result in this study rests on one assumption: that a satellite *hotspot* i
 
 ## The short version
 
-- **Where and when: hotspots hold up.** Month by month and kecamatan by kecamatan they agree with the MODIS burned-area product clearly better than chance, and year by year the two track each other (Spearman ρ = 0.72 across 110 kecamatan-years).
+- **Where and when: hotspots hold up.** Month by month and kecamatan by kecamatan they agree with the MODIS burned-area product clearly better than chance, and year by year the two track each other (<Term id="spearman">Spearman</Term> ρ = 0.72 across 110 kecamatan-years).
 - **How much: they do not.** Burned hectares per hotspot vary from about 5 to 28 depending on the year and the product. Hotspot counts are a signal of fire activity, not an area estimate. A study at a degraded peat swamp forest in Central Kalimantan reached the same conclusion.[^tansey08]
 - **Small fire years are the weak spot.** In 2023, more than half of the burned area detected by Landsat had no hotspot within 2 km.
-- **The climate signal is weaker in burned area than in hotspots.** The correlation of monthly burned area with ONI is 0.09, against 0.23 for hotspots. The direction agrees; the strength does not.
+- **The climate signal is weaker in burned area than in hotspots.** The correlation of monthly burned area with <Term id="oni-phases">ONI</Term> is 0.09, against 0.23 for hotspots. The direction agrees; the strength does not.
 
 ## Check 1: do hotspot months match burned months?
 
@@ -103,7 +104,7 @@ The last question flips the first. Instead of asking whether hotspots land on bu
 
 At 1 km the study's filtered hotspots account for 82% of 2015's burned area, 73% of 2019's and 46% of 2023's, which is 8, 11 and 38 times what chance would give. Two points stand out.
 
-**The DBSCAN filter costs little where fires were large.** Using all raw detections raises the share at 1 km by 4 points in 2015, 9 in 2019 and 3 in 2023. The filter does discard some points that sat next to real burn scars, but it also removes false alarms, and the trade-off is modest.
+**The <Term id="dbscan">DBSCAN</Term> filter costs little where fires were large.** Using all raw detections raises the share at 1 km by 4 points in 2015, 9 in 2019 and 3 in 2023. The filter does discard some points that sat next to real burn scars, but it also removes false alarms, and the trade-off is modest.
 
 **Small years are poorly covered.** In 2023 the share stays at about 47–52% even at a 2 km radius, regardless of which hotspot set is used. That is the Landsat burn that MODIS hotspots do not see at all: roughly 420 ha of the 774 ha detected that year, with no filtered hotspot within a kilometre. Small, short-lived peat fires are exactly what a coarse thermal sensor misses: the MODIS fire-detection validation reports high omission for small fires,[^giglio16] and small fires are known to add materially to burned area in this part of the world.[^randerson12]
 
@@ -127,7 +128,7 @@ The headline finding of the thesis is that El Niño and drought raise fire activ
 <tr><td>SPI-3 (Jul–Oct) · annual total, n = 10 years</td><td>−0.77</td><td>−0.53</td></tr>
 </tbody></table></div>
 
-Drought is the stronger driver in both records: at the annual scale, July–October SPI-3 tracks the hotspot total at ρ = −0.77 and the MODIS burned area at −0.53 (ten years, so treat both with care). The gap is consistent with burned area being a noisier, coarser measure, and also with hotspots responding to dry conditions more readily than burn scars do.
+Drought is the stronger driver in both records: at the annual scale, July–October <Term id="spi-3">SPI-3</Term> tracks the hotspot total at ρ = −0.77 and the MODIS burned area at −0.53 (ten years, so treat both with care). The gap is consistent with burned area being a noisier, coarser measure, and also with hotspots responding to dry conditions more readily than burn scars do.
 
 ## Reading these numbers against the published validation work
 

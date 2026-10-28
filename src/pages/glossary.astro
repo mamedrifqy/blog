@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { GLOSSARY, GROUPS, renderEntry } from '../data/glossary';
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+const groups = GROUPS.map((g) => ({ name: g, items: GLOSSARY.filter((e) => e.group === g) })).filter((g) => g.items.length);
+---
+<BaseLayout title="Methods glossary" activePage="glossary" description="Formulas and plain-language explanations of the statistical methods used in the Bengkalis peatland fire thesis.">
+  <div class="gl-wrap container">
+    <div class="gl-hero">
+      <div class="section-label"><span class="label-line"></span><span>Glossary</span></div>
+      <h1>Methods glossary</h1>
+      <p class="lead">
+        The dotted-underlined terms in the thesis posts open a small card with the formula. This page lists all of them in one place.
+        Formulas are the thesis's own equations (Chapter 3). Where the thesis only cites a method, the entry gives the standard definition and says so.
+      </p>
+      <nav class="gl-jump" aria-label="Jump to a group">
+        {groups.map((g) => <a href={`#g-${g.name.toLowerCase().replace(/[^a-z]+/g, '-')}`}>{g.name}</a>)}
+      </nav>
+    </div>
+    {groups.map((g) => (
+      <section id={`g-${g.name.toLowerCase().replace(/[^a-z]+/g, '-')}`}>
+        <h2>{g.name}</h2>
+        {g.items.map((e) => (
+          <article class="gl-entry term-card" id={e.id}>
+            <h3>{e.name}</h3>
+            <Fragment set:html={renderEntry(e, BASE)} />
+          </article>
+        ))}
+      </section>
+    ))}
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .gl-wrap { padding: calc(var(--nav-h) + 4rem) 0 5rem; max-width: 860px; }
+  .gl-hero { margin-bottom: 2rem; }
+  .gl-hero .lead { max-width: 680px; }
+  .gl-jump { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1.4rem; }
+  .gl-jump a { font-size: .78rem; color: var(--text-muted); border: 1px solid var(--border-md); padding: .3rem .65rem; border-radius: 4px; text-decoration: none; }
+  .gl-jump a:hover { color: var(--text-bright); background: var(--bg-hover); }
+  .gl-wrap h2 { font-family: var(--font-display); font-size: 1.5rem; margin: 3rem 0 1rem; }
+  .gl-entry { background: var(--bg-card); border: 1px solid var(--border); padding: 1.2rem 1.4rem; margin-bottom: .9rem; scroll-margin-top: calc(var(--nav-h) + 1.5rem); }
+  .gl-entry:target { border-color: var(--teal); }
+  .gl-entry h3 { font-family: var(--font-display); font-size: 1.15rem; margin: 0 0 .6rem; color: var(--text-bright); }
+</style>

@@ -1,0 +1,10 @@
+---
+// Inline methods term. Hover, focus or tap opens a card with the formula (see src/scripts/terms.js).
+// Without JavaScript it is a plain link to the glossary entry, so the page still works.
+import { BY_ID } from '../data/glossary';
+interface Props { id: string }
+const { id } = Astro.props;
+if (!BY_ID[id]) throw new Error(`<Term id="${id}"> is not in src/data/glossary.ts`);
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<a class="term" href={`${BASE}/glossary#${id}`} data-term={id} aria-haspopup="dialog" aria-expanded="false"><slot /></a>
