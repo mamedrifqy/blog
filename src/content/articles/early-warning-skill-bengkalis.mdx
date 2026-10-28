@@ -10,6 +10,10 @@ chapter: "4.8"
 
 import '../../styles/paper.css';
 import '../../styles/thesis.css';
+import SeasonCalendar from '../../components/thesis/SeasonCalendar.jsx';
+import EwsAlertMap from '../../components/thesis/EwsAlertMap.jsx';
+import DataTable from '../../components/thesis/DataTable.jsx';
+import REPORT from '../../data/thesis-report.json';
 import SkillBars from '../../components/thesis/SkillBars.jsx';
 
 ENSO can be forecast months ahead, which makes it an attractive trigger for a fire early-warning system. The thesis tests that idea in the most direct way it can: build a rule from ENSO and drought, apply it to years it has never seen, and compare it with a baseline that needs no climate information at all. This post covers that test, and the descriptive alert levels that sit next to it.
@@ -35,6 +39,11 @@ The candidate rule raises an alarm for a sub-district in a given month if three 
 The reference is an alarm in every fire month. That sounds naive, but it is close to what already happens: provincial alert periods in Riau typically open in February and close at the end of the second dry season. In 2019 the governor declared an alert status from 19 February to 31 October; in 2026 the provincial status runs from 13 February to 30 November. That matches the two fire seasons the thesis documents, so in practice the status already works as a seasonal-calendar rule.
 
 Skill is scored with the standard yes/no forecast measures: probability of detection (POD, the share of fire months caught), false alarm ratio (FAR, the share of alarms that were wrong), probability of false detection (POFD) and the Critical Success Index (CSI). The headline measure is the Peirce Skill Score, PSS = POD − POFD, because it does not reward simply forecasting the more common category and does not depend on the base rate.[^hanssen65]
+
+<SeasonCalendar
+  client:visible
+  caption="Share of all 3,402 hotspots by calendar month, 2015–2024. The five months drawn in teal (February, March, April, July, August) are the empirical fire months that the rule and the calendar baseline both use; they group into the two preparedness windows."
+/>
 
 ## The result
 
@@ -95,6 +104,28 @@ Alongside the skill test, the thesis builds a descriptive alert table. The level
 
 Applied to Bengkalis, the probability of a fire month rises in every sub-district from "all months" to "El Niño months" to "El Niño months in the dry season", but the size of the jump differs a lot. Bandar Laksamana goes from 0.57 to 0.68 to 0.94; Rupat from 0.41 to 0.61 to 0.78; Mandau only from 0.06 to 0.09 to 0.22. The resulting levels: Bandar Laksamana at Alert 1 (2-month lag), Rupat at Alert 2 (0-month lag), Siak Kecil, Talang Muandau, Bengkalis and Pinggir at Alert 3, four sub-districts at Watch, and Mandau at Normal.
 
+### The eleven sub-districts on one map
+
+<EwsAlertMap
+  client:visible
+  caption="Operational alert level by sub-district (Section 4.7.6, Table 4.25). Click a sub-district for its best ONI lag and the three conditional probabilities of a fire month. This is a descriptive scheme, not a forecast."
+/>
+
+<DataTable
+  client:visible
+  csv="early_warning_alert_table.csv"
+  rows={REPORT.ews}
+  caption="Conditional probability of at least one hotspot in a month, by sub-district, under all months, El Niño months, and El Niño months in the dry season (click a column to sort). Lag is the ONI lead, in months, with the strongest Spearman correlation."
+  cols={[
+    { k: 'kecamatan', label: 'Sub-district' },
+    { k: 'alert_level', label: 'Level' },
+    { k: 'oni_lag_months', label: 'Lag (months)', num: true },
+    { k: 'p_fire_annual', label: 'All months', num: true, digits: 2 },
+    { k: 'p_fire_el_nino', label: 'El Niño', num: true, digits: 2 },
+    { k: 'p_fire_el_nino_dry', label: 'El Niño + dry season', num: true, digits: 2 },
+  ]}
+/>
+
 The thesis is firm about how to read this. The probabilities come from few, autocorrelated El Niño months in three episodes (2015/16, 2018/19, 2023/24), so the intervals are optimistic. And because ONI adds no demonstrable skill over the calendar, the levels are descriptive priorities, not forecasts.
 
 ### A companion ranking: composite vulnerability
@@ -108,6 +139,18 @@ A separate time-invariant screening index combines climate sensitivity (40%), pe
 - Fire months and thresholds change from fold to fold, so the "rule" is really a family of similar rules.
 
 For what the thesis proposes to do with this result, see [the post on recommendations for disaster management](/blog/thesis-recommendations-disaster-management-bengkalis). For how much of the ENSO signal is really local drought, see [the ENSO and SPI-3 analysis](/blog/enso-spi3-peatland-fire-bengkalis).
+
+<div class="pp-datanote">
+<h4>Data for this post</h4>
+<p>The alert table keeps the Indonesian text of the action and trigger columns from the analysis output; numeric columns have English headers.</p>
+<ul class="th-dl">
+  <li><a href="/blog/thesis-data/csv/early_warning_skill.csv" download>Skill scores <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/early_warning_alert_table.csv" download>Operational alert table <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/seasonal_profile.csv" download>Seasonal profile <small>CSV</small></a></li>
+  <li><a href="/blog/thesis-data/csv/subdistrict_summary.csv" download>Sub-district summary <small>CSV</small></a></li>
+</ul>
+<p class="th-alldata"><a href="/blog/data">All tables, map layers and figures</a></p>
+</div>
 
 *All numbers in this post come from Sections 3.13, 4.7.6–4.8, 2.7–2.8 and 5.7 of the thesis (Tables 4.25–4.29). Fire months, thresholds and alert levels are derived from NASA FIRMS (MODIS) hotspots filtered with DBSCAN, ONI from NOAA, and SPEI-3 from CHIRPS and ERA5-Land.*
 

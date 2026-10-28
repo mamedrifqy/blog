@@ -1,0 +1,10 @@
+land_cover,hotspot_pct,null_pct,ratio
+bare,0.0,0.0,
+built,0.1,0.1,1.0
+crop,1.1,0.7,1.57
+grass,30.5,10.6,2.88
+herb_wetland,0.0,0.2,0.0
+mangrove,0.0,0.2,0.0
+shrub,3.3,1.8,1.83
+tree,65.0,86.3,0.75
+water,0.0,0.0,
