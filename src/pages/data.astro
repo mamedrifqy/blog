@@ -3,6 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import datasets from '../data/thesis-datasets.json';
 import fs from 'node:fs';
 import path from 'node:path';
+import DataStack from '../components/thesis/DataStack.jsx';
+import '../styles/thesis.css';
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 const root = path.join(process.cwd(), 'public', 'thesis-data');
@@ -59,6 +61,14 @@ const figures = [
       </p>
     </div>
 
+    <h2 id="structure">How the data fit together</h2>
+    <p class="data-intro">
+      The thesis data form a stack: raw sources at the bottom, then the filtered hotspots, the spatial frame they are joined to,
+      the climate and ocean indices, the sub-district × month panel every model is fitted to, the analyses, and finally the tables on this page.
+      Pick a layer to see what it holds, where it comes from and which files carry it.
+    </p>
+    <DataStack client:visible base={BASE} />
+
     <h2>Tables</h2>
     <div class="data-list">
       {items.map((d: any) => (
@@ -110,6 +120,7 @@ const figures = [
 </BaseLayout>
 
 <style>
+  .data-intro { color: var(--text-muted); font-size: .92rem; line-height: 1.6; max-width: 760px; margin: 0 0 1.25rem; }
   .data-wrap { padding: calc(var(--nav-h) + 4rem) 0 5rem; max-width: 1040px; }
   .data-hero { margin-bottom: 2.5rem; }
   .section-label { display:flex;align-items:center;gap:0.75rem;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:1.5rem; }
