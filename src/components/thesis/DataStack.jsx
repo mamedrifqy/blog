@@ -1,4 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
+import Modal from './stack/Modal.jsx';
+import SourceSheet from './stack/SourceSheet.jsx';
+import { AnalysisSheet, OutputSheet } from './stack/Sheets.jsx';
+import { SOURCE_SHEETS } from './stack/sources.js';
+import { ANALYSIS_SHEETS } from './stack/analyses.js';
 import STACK from '../../data/data-stack.json';
 import DATASETS from '../../data/thesis-datasets.json';
 
@@ -10,6 +15,17 @@ import DATASETS from '../../data/thesis-datasets.json';
 const DEPTH = ['#4b5d9e', '#3b97b0', '#2cc4a0', '#8fd96a', '#e6d23c', '#f28f3b'];
 const PHASE = { 'El Nino': '#e8533a', 'La Nina': '#4f9be8', Netral: '#6b7280' };
 const TEAL = '#1cc8aa', GOLD = '#f0bc2e', CORAL = '#e8533a';
+
+const HotspotExplorer = lazy(() => import('./stack/HotspotExplorer.jsx'));
+const FrameExplorer = lazy(() => import('./stack/FrameExplorer.jsx'));
+const ClimateExplorer = lazy(() => import('./stack/ClimateExplorer.jsx'));
+const PanelExplorer = lazy(() => import('./stack/PanelExplorer.jsx'));
+const EXPLORE = {
+  hotspots: ['Explore all 3,402 hotspots', 'Click any hotspot for its date, satellite, confidence, fire radiative power, peat depth and distance to canal'],
+  frame: ['Explore the map', 'Click a sub-district or a peat polygon'],
+  climate: ['Explore the 120 months', 'Click a month for ONI, DMI, drought indices and hotspots in every sub-district'],
+  panel: ['Explore the panel', 'Click any of the 1,320 cells to read its full row'],
+};
 
 const anchor = (file) => file.replace(/^csv\//, '').replace(/\.csv$/, '');
 
@@ -100,7 +116,7 @@ function lattice(x, y, w, h, step, col, op = 0.9, r = 9) {
   return out;
 }
 
-function Content({ k, hi }) {
+function Content({ k, hi, onTile }) {
   if (k === 'sources' || k === 'analyses') {
     const list = k === 'sources' ? SOURCES : ANALYSES;
     const cols = k === 'sources' ? 4 : 2;
@@ -110,7 +126,7 @@ function Content({ k, hi }) {
       const x = (i % cols) * cw + 30, y = Math.floor(i / cols) * ch + 30, w = cw - 60, h = ch - 60;
       const on = hi == null || hi === i;
       return (
-        <g key={i} opacity={on ? 1 : 0.25}>
+        <g key={i} opacity={on ? 1 : 0.25} onClick={onTile ? (e) => { e.stopPropagation(); onTile(i); } : undefined}>
           <rect x={x} y={y} width={w} height={h} fill={s[3]} fillOpacity={hi === i ? 0.22 : 0.08} stroke={s[3]} strokeOpacity={0.6} vectorEffect="non-scaling-stroke" />
           {lattice(x, y, w, h, k === 'sources' ? 46 : 62, s[3])}
         </g>
@@ -124,7 +140,7 @@ function Content({ k, hi }) {
       const x = (i % 4) * cw + (cw - s) / 2, y = Math.floor(i / 4) * cw + (cw - s) / 2;
       const col = GROUP_COL[GROUP(d.file)];
       return (
-        <g key={i} opacity={hi == null || hi === i ? 1 : 0.25}>
+        <g key={i} opacity={hi == null || hi === i ? 1 : 0.25} onClick={onTile ? (e) => { e.stopPropagation(); onTile(i); } : undefined}>
           <rect x={x} y={y} width={s} height={s} fill={col} fillOpacity={hi === i ? 0.35 : 0.12} stroke={col} vectorEffect="non-scaling-stroke" />
           {lattice(x, y, s, s, 34, col, 0.85, 7)}
         </g>
@@ -181,6 +197,14 @@ export default function DataStack({ base = '' }) {
     if (m) setReduce(m.matches);
   }, []);
   useEffect(() => setHi(null), [active]);
+  const [sheet, setSheet] = useState(null); // { kind: 'sources'|'analyses'|'outputs'|'explore', i, layer }
+  const close = () => setSheet(null);
+  const openFile = (f) => setSheet({ kind: 'outputs', i: DATASETS.findIndex((d) => d.file === f) });
+  const openLayer = (i) => {
+    const k = LAYERS[i].key;
+    if (EXPLORE[k]) setSheet({ kind: 'explore', layer: k });
+    else if (k === 'sources' || k === 'analyses' || k === 'outputs') setSheet({ kind: k, i: 0 });
+  };
 
   const gap = open ? GAP : SHUT;
   const lift = open && active != null ? LIFT : 0;
@@ -220,11 +244,11 @@ export default function DataStack({ base = '' }) {
           {LAYERS.map((l, i) => {
             const y = yOf(i), on = active == null || active === i;
             return (
-              <g key={l.key} style={{ transform: `translateY(${y}px)`, transition: tr, opacity: on ? 1 : 0.55, cursor: 'pointer' }} onClick={() => setActive(i)}>
+              <g key={l.key} style={{ transform: `translateY(${y}px)`, transition: tr, opacity: on ? 1 : 0.55, cursor: 'pointer' }} onClick={() => (active === i ? openLayer(i) : setActive(i))}>
                 <g transform={`matrix(${A / 1000},${B / 1000},${-A / 1000},${B / 1000},${CX},0)`}>
                   <rect x={0} y={0} width={1000} height={1000} fill="#121417" fillOpacity={0.62} stroke={active === i ? TEAL : 'rgba(255,255,255,.16)'} strokeWidth={active === i ? 1.5 : 1} vectorEffect="non-scaling-stroke" />
                   <rect x={0} y={0} width={1000} height={1000} fill="url(#ds-dots)" />
-                  {ready && <Content k={l.key} hi={active === i ? hi : null} />}
+                  {ready && <Content k={l.key} hi={active === i ? hi : null} onTile={active === i && ['sources', 'analyses', 'outputs'].includes(l.key) ? (j) => setSheet({ kind: l.key, i: j }) : undefined} />}
                 </g>
                 {(open || active === i) && (
                   <>
@@ -252,19 +276,25 @@ export default function DataStack({ base = '' }) {
                   {L.items.map((it, j) => {
                     const hov = { onMouseEnter: () => setHi(j), onMouseLeave: () => setHi(null), onFocus: () => setHi(j), onBlur: () => setHi(null) };
                     const inner = <>{it.col && <i style={{ background: it.col }} />}<span><b>{it.label}</b><small>{it.note}</small></span></>;
+                    const sheetKind = ['sources', 'analyses', 'outputs'].includes(L.key) ? L.key : null;
                     return (
                       <li key={j}>
-                        {it.href ? <a href={it.href} {...hov}>{inner}</a>
-                          : it.slug ? <a href={`${base}/${it.slug}`} {...hov}>{inner}</a>
-                          : <div tabIndex={L.key === 'hotspots' ? undefined : 0} {...(L.key === 'hotspots' ? {} : hov)}>{inner}</div>}
+                        {sheetKind ? <button className="ds-item" onClick={() => setSheet({ kind: sheetKind, i: j })} {...hov}>{inner}<em aria-hidden="true">↗</em></button>
+                          : <div>{inner}</div>}
                       </li>
                     );
                   })}
                 </ol>
               )}
+              {EXPLORE[L.key] && (
+                <button className="ds-explore" onClick={() => setSheet({ kind: 'explore', layer: L.key })}>
+                  <b>{EXPLORE[L.key][0]} ↗</b><small>{EXPLORE[L.key][1]}</small>
+                </button>
+              )}
+              {['sources', 'analyses', 'outputs'].includes(L.key) && <p className="ds-tip">Click an item, or a tile on the lifted plane, for the full detail.</p>}
               {L.files && (
                 <p className="ds-files">
-                  {L.files.map((f) => <a key={f} href={'#' + anchor(f)}>{f.replace(/^csv\//, '')}</a>)}
+                  {L.files.map((f) => <button key={f} onClick={() => openFile(f)}>{f.replace(/^csv\//, '')}</button>)}
                 </p>
               )}
               {L.post && <p className="ds-post"><a href={`${base}/${L.post[0]}`}>Read: {L.post[1]} →</a></p>}
@@ -272,12 +302,45 @@ export default function DataStack({ base = '' }) {
           )}
         </aside>
       </div>
+      {sheet && <StackModal sheet={sheet} setSheet={setSheet} close={close} base={base} openFile={openFile} />}
       <figcaption>
         The thesis data from bottom to top: the source datasets of Table 3.2, the filtered hotspots, the spatial frame they are joined to,
         the climate and ocean indices, the sub-district × month panel, the analyses run on it, and the tables published here.
         The hotspot, peat, sub-district, ONI and panel planes are drawn from the files on this page; the source, analysis and output planes are schematic.
-        Pick a layer to lift it out of the stack.
+        Pick a layer to lift it out of the stack, then click it, or any item beside it, for the detail.
       </figcaption>
     </figure>
+  );
+}
+
+function StackModal({ sheet, setSheet, close, base, openFile }) {
+  const nav = (list, kind) => ({
+    label: `${sheet.i + 1} / ${list.length}`,
+    prev: sheet.i > 0 ? () => setSheet({ kind, i: sheet.i - 1 }) : null,
+    next: sheet.i < list.length - 1 ? () => setSheet({ kind, i: sheet.i + 1 }) : null,
+  });
+  if (sheet.kind === 'sources') {
+    const s = SOURCE_SHEETS[sheet.i];
+    return <Modal open onClose={close} kicker="01 · Sources · Table 3.2" title={s.name} nav={nav(SOURCE_SHEETS, 'sources')}><SourceSheet key={s.id} s={s} base={base} /></Modal>;
+  }
+  if (sheet.kind === 'analyses') {
+    const a = ANALYSIS_SHEETS[sheet.i];
+    return <Modal open onClose={close} kicker="06 · Analyses" title={a.name} nav={nav(ANALYSIS_SHEETS, 'analyses')}><AnalysisSheet key={a.id} a={a} base={base} onFile={openFile} /></Modal>;
+  }
+  if (sheet.kind === 'outputs') {
+    const d = DATASETS[sheet.i];
+    return <Modal open onClose={close} kicker={`07 · Outputs · ${d.file.replace(/^csv\//, '')}`} title={d.title} nav={nav(DATASETS, 'outputs')}><OutputSheet key={d.file} d={d} base={base} onClose={close} /></Modal>;
+  }
+  const meta = {
+    hotspots: ['02 · Hotspots · hotspots_filtered_3402.csv', 'The 3,402 filtered hotspots', HotspotExplorer],
+    frame: ['03 · Spatial frame', 'Sub-districts, peat and canals', FrameExplorer],
+    climate: ['04 · Climate & ocean · monthly_panel_11x120.csv', 'Ten years of climate, month by month', ClimateExplorer],
+    panel: ['05 · Panel · monthly_panel_11x120.csv', 'The 11 × 120 analysis panel', PanelExplorer],
+  }[sheet.layer];
+  const [kicker, title, C] = meta;
+  return (
+    <Modal open onClose={close} kicker={kicker} title={title}>
+      <Suspense fallback={<div className="sx-loading">Loading…</div>}><C base={base} /></Suspense>
+    </Modal>
   );
 }
