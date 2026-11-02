@@ -121,3 +121,56 @@
 .th-datatable .th-dl { margin-top: .8rem; padding: 0; }
 .pp-datanote .th-alldata { margin: .8rem 0 0; font-size: .8rem; }
 .pp-datanote .th-alldata a { color: var(--teal); }
+
+/* DataStack: layered "how the data fit together" figure on the Data page */
+.ds-wrap { margin: 1rem 0 0; }
+.ds-bar { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+.ds-tabs { display: flex; flex-wrap: wrap; gap: .35rem; }
+.ds-tabs button, .ds-ctl button { font: 600 .74rem var(--font-sans); color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--border-md); border-radius: 999px; padding: .38rem .75rem; cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
+.ds-tabs button span { font-family: var(--font-mono); color: var(--text-dim); margin-right: .4rem; }
+.ds-tabs button:hover, .ds-ctl button:hover { color: var(--text-bright); border-color: rgba(255,255,255,.25); }
+.ds-tabs button.on { color: var(--teal); border-color: var(--teal); background: var(--teal-dim); }
+.ds-tabs button.on span { color: var(--teal); }
+.ds-ctl { display: flex; gap: .35rem; }
+.ds-tabs button:focus-visible, .ds-ctl button:focus-visible, .ds-items a:focus-visible, .ds-items div:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.ds-body { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; }
+.ds-svg { width: 100%; height: auto; display: block; overflow: visible; }
+.ds-lbl { font: 600 15px var(--font-sans); fill: var(--text); }
+.ds-lbl.on { fill: var(--teal); }
+.ds-num { font-family: var(--font-mono); fill: var(--text-muted); }
+.ds-lbl.on .ds-num { fill: var(--teal); }
+.ds-lbl-sub { font: 12px var(--font-mono); fill: var(--text-muted); }
+.ds-flowt { font: 11px var(--font-mono); fill: var(--text-muted); letter-spacing: .06em; text-transform: uppercase; }
+.ds-panel { position: sticky; top: calc(var(--nav-h) + 1rem); border-left: 1px solid var(--border-md); padding-left: 1.25rem; min-height: 320px; }
+.ds-kick { font: 600 .68rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--teal); margin: 0 0 .4rem; }
+.ds-panel h3 { font-family: var(--font-display); font-size: 1.45rem; color: var(--text-bright); margin: 0 0 .6rem; }
+.ds-desc { font-size: .86rem; line-height: 1.6; color: var(--text); margin: 0 0 1rem; }
+.ds-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-bottom: 1rem; }
+.ds-stats div { background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 6px; padding: .55rem .6rem; }
+.ds-stats b { display: block; font: 700 1.05rem var(--font-mono); color: var(--text-bright); }
+.ds-stats span { font-size: .7rem; color: var(--text-muted); line-height: 1.3; display: block; margin-top: .15rem; }
+.ds-legend { display: flex; flex-wrap: wrap; gap: .35rem .9rem; font-size: .74rem; color: var(--text-muted); margin-bottom: 1rem; }
+.ds-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: .35rem; vertical-align: -1px; }
+.ds-items { list-style: none; margin: 0 0 1rem; padding: 0; max-height: 340px; overflow-y: auto; }
+.ds-items li { border-top: 1px solid var(--border); }
+.ds-items a, .ds-items div { display: flex; gap: .6rem; padding: .5rem .25rem; color: inherit; text-decoration: none; border-radius: 4px; }
+.ds-items a:hover, .ds-items div:hover { background: var(--bg-hover); }
+.ds-items i { flex: 0 0 9px; height: 9px; border-radius: 2px; margin-top: .3rem; }
+.ds-items b { display: block; font-size: .8rem; font-weight: 600; color: var(--text-bright); }
+.ds-items small { display: block; font-size: .74rem; color: var(--text-muted); line-height: 1.45; margin-top: .1rem; }
+.ds-items.funnel div { justify-content: space-between; }
+.ds-items.funnel span { display: flex; justify-content: space-between; gap: 1rem; width: 100%; }
+.ds-items.funnel small { font: 600 .8rem var(--font-mono); color: var(--teal); margin: 0; white-space: nowrap; }
+.ds-files { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0 0 .75rem; }
+.ds-files a { font: .72rem var(--font-mono); color: var(--text); background: var(--bg-subtle); border: 1px solid var(--border-md); border-radius: 4px; padding: .2rem .45rem; text-decoration: none; }
+.ds-files a:hover { color: var(--teal); border-color: var(--teal); }
+.ds-post a { font-size: .82rem; font-weight: 600; color: var(--teal); text-decoration: none; }
+.ds-post a:hover { text-decoration: underline; }
+.ds-wrap figcaption { font-size: .8rem; color: var(--text-muted); line-height: 1.55; margin-top: .9rem; max-width: 760px; }
+@media (max-width: 900px) {
+  .ds-body { grid-template-columns: 1fr; padding: .9rem; }
+  .ds-panel { position: static; border-left: 0; border-top: 1px solid var(--border-md); padding: 1rem 0 0; min-height: 0; }
+  .ds-lbl { font-size: 22px; }
+  .ds-lbl-sub, .ds-flow { display: none; }
+}
+@media (max-width: 480px) { .ds-stats b { font-size: .92rem; } .ds-stats div { padding: .45rem; } }
