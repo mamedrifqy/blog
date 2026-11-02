@@ -17,21 +17,21 @@ export default function CanalDistanceChart({ caption }) {
     <figure className="pp-fig">
       <svg viewBox={`0 0 ${W} ${H}`} className="th-svg" role="img" aria-label="Median distance to the nearest canal for hotspots and random points, by peat depth">
         {ticks.map((t) => (
-          <g key={t}><line x1={x(t)} x2={x(t)} y1={PT - 6} y2={H - 28} stroke="rgba(255,255,255,.08)" /><text className="th-ax" x={x(t)} y={H - 12} textAnchor="middle">{t >= 1000 ? t / 1000 + ' km' : t + ' m'}</text></g>
+          <g key={t}><line x1={x(t)} x2={x(t)} y1={PT - 6} y2={H - 28} stroke="rgb(var(--ink-rgb) / .08)" /><text className="th-ax" x={x(t)} y={H - 12} textAnchor="middle">{t >= 1000 ? t / 1000 + ' km' : t + ' m'}</text></g>
         ))}
-        <text className="th-ax" x={PL} y={14} fill="#1cc8aa">● hotspots (median)</text>
-        <text className="th-ax" x={PL + 150} y={14} fill="#9aa3ad">○ random burnable-peat points (median)</text>
+        <text className="th-ax" x={PL} y={14} fill="var(--teal)">● hotspots (median)</text>
+        <text className="th-ax" x={PL + 150} y={14} fill="var(--text-muted)">○ random burnable-peat points (median)</text>
         {R.map((r, i) => {
           const cy = PT + i * ROW + ROW / 2;
           const a = x(r.median_hotspot_distance_m), b = x(r.median_null_distance_m);
           const closer = r.median_hotspot_distance_m < r.median_null_distance_m;
           return (
             <g key={r.depth_class} tabIndex={0} role="button" aria-label={`${r.depth_class}`} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(null)} onFocus={() => setHov(i)} onBlur={() => setHov(null)}>
-              <rect x={0} y={cy - ROW / 2} width={W} height={ROW} fill={hov === i ? 'rgba(255,255,255,.04)' : 'transparent'} />
+              <rect x={0} y={cy - ROW / 2} width={W} height={ROW} fill={hov === i ? 'rgb(var(--ink-rgb) / .04)' : 'transparent'} />
               <text className="th-lab-s" x={PL - 12} y={cy + 4} textAnchor="end">{r.depth_class}</text>
-              <line x1={a} x2={b} y1={cy} y2={cy} stroke={closer ? '#1cc8aa' : '#e8533a'} strokeWidth="2.5" opacity=".7" />
-              <circle cx={b} cy={cy} r="6" fill="none" stroke="#9aa3ad" strokeWidth="2" />
-              <circle cx={a} cy={cy} r="6.5" fill="#1cc8aa" />
+              <line x1={a} x2={b} y1={cy} y2={cy} stroke={closer ? 'var(--c-teal)' : 'var(--c-coral)'} strokeWidth="2.5" opacity=".7" />
+              <circle cx={b} cy={cy} r="6" fill="none" stroke="var(--text-muted)" strokeWidth="2" />
+              <circle cx={a} cy={cy} r="6.5" fill="var(--c-teal)" />
               <text className="th-val" x={W - PR + 10} y={cy + 4}>{sig(r.p_bh_adjusted)}</text>
             </g>
           );

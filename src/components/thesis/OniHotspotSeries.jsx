@@ -33,35 +33,35 @@ export default function OniHotspotSeries({ caption }) {
       <svg viewBox={`0 0 ${W} ${H}`} className="th-svg" role="img" aria-label="Monthly ONI and monthly filtered hotspots in Bengkalis, 2015 to 2024"
         onMouseMove={(e) => setHov(pick(e))} onMouseLeave={() => setHov(null)} onClick={(e) => { const i = pick(e); setLock(i === lock ? null : i); }}>
         {/* ONI panel */}
-        <rect x={PL} y={yO(0.5)} width={IW} height={yO(-0.5) - yO(0.5)} fill="rgba(255,255,255,.04)" />
+        <rect x={PL} y={yO(0.5)} width={IW} height={yO(-0.5) - yO(0.5)} fill="rgb(var(--ink-rgb) / .04)" />
         {[-2, -1, 0, 1, 2].map((v) => (
-          <g key={v}><line x1={PL} x2={W - PR} y1={yO(v)} y2={yO(v)} stroke={v === 0 ? 'rgba(255,255,255,.28)' : 'rgba(255,255,255,.07)'} />
+          <g key={v}><line x1={PL} x2={W - PR} y1={yO(v)} y2={yO(v)} stroke={v === 0 ? 'rgb(var(--ink-rgb) / .28)' : 'rgb(var(--ink-rgb) / .07)'} />
             <text className="th-ax" x={PL - 8} y={yO(v) + 4} textAnchor="end">{v > 0 ? '+' + v : v}</text></g>
         ))}
-        <line x1={PL} x2={W - PR} y1={yO(0.5)} y2={yO(0.5)} stroke="#e8533a" strokeDasharray="4 4" opacity=".55" />
-        <line x1={PL} x2={W - PR} y1={yO(-0.5)} y2={yO(-0.5)} stroke="#4f9be8" strokeDasharray="4 4" opacity=".55" />
-        <text className="th-ax" x={W - PR - 4} y={yO(0.5) - 5} textAnchor="end" fill="#e8533a">+0.5 El Niño</text>
-        <text className="th-ax" x={W - PR - 4} y={yO(-0.5) + 14} textAnchor="end" fill="#4f9be8">−0.5 La Niña</text>
-        <text className="th-ax" x={PL} y={PT - 1} fill="#b8b2a6">ONI (°C)</text>
+        <line x1={PL} x2={W - PR} y1={yO(0.5)} y2={yO(0.5)} stroke="var(--c-coral)" strokeDasharray="4 4" opacity=".55" />
+        <line x1={PL} x2={W - PR} y1={yO(-0.5)} y2={yO(-0.5)} stroke="var(--c-blue)" strokeDasharray="4 4" opacity=".55" />
+        <text className="th-ax" x={W - PR - 4} y={yO(0.5) - 5} textAnchor="end" fill="var(--coral)">+0.5 El Niño</text>
+        <text className="th-ax" x={W - PR - 4} y={yO(-0.5) + 14} textAnchor="end" fill="var(--blue-text)">−0.5 La Niña</text>
+        <text className="th-ax" x={PL} y={PT - 1} fill="var(--text-muted)">ONI (°C)</text>
         {M.map((p, i) => (
           <rect key={'o' + i} x={x(i) - bw / 2 + 0.3} width={bw - 0.6} y={Math.min(yO(0), yO(p.oni))} height={Math.abs(yO(p.oni) - yO(0))}
-            fill={p.ph === 'E' ? '#e8533a' : p.ph === 'L' ? '#4f9be8' : '#6b7280'} opacity={a === i ? 1 : 0.8} />
+            fill={p.ph === 'E' ? 'var(--c-coral)' : p.ph === 'L' ? 'var(--c-blue)' : '#6b7280'} opacity={a === i ? 1 : 0.8} />
         ))}
         {/* hotspot panel */}
         {[0, yMax / 2, yMax].map((v) => (
-          <g key={v}><line x1={PL} x2={W - PR} y1={yN(v)} y2={yN(v)} stroke="rgba(255,255,255,.08)" />
+          <g key={v}><line x1={PL} x2={W - PR} y1={yN(v)} y2={yN(v)} stroke="rgb(var(--ink-rgb) / .08)" />
             <text className="th-ax" x={PL - 8} y={yN(v) + 4} textAnchor="end">{v}</text></g>
         ))}
-        <text className="th-ax" x={PL} y={PT + H1 + GAP - 8} fill="#b8b2a6">Hotspots per month, all 11 sub-districts</text>
+        <text className="th-ax" x={PL} y={PT + H1 + GAP - 8} fill="var(--text-muted)">Hotspots per month, all 11 sub-districts</text>
         {M.map((p, i) => (
-          <rect key={'n' + i} x={x(i) - bw / 2 + 0.3} width={bw - 0.6} y={yN(p.n)} height={yN(0) - yN(p.n)} fill="#f0bc2e" opacity={a === i ? 1 : 0.85} />
+          <rect key={'n' + i} x={x(i) - bw / 2 + 0.3} width={bw - 0.6} y={yN(p.n)} height={yN(0) - yN(p.n)} fill="var(--c-gold)" opacity={a === i ? 1 : 0.85} />
         ))}
         {/* year ticks */}
         {Array.from({ length: 10 }, (_, k) => (
-          <g key={k}><line x1={PL + k * 12 * bw} x2={PL + k * 12 * bw} y1={PT} y2={PT + H1 + GAP + H2} stroke="rgba(255,255,255,.06)" />
+          <g key={k}><line x1={PL + k * 12 * bw} x2={PL + k * 12 * bw} y1={PT} y2={PT + H1 + GAP + H2} stroke="rgb(var(--ink-rgb) / .06)" />
             <text className="th-ax" x={PL + (k * 12 + 6) * bw} y={H - 8} textAnchor="middle">{2015 + k}</text></g>
         ))}
-        {a != null && <line x1={x(a)} x2={x(a)} y1={PT} y2={PT + H1 + GAP + H2} stroke="#f2ede4" strokeWidth="1" opacity=".7" />}
+        {a != null && <line x1={x(a)} x2={x(a)} y1={PT} y2={PT + H1 + GAP + H2} stroke="var(--text-bright)" strokeWidth="1" opacity=".7" />}
       </svg>
       <p className="th-readout" aria-live="polite">
         {d ? <><b>{MN[d.m - 1]} {d.y}</b>: ONI {d.oni > 0 ? '+' : ''}{d.oni.toFixed(2)} °C ({phase(d.ph)}), <b>{d.n}</b> hotspots.{lock != null ? ' (click again to release)' : ''}</>

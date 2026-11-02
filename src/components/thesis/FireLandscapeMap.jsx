@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTheme, palette, ink } from '../../lib/theme.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import REPORT from '../../data/thesis-report.json';
 
@@ -30,6 +31,7 @@ function centroid(feature) {
 }
 
 export default function FireLandscapeMap({ initial = 'peat', caption, height = 560 }) {
+  const theme = useTheme();
   const el = useRef(null);
   const mapRef = useRef(null);
   const markers = useRef([]);
@@ -80,9 +82,10 @@ export default function FireLandscapeMap({ initial = 'peat', caption, height = 5
     (async () => {
       const maplibregl = (await import('maplibre-gl')).default;
       if (cancelled) return;
+      const PAL = palette();
       map = new maplibregl.Map({
         container: el.current,
-        style: { version: 8, sources: {}, layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#101213' } }] },
+        style: { version: 8, sources: {}, layers: [{ id: 'bg', type: 'background', paint: { 'background-color': PAL.mapBg } }] },
         bounds: [[100.95, 0.97], [102.52, 2.07]], fitBoundsOptions: { padding: 10 },
         minZoom: 7.2, maxZoom: 13, attributionControl: false, cooperativeGestures: true,
       });
@@ -104,11 +107,11 @@ export default function FireLandscapeMap({ initial = 'peat', caption, height = 5
           'fill-opacity': 0.82 } });
         map.addLayer({ id: 'cdist', type: 'raster', source: 'cdist', paint: { 'raster-opacity': 1, 'raster-fade-duration': 0, 'raster-resampling': 'nearest' } });
         map.addLayer({ id: 'clines', type: 'raster', source: 'clines', paint: { 'raster-opacity': 0.8, 'raster-fade-duration': 0 } });
-        map.addLayer({ id: 'kec-line', type: 'line', source: 'kec', paint: { 'line-color': 'rgba(255,255,255,.55)', 'line-width': 1 } });
+        map.addLayer({ id: 'kec-line', type: 'line', source: 'kec', paint: { 'line-color': ink(0.55), 'line-width': 1 } });
         map.addLayer({ id: 'hs-dot', type: 'circle', source: 'hs', paint: {
           'circle-radius': ['interpolate', ['linear'], ['zoom'], 7, 1.6, 10, 3, 13, 5],
-          'circle-color': ['case', ['==', ['get', 'sel'], 1], '#ff4d6d', '#ffffff'],
-          'circle-opacity': 0.9, 'circle-stroke-color': '#0d0e0f', 'circle-stroke-width': 0.5 } });
+          'circle-color': ['case', ['==', ['get', 'sel'], 1], '#ff4d6d', PAL.bright],
+          'circle-opacity': 0.9, 'circle-stroke-color': PAL.halo, 'circle-stroke-width': 0.5 } });
 
         // sub-district labels as DOM markers (no glyph server needed)
         data.kec.features.forEach((f) => {
@@ -129,7 +132,7 @@ export default function FireLandscapeMap({ initial = 'peat', caption, height = 5
       });
     })();
     return () => { cancelled = true; markers.current.forEach((m) => m.remove()); markers.current = []; if (map) map.remove(); mapRef.current = null; setReady(false); };
-  }, [data]);
+  }, [data, theme]);
 
   // layer visibility
   useEffect(() => {

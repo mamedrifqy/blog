@@ -13,6 +13,7 @@
  */
 
 import { useEffect, useRef } from 'react';
+import { useTheme, palette, ink } from '../lib/theme.js';
 
 const SCENARIO_COLORS = {
   'El Niño':    'rgba(224,92,40,0.85)',    /* warm orange-red — danger */
@@ -21,6 +22,7 @@ const SCENARIO_COLORS = {
 };
 
 export default function FireProbChart({ data = [], title = '' }) {
+  const theme = useTheme();
   const canvasRef = useRef(null);
   const chartRef  = useRef(null);
 
@@ -28,6 +30,7 @@ export default function FireProbChart({ data = [], title = '' }) {
     async function build() {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
+      const P = palette();
       if (chartRef.current) chartRef.current.destroy();
       if (!data.length) return;
 
@@ -54,34 +57,34 @@ export default function FireProbChart({ data = [], title = '' }) {
           interaction: { mode: 'index', intersect: false },
           scales: {
             x: {
-              ticks: { color: '#4a5e50', font: { size: 9 }, maxRotation: 55 },
-              grid:  { color: 'rgba(255,255,255,0.03)' },
+              ticks: { color: P.muted, font: { size: 9 }, maxRotation: 55 },
+              grid:  { color: ink(0.03) },
             },
             y: {
-              title: { display: true, text: 'Fire probability (×10)', color: '#4a5e50', font: { size: 11 } },
+              title: { display: true, text: 'Fire probability (×10)', color: P.muted, font: { size: 11 } },
               ticks: {
-                color: '#4a5e50',
+                color: P.muted,
                 font:  { size: 10 },
                 callback: v => (v / 10).toFixed(1),
               },
-              grid: { color: 'rgba(255,255,255,0.04)' },
+              grid: { color: ink(0.04) },
             },
           },
           plugins: {
             legend: {
               position: 'bottom',
               labels: {
-                color:    '#8a9e8f',
+                color:    P.muted,
                 font:     { family: "'Source Sans 3', sans-serif", size: 11 },
                 boxWidth: 12,
                 padding:  14,
               },
             },
             tooltip: {
-              backgroundColor: 'rgba(12,26,16,0.95)',
-              titleColor:      '#f0ece0',
-              bodyColor:       '#8a9e8f',
-              borderColor:     'rgba(255,255,255,0.07)',
+              backgroundColor: P.pop,
+              titleColor:      P.bright,
+              bodyColor:       P.muted,
+              borderColor:     ink(0.07),
               borderWidth:     1,
               padding:         12,
               callbacks: {
@@ -95,7 +98,7 @@ export default function FireProbChart({ data = [], title = '' }) {
 
     build();
     return () => chartRef.current?.destroy();
-  }, [data]);
+  }, [data, theme]);
 
   return (
     <div style={{
@@ -109,14 +112,14 @@ export default function FireProbChart({ data = [], title = '' }) {
         <h4 style={{
           fontFamily: "'Playfair Display', serif",
           fontSize: '1.05rem',
-          color: '#f0ece0',
+          color: 'var(--text-bright)',
           marginBottom: '1.25rem',
         }}>{title}</h4>
       )}
       <div style={{ height: 320, position: 'relative' }}>
         <canvas ref={canvasRef} />
       </div>
-      <p style={{ fontSize: '0.72rem', color: '#4a5e50', marginTop: '0.75rem', marginBottom: 0 }}>
+      <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.75rem', marginBottom: 0 }}>
         Source: XGBoost (GroupKFold, k=11) · CHIRPS · ERA5-Land · MODIS hotspot · Bengkalis Regency
       </p>
     </div>

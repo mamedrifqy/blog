@@ -1,26 +1,29 @@
 import { useEffect, useRef } from 'react';
-import { D, PH, MN } from './shared.js';
+import { useTheme, palette, ink } from '../../lib/theme.js';
+import { D, PH, MN, phaseColors } from './shared.js';
 
 export default function SeasonProfile() {
+  const theme = useTheme();
   const ref = useRef(null);
   useEffect(() => {
     let chart;
     (async () => {
       const { Chart, registerables } = await import('chart.js');
       Chart.register(...registerables);
-      Chart.defaults.color = '#7a8089'; Chart.defaults.font.family = "'Plus Jakarta Sans', system-ui, sans-serif";
+      const P = palette();
+      Chart.defaults.color = P.muted; Chart.defaults.borderColor = ink(0.1); Chart.defaults.font.family = "'Plus Jakarta Sans', system-ui, sans-serif";
       chart = new Chart(ref.current, {
         type: 'bar',
-        data: { labels: MN, datasets: ['La Niña', 'Neutral', 'El Niño'].map((k) => ({ label: k, data: D.calendar[k], backgroundColor: PH[k] })) },
+        data: { labels: MN, datasets: ['La Niña', 'Neutral', 'El Niño'].map((k) => ({ label: k, data: D.calendar[k], backgroundColor: phaseColors(P)[k] })) },
         options: {
           responsive: true, maintainAspectRatio: false,
           plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-          scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: 'rgba(255,255,255,.05)' }, title: { display: true, text: 'Hotspots, 2015–2024 total' } } },
+          scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: ink(0.05) }, title: { display: true, text: 'Hotspots, 2015–2024 total' } } },
         },
       });
     })();
     return () => chart && chart.destroy();
-  }, []);
+  }, [theme]);
   return (
     <figure className="pp-fig">
       <div className="pp-legend">{Object.entries(PH).map(([k, c]) => <span key={k}><i style={{ background: c }} />{k}</span>)}</div>

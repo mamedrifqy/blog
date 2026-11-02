@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { EMERGING, PERIODS, KEC } from './data.js';
 
 const INFO = {
-  HH: ['High–high', 'a hot kecamatan among hot neighbours', '#e8533a'],
-  LH: ['Low–high', 'a cool kecamatan beside a hot neighbour', '#f0bc2e'],
-  HL: ['High–low', 'a hot kecamatan among cool neighbours', '#e8533a'],
-  LL: ['Low–low', 'a cool kecamatan among cool neighbours', '#4f9be8'],
-  NS: ['Not significant', 'no spatial pattern beyond chance', 'rgba(255,255,255,.07)'],
+  HH: ['High–high', 'a hot kecamatan among hot neighbours', 'var(--c-coral)'],
+  LH: ['Low–high', 'a cool kecamatan beside a hot neighbour', 'var(--c-gold)'],
+  HL: ['High–low', 'a hot kecamatan among cool neighbours', 'var(--c-coral)'],
+  LL: ['Low–low', 'a cool kecamatan among cool neighbours', 'var(--c-blue)'],
+  NS: ['Not significant', 'no spatial pattern beyond chance', 'rgb(var(--ink-rgb) / .07)'],
 };
 
 export default function EmergingGrid() {

@@ -2,12 +2,11 @@ import { useMemo, useState } from 'react';
 import { D, sig, sgn, fmt } from './shared.js';
 
 const MODES = {
-  total: { label: 'Hotspots', note: 'Hotspots 2015–2024 (DBSCAN-filtered)', hi: [232, 83, 58] },
-  oni: { label: 'ρ with ONI', note: 'Spearman ρ, ONI vs monthly hotspots', hi: [28, 200, 170] },
-  spi: { label: 'ρ with SPI-3', note: 'Spearman ρ, SPI-3 vs monthly hotspots (strength, |ρ|)', hi: [28, 200, 170] },
+  total: { label: 'Hotspots', note: 'Hotspots 2015–2024 (DBSCAN-filtered)', hi: 'var(--c-coral)' },
+  oni: { label: 'ρ with ONI', note: 'Spearman ρ, ONI vs monthly hotspots', hi: 'var(--c-teal)' },
+  spi: { label: 'ρ with SPI-3', note: 'Spearman ρ, SPI-3 vs monthly hotspots (strength, |ρ|)', hi: 'var(--c-teal)' },
 };
-const LO = [38, 44, 48];
-const mix = (t, hi) => 'rgb(' + LO.map((c, i) => Math.round(c + (hi[i] - c) * t)).join(',') + ')';
+const mix = (t, hi) => `color-mix(in srgb, ${hi} ${(Math.max(0, Math.min(1, t)) * 100).toFixed(1)}%, var(--ramp-lo))`;
 const NUDGE = { Bantan: [0, -30], Bengkalis: [-6, 26] };
 const YEARS = ['All', ...Array.from({ length: 10 }, (_, i) => String(2015 + i))];
 
@@ -41,12 +40,12 @@ export default function KecMap() {
       <div className="pp-map-grid">
         <svg viewBox={`-60 -10 ${D.w + 120} ${D.h + 20}`} role="img" aria-label="Map of the 11 kecamatan of Bengkalis Regency coloured by the selected variable, with hotspot points.">
           {names.map((n) => (
-            <path key={n} d={D.kec[n].d} fill={shade(n)} stroke={active === n ? '#f2ede4' : 'rgba(255,255,255,.28)'} strokeWidth={active === n ? 2.2 : 0.8}
+            <path key={n} d={D.kec[n].d} fill={shade(n)} stroke={active === n ? 'var(--text-bright)' : 'rgb(var(--ink-rgb) / .28)'} strokeWidth={active === n ? 2.2 : 0.8}
               strokeDasharray={nsFlag(n) ? '5 4' : undefined} className="pp-kec" tabIndex={0}
               onMouseEnter={() => setHov(n)} onMouseLeave={() => setHov(null)} onFocus={() => setHov(n)} onBlur={() => setHov(null)}
               onClick={() => setSel(n)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSel(n)} aria-label={n} />
           ))}
-          {pts && <g pointerEvents="none">{shown.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r="1.7" fill={p[3] ? '#f0bc2e' : '#f6dc8a'} fillOpacity={p[3] ? 0.75 : 0.45} />)}</g>}
+          {pts && <g pointerEvents="none">{shown.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r="1.7" fill={p[3] ? 'var(--c-gold)' : '#f6dc8a'} fillOpacity={p[3] ? 0.75 : 0.45} />)}</g>}
           <g pointerEvents="none" className="pp-labels">
             {names.map((n) => { const o = NUDGE[n] || [0, 0]; return <text key={n} className={n === active ? 'on' : ''} x={D.kec[n].cx + o[0]} y={D.kec[n].cy + o[1]} textAnchor="middle">{n}</text>; })}
           </g>
@@ -76,7 +75,7 @@ function Spark({ series }) {
   const pts = series.map((v, i) => `${(i / 119) * w},${h - (v / mx) * (h - 4) - 2}`).join(' ');
   return (
     <svg className="pp-spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" role="img" aria-label="Monthly hotspot series">
-      <polyline points={pts} fill="none" stroke="#e8533a" strokeWidth="1.4" />
+      <polyline points={pts} fill="none" stroke="var(--c-coral)" strokeWidth="1.4" />
     </svg>
   );
 }

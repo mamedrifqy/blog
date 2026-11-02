@@ -5,9 +5,9 @@ import REPORT from '../../data/thesis-report.json';
 
 // Operational alert levels per sub-district (descriptive scheme from the thesis, not a forecast).
 const LEVEL = {
-  'SIAGA 1': { fill: '#e8533a', label: 'Alert 1 (SIAGA 1)' },
+  'SIAGA 1': { fill: 'var(--c-coral)', label: 'Alert 1 (SIAGA 1)' },
   'SIAGA 2': { fill: '#e8833a', label: 'Alert 2 (SIAGA 2)' },
-  'SIAGA 3': { fill: '#f0bc2e', label: 'Alert 3 (SIAGA 3)' },
+  'SIAGA 3': { fill: 'var(--c-gold)', label: 'Alert 3 (SIAGA 3)' },
   WASPADA: { fill: '#2f7a8a', label: 'Watch (WASPADA)' },
   NORMAL: { fill: '#4b5563', label: 'Normal' },
 };

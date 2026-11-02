@@ -5,8 +5,9 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { useTheme, palette, ink } from '../lib/theme.js';
 
-const BASEMAP = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+const BASEMAPS = { dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json' };
 
 const CLASS_COLORS = {
   'Class 1 — Highly suitable':    '#3ab06e',
@@ -22,7 +23,7 @@ const LEGEND = [
   { label: 'Class 4 — Not suitable',       color: '#e05c28' },
 ];
 
-export default function SuitabilityMap({ steps = [], dataUrl = '/data/kuala_selat_suitability.geojson' }) {
+function SuitabilityMapInner({ theme, steps = [], dataUrl = '/data/kuala_selat_suitability.geojson' }) {
   const mapContainer = useRef(null);
   const mapRef       = useRef(null);
   const [activeStep, setActiveStep] = useState(0);
@@ -40,7 +41,7 @@ export default function SuitabilityMap({ steps = [], dataUrl = '/data/kuala_sela
 
       map = new maplibregl.Map({
         container: mapContainer.current,
-        style:     BASEMAP,
+        style:     BASEMAPS[theme] || BASEMAPS.dark,
         center:    DEFAULT_CENTER,
         zoom:      DEFAULT_ZOOM,
         minZoom:   9,
@@ -74,7 +75,7 @@ export default function SuitabilityMap({ steps = [], dataUrl = '/data/kuala_sela
         map.addLayer({
           id: 'suit-outline', type: 'line', source: 'suitability',
           paint: {
-            'line-color': 'rgba(255,255,255,0.25)',
+            'line-color': ink(0.25),
             'line-width': 0.8,
           }
         });
@@ -83,7 +84,7 @@ export default function SuitabilityMap({ steps = [], dataUrl = '/data/kuala_sela
         map.addLayer({
           id: 'suit-hover', type: 'fill', source: 'suitability',
           paint: {
-            'fill-color': '#ffffff',
+            'fill-color': palette().bright,
             'fill-opacity': ['case',
               ['boolean', ['feature-state', 'hovered'], false], 0.15, 0
             ],
@@ -262,7 +263,7 @@ export default function SuitabilityMap({ steps = [], dataUrl = '/data/kuala_sela
         .map-badge {
           position: absolute;
           top: 16px; left: 16px;
-          background: rgba(12,26,16,0.88);
+          background: var(--overlay-bg);
           border: 1px solid rgba(58,176,110,0.4);
           color: #3ab06e;
           font-family: 'Source Sans 3', sans-serif;
@@ -277,17 +278,17 @@ export default function SuitabilityMap({ steps = [], dataUrl = '/data/kuala_sela
         .map-legend {
           position: absolute;
           bottom: 32px; left: 16px;
-          background: rgba(12,26,16,0.88);
-          border: 1px solid rgba(255,255,255,0.07);
+          background: var(--overlay-bg);
+          border: 1px solid rgb(var(--ink-rgb) / 0.07);
           padding: 0.75rem 0.9rem;
           border-radius: 4px;
           backdrop-filter: blur(8px);
           font-family: 'Source Sans 3', sans-serif;
         }
-        .legend-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: #8a9e8f; margin-bottom: 0.5rem; }
+        .legend-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.5rem; }
         .legend-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; }
         .legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-        .legend-text { font-size: 0.72rem; color: #8a9e8f; }
+        .legend-text { font-size: 0.72rem; color: var(--text-muted); }
         .scroll-steps-col { flex: 1; padding: 0 2rem; pointer-events: none; }
         .scroll-step {
           min-height: 80vh;
@@ -297,8 +298,8 @@ export default function SuitabilityMap({ steps = [], dataUrl = '/data/kuala_sela
           pointer-events: all;
         }
         .step-inner {
-          background: rgba(12,26,16,0.75);
-          border: 1px solid rgba(255,255,255,0.06);
+          background: color-mix(in srgb, var(--bg-card) 78%, transparent);
+          border: 1px solid rgb(var(--ink-rgb) / 0.06);
           border-left: 3px solid rgba(58,176,110,0.2);
           padding: 1.5rem 1.75rem;
           border-radius: 6px;
@@ -308,7 +309,7 @@ export default function SuitabilityMap({ steps = [], dataUrl = '/data/kuala_sela
         }
         .scroll-step.is-active .step-inner {
           border-left-color: #3ab06e;
-          background: rgba(18,31,22,0.92);
+          background: var(--overlay-bg);
         }
         .step-year {
           font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
@@ -317,25 +318,25 @@ export default function SuitabilityMap({ steps = [], dataUrl = '/data/kuala_sela
         }
         .step-title {
           font-family: 'Playfair Display', serif; font-size: 1.15rem;
-          color: #f0ece0; line-height: 1.3; margin-bottom: 0.75rem;
+          color: var(--text-bright); line-height: 1.3; margin-bottom: 0.75rem;
         }
-        .step-text { font-size: 0.875rem; color: #8a9e8f; line-height: 1.65; margin: 0; }
+        .step-text { font-size: 0.875rem; color: var(--text-muted); line-height: 1.65; margin: 0; }
         .step-stat {
           display: flex; flex-direction: column;
           margin-top: 1rem; padding-top: 1rem;
-          border-top: 1px solid rgba(255,255,255,0.06);
+          border-top: 1px solid rgb(var(--ink-rgb) / 0.06);
         }
         .stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: #3ab06e; line-height: 1; }
-        .stat-label { font-size: 0.72rem; color: #8a9e8f; margin-top: 0.2rem; }
+        .stat-label { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; }
         .step-formula {
           margin-top: 0.75rem;
-          background: rgba(0,0,0,0.3);
-          border: 1px solid rgba(255,255,255,0.06);
+          background: var(--bg-subtle);
+          border: 1px solid rgb(var(--ink-rgb) / 0.06);
           border-radius: 4px;
           padding: 0.6rem 0.8rem;
           font-family: 'Source Code Pro', monospace;
           font-size: 0.78rem;
-          color: #f4a023;
+          color: var(--gold);
           line-height: 1.6;
         }
         @media (max-width: 768px) {
@@ -347,4 +348,11 @@ export default function SuitabilityMap({ steps = [], dataUrl = '/data/kuala_sela
       `}</style>
     </div>
   );
+}
+
+
+// Remounted when the theme flips, so the basemap (dark-matter / positron), layer colours and chart palette are rebuilt cleanly.
+export default function SuitabilityMap(props) {
+  const theme = useTheme();
+  return <SuitabilityMapInner key={theme} theme={theme} {...props} />;
 }

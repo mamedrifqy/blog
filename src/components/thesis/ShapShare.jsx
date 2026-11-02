@@ -1,7 +1,7 @@
 import { SHAP_SHARE } from './data.js';
 
 const ORDER = ['Climate', 'Seasonal', 'Biophysical-static', 'Anthropogenic'];
-const COL = { Climate: '#1cc8aa', Seasonal: '#4f9be8', 'Biophysical-static': '#a78b5a', Anthropogenic: '#e8533a' };
+const COL = { Climate: 'var(--c-teal)', Seasonal: 'var(--c-blue)', 'Biophysical-static': '#a78b5a', Anthropogenic: 'var(--c-coral)' };
 
 export default function ShapShare() {
   return (

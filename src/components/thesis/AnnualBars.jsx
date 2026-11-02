@@ -10,10 +10,10 @@ export default function AnnualBars() {
   return (
     <figure className="pp-fig">
       <svg viewBox={`0 0 ${W} ${Ht}`} className="th-svg" role="img" aria-label="Filtered hotspots per year in Bengkalis, 2015 to 2024">
-        {[0, 400, 800, 1200].map((v) => <g key={v}><line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="rgba(255,255,255,.07)" /><text x={L - 6} y={y(v) + 4} textAnchor="end" className="th-ax">{v}</text></g>)}
+        {[0, 400, 800, 1200].map((v) => <g key={v}><line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="rgb(var(--ink-rgb) / .07)" /><text x={L - 6} y={y(v) + 4} textAnchor="end" className="th-ax">{v}</text></g>)}
         {yrs.map((r, i) => (
           <g key={r.year} tabIndex={0} onMouseEnter={() => setH(i)} onMouseLeave={() => setH(null)} onFocus={() => setH(i)} onBlur={() => setH(null)}>
-            <rect x={L + bw * i + 8} y={y(r.total)} width={bw - 16} height={Ht - B - y(r.total)} fill="#e8533a" fillOpacity={h === null || h === i ? 0.85 : 0.35} />
+            <rect x={L + bw * i + 8} y={y(r.total)} width={bw - 16} height={Ht - B - y(r.total)} fill="var(--c-coral)" fillOpacity={h === null || h === i ? 0.85 : 0.35} />
             <text x={L + bw * (i + 0.5)} y={Ht - 10} textAnchor="middle" className="th-ax">{r.year}</text>
             <text x={L + bw * (i + 0.5)} y={y(r.total) - 5} textAnchor="middle" className="th-val">{r.total}</text>
           </g>

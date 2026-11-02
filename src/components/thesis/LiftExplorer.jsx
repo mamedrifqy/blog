@@ -13,7 +13,7 @@ export default function LiftExplorer() {
   const ha = (i) => TIER2.ha[key(i)];
   const W = 720, H = 280, L = 40, R = 10, T = 14, B = 30, gw = (W - L - R) / 4;
   const y = (v) => T + (H - T - B) * (1 - Math.max(v, 0) / 0.8);
-  const col = { ATBI: '#1cc8aa', NBR: '#f0bc2e' };
+  const col = { ATBI: 'var(--c-teal)', NBR: 'var(--c-gold)' };
   return (
     <figure className="pp-fig pp-wide">
       <div className="pp-controls">
@@ -23,7 +23,7 @@ export default function LiftExplorer() {
       </div>
       <div className="pp-legend"><span><i style={{ background: col.ATBI }} />dATBI</span><span><i style={{ background: col.NBR }} />dNBR</span><span style={{ color: 'var(--text-dim)' }}>Bars: hit-rate at hotspots minus hit-rate at matched peat control points</span></div>
       <svg viewBox={`0 0 ${W} ${H}`} className="th-svg" role="img" aria-label="Hit-rate difference between hotspots and control points for dATBI and dNBR at four thresholds">
-        {[0, 0.2, 0.4, 0.6, 0.8].map((v) => <g key={v}><line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="rgba(255,255,255,.07)" /><text x={L - 6} y={y(v) + 4} textAnchor="end" className="th-ax">{v.toFixed(1)}</text></g>)}
+        {[0, 0.2, 0.4, 0.6, 0.8].map((v) => <g key={v}><line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="rgb(var(--ink-rgb) / .07)" /><text x={L - 6} y={y(v) + 4} textAnchor="end" className="th-ax">{v.toFixed(1)}</text></g>)}
         {T_LIST.map((t, g) => ['ATBI', 'NBR'].map((idx, j) => {
           const v = d(idx)[g], x = L + gw * g + gw * 0.17 + j * gw * 0.34;
           return <g key={idx + t}><rect x={x} y={y(v)} width={gw * 0.3} height={Math.max(1, H - B - y(v))} fill={col[idx]} fillOpacity=".85" />

@@ -17,16 +17,16 @@ export default function EnsoHeterogeneity({ caption }) {
     <figure className="pp-fig pp-wide">
       <svg viewBox={`0 0 ${W} ${H}`} className="th-svg" role="img" aria-label="Incidence rate ratio of monthly hotspots per degree of ONI, by sub-district, with 95 percent confidence intervals">
         {[0.75, 1, 1.5, 2, 3, 4, 5].map((t) => (
-          <g key={t}><line x1={x(t)} x2={x(t)} y1={PT - 8} y2={H - 28} stroke={t === 1 ? 'rgba(255,255,255,.4)' : 'rgba(255,255,255,.08)'} /><text className="th-ax" x={x(t)} y={H - 12} textAnchor="middle">{t}</text></g>
+          <g key={t}><line x1={x(t)} x2={x(t)} y1={PT - 8} y2={H - 28} stroke={t === 1 ? 'rgb(var(--ink-rgb) / .4)' : 'rgb(var(--ink-rgb) / .08)'} /><text className="th-ax" x={x(t)} y={H - 12} textAnchor="middle">{t}</text></g>
         ))}
-        <text className="th-ax" x={x(1)} y={16} textAnchor="middle" fill="#b8b2a6">IRR per +1 °C ONI (log scale); 1 = no response. Marker size = hotspots.</text>
+        <text className="th-ax" x={x(1)} y={16} textAnchor="middle" fill="var(--text-muted)">IRR per +1 °C ONI (log scale); 1 = no response. Marker size = hotspots.</text>
         {R.map((r, i) => {
           const cy = PT + i * ROW + ROW / 2;
           const sig = r.irr_ci95_low > 1;
-          const c = sig ? '#e8533a' : '#8b93a0';
+          const c = sig ? 'var(--c-coral)' : '#8b93a0';
           return (
             <g key={r.kecamatan} tabIndex={0} role="button" aria-label={r.kecamatan} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(null)} onFocus={() => setHov(i)} onBlur={() => setHov(null)}>
-              <rect x={0} y={cy - ROW / 2} width={W} height={ROW} fill={hov === i ? 'rgba(255,255,255,.04)' : 'transparent'} />
+              <rect x={0} y={cy - ROW / 2} width={W} height={ROW} fill={hov === i ? 'rgb(var(--ink-rgb) / .04)' : 'transparent'} />
               <text className="th-lab-s" x={PL - 12} y={cy + 4} textAnchor="end">{r.kecamatan}</text>
               <line x1={x(r.irr_ci95_low)} x2={x(r.irr_ci95_high)} y1={cy} y2={cy} stroke={c} strokeWidth="2.5" />
               <circle cx={x(r.irr_per_oni_c)} cy={cy} r={rad(r.hotspots_total)} fill={c} opacity=".9" />

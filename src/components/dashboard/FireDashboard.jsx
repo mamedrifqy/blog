@@ -8,8 +8,8 @@ import G from '../../data/riau-geo.json';
 // Colour roles are fixed across every panel:
 //   gold = hotspots (on mapped peat, where the split exists) · blue = hotspots off peat
 //   coral = MODIS burned area · teal = Landsat dATBI · tan = mapped peat
-const C = { peat: '#f0bc2e', off: '#6fa8dc', burn: '#e8533a', landsat: '#1cc8aa', soil: '#9c8460' };
-const GREY = [96, 104, 112];
+const C = { peat: 'var(--c-gold)', off: '#6fa8dc', burn: 'var(--c-coral)', landsat: 'var(--c-teal)', soil: '#9c8460' };
+const GREY = 'rgb(96,104,112)';
 const YEARS = R.years;
 const NUDGE = { Bantan: [0, -30], Bengkalis: [-6, 26] };
 const RNUDGE = { Pekanbaru: [8, 22], Dumai: [-10, -14], Siak: [4, -6], Kampar: [-14, 0], 'Kepulauan Meranti': [0, -4] };
@@ -96,7 +96,7 @@ function RegencyView({ scope, year, yi, setScope, setYear }) {
           <header><h3>Where · Riau</h3><small>Click a regency to filter</small></header>
           <svg viewBox={`0 0 ${G.w} ${G.h}`} className="fd-map" role="img" aria-label={`Riau regencies shaded by hotspot count, ${yi === null ? '2015 to 2024' : year}. ${isAll ? 'All regencies shown.' : scope + ' selected.'}`}>
             {R.regencies.map((n) => (
-              <path key={n} d={G.regencies[n].d} fill={mix(Math.sqrt(vals[n] / vmax), GOLD)} stroke={active === n ? '#f2ede4' : 'rgba(255,255,255,.28)'} strokeWidth={active === n ? 3 : 1}
+              <path key={n} d={G.regencies[n].d} fill={mix(Math.sqrt(vals[n] / vmax), GOLD)} stroke={active === n ? 'var(--text-bright)' : 'rgb(var(--ink-rgb) / .28)'} strokeWidth={active === n ? 3 : 1}
                 className="pp-kec" tabIndex={0} role="button" aria-label={`${n}: ${fmt(vals[n])} hotspots`} aria-pressed={scope === n}
                 fillOpacity={isAll || scope === n || hov === n ? 1 : 0.55}
                 onMouseEnter={() => setHov(n)} onMouseLeave={() => setHov(null)} onFocus={() => setHov(n)} onBlur={() => setHov(null)}
@@ -214,7 +214,7 @@ function BengkalisView({ year, yi, setYear }) {
             <label className="pp-check"><input type="checkbox" checked={pts} onChange={(e) => setPts(e.target.checked)} /> Points</label></header>
           <svg viewBox={`-60 -10 ${D.w + 120} ${D.h + 20}`} className="fd-map" role="img" aria-label={`Bengkalis kecamatan shaded by hotspot count, ${year === 'All' ? '2015 to 2024' : year}, with ${fmt(shown.length)} hotspot points.`}>
             {names.map((n) => (
-              <path key={n} d={D.kec[n].d} fill={mix(Math.sqrt(kv[n] / kmax), GREY)} stroke={(hov || sel) === n ? '#f2ede4' : 'rgba(255,255,255,.25)'} strokeWidth={(hov || sel) === n ? 2.2 : 0.8}
+              <path key={n} d={D.kec[n].d} fill={mix(Math.sqrt(kv[n] / kmax), GREY)} stroke={(hov || sel) === n ? 'var(--text-bright)' : 'rgb(var(--ink-rgb) / .25)'} strokeWidth={(hov || sel) === n ? 2.2 : 0.8}
                 className="pp-kec" tabIndex={0} aria-label={`${n}: ${kv[n]} hotspots`}
                 onMouseEnter={() => setHov(n)} onMouseLeave={() => setHov(null)} onFocus={() => setHov(n)} onBlur={() => setHov(null)}
                 onClick={() => setSel(n)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSel(n)} />
@@ -339,7 +339,7 @@ function Spark({ series, yi }) {
   const pts = series.map((v, i) => `${(i / (n - 1)) * w},${h - (v / mx) * (h - 4) - 2}`).join(' ');
   return (
     <svg className="pp-spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" role="img" aria-label="Monthly hotspot series, 2015 to 2024">
-      {yi !== null && <rect x={(yi * 12 / (n - 1)) * w} y="0" width={(12 / (n - 1)) * w} height={h} fill="rgba(240,188,46,.16)" />}
+      {yi !== null && <rect x={(yi * 12 / (n - 1)) * w} y="0" width={(12 / (n - 1)) * w} height={h} fill="rgb(var(--gold-rgb) / .16)" />}
       <polyline points={pts} fill="none" stroke={C.peat} strokeWidth="1.4" />
     </svg>
   );
@@ -365,9 +365,9 @@ function Timeline({ series, year, onPick }) {
           </g>
         ))}
         {YEARS.map((yr, j) => (
-          <text key={yr} x={L + pw * (j * 12 + 6)} y={H - 12} textAnchor="middle" className="th-ax" fontWeight={year === yr ? 700 : 400} fill={year === yr ? '#f2ede4' : undefined}>{yr}</text>
+          <text key={yr} x={L + pw * (j * 12 + 6)} y={H - 12} textAnchor="middle" className="th-ax" fontWeight={year === yr ? 700 : 400} fill={year === yr ? 'var(--text-bright)' : undefined}>{yr}</text>
         ))}
-        <line x1={L} x2={W - Rr} y1={H - B} y2={H - B} stroke="rgba(255,255,255,.2)" />
+        <line x1={L} x2={W - Rr} y1={H - B} y2={H - B} stroke="rgb(var(--ink-rgb) / .2)" />
       </svg>
       <p className="th-readout" aria-live="polite">{read}</p>
     </>
@@ -397,14 +397,14 @@ function BarChart({ labels, series, colors, hi, onPick, markers, markerColor, la
                 return <rect key={j} x={L + pw * i + 5} y={y0} width={pw - 10} height={hgt} fill={colors[j]} fillOpacity={active === null || active === i ? 0.92 : 0.32} />;
               })}
               {markers && markers[i] != null && (
-                <rect x={L + pw * (i + 0.5) - 5} y={y(markers[i]) - 5} width="10" height="10" fill={markerColor} stroke="#0d0e0f" strokeWidth="1" transform={`rotate(45 ${L + pw * (i + 0.5)} ${y(markers[i])})`} />
+                <rect x={L + pw * (i + 0.5) - 5} y={y(markers[i]) - 5} width="10" height="10" fill={markerColor} stroke="var(--bg)" strokeWidth="1" transform={`rotate(45 ${L + pw * (i + 0.5)} ${y(markers[i])})`} />
               )}
-              <text x={L + pw * (i + 0.5)} y={H - 8} textAnchor="middle" className="th-ax" fontWeight={active === i ? 700 : 400} fill={active === i ? '#f2ede4' : undefined}>{String(lb).slice(2)}</text>
+              <text x={L + pw * (i + 0.5)} y={H - 8} textAnchor="middle" className="th-ax" fontWeight={active === i ? 700 : 400} fill={active === i ? 'var(--text-bright)' : undefined}>{String(lb).slice(2)}</text>
               {active === i && <text x={L + pw * (i + 0.5)} y={y(Math.max(tot[i], markers?.[i] ?? 0)) - 10} textAnchor="middle" className="th-val">{fmt(tot[i])}</text>}
             </g>
           );
         })}
-        <line x1={L} x2={W - Rr} y1={H - B} y2={H - B} stroke="rgba(255,255,255,.2)" />
+        <line x1={L} x2={W - Rr} y1={H - B} y2={H - B} stroke="rgb(var(--ink-rgb) / .2)" />
       </svg>
     </>
   );
@@ -430,7 +430,7 @@ function BurnMonthly({ yr }) {
         ))}
         <polyline points={line} fill="none" stroke={C.peat} strokeWidth="2" />
         {hs.map((v, i) => <circle key={i} cx={L + pw * (i + 0.5)} cy={y(v, hM)} r={h === i ? 5 : 3} fill={C.peat} />)}
-        <line x1={L} x2={W - Rr} y1={H - B} y2={H - B} stroke="rgba(255,255,255,.2)" />
+        <line x1={L} x2={W - Rr} y1={H - B} y2={H - B} stroke="rgb(var(--ink-rgb) / .2)" />
       </svg>
       <p className="th-readout" aria-live="polite">{h === null ? `Peak month: burned area ${MN[mcd.indexOf(mM)]} (${fmt(mM)} ha), hotspots ${MN[hs.indexOf(hM)]} (${hM}). Hover a month.` : `${MN[h]} ${yr}: ${fmt(mcd[h])} ha burned · ${hs[h]} hotspots`}</p>
     </>
