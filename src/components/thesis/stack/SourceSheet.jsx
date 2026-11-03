@@ -19,6 +19,18 @@ export default function SourceSheet({ s, base }) {
           <ul className="sx-list warn">{s.caveats.map((t, i) => <li key={i}>{t}</li>)}</ul>
         </section>
       </div>
+      {s.table && (
+        <>
+          <h3>{s.table.title}</h3>
+          <div className="sx-tablewrap">
+            <table className="sx-table">
+              <thead><tr>{s.table.cols.map((c) => <th key={c}>{c}</th>)}</tr></thead>
+              <tbody>{s.table.rows.map((r) => <tr key={r[0]}>{r.map((c, i) => <td key={i}>{c}</td>)}</tr>)}</tbody>
+            </table>
+          </div>
+          <p className="sx-note">{s.table.note}</p>
+        </>
+      )}
       <h3>Sources</h3>
       <ol className="sx-refs">
         {s.refs.map(([t, u]) => <li key={u}>{t} <a href={u} target="_blank" rel="noopener noreferrer">{u.replace(/^https?:\/\//, '')}</a></li>)}
