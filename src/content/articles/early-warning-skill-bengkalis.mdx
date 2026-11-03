@@ -15,14 +15,15 @@ import EwsAlertMap from '../../components/thesis/EwsAlertMap.jsx';
 import DataTable from '../../components/thesis/DataTable.jsx';
 import REPORT from '../../data/thesis-report.json';
 import SkillBars from '../../components/thesis/SkillBars.jsx';
+import PssMatrix from '../../components/thesis/PssMatrix.jsx';
 import Term from '../../components/Term.astro';
 
 ENSO can be forecast months ahead, which makes it an attractive trigger for a fire early-warning system. The thesis tests that idea in the most direct way it can: build a rule from ENSO and drought, apply it to years it has never seen, and compare it with a baseline that needs no climate information at all. This post covers that test, and the descriptive alert levels that sit next to it.
 
 <div class="pp-keys">
-  <div><b>0.21</b><span>Peirce Skill Score of the ONI-plus-drought rule (nested leave-one-year-out)</span></div>
-  <div><b>0.16</b><span>Peirce Skill Score of the baseline: an alarm in every fire month</span></div>
-  <div><b>+0.034</b><span>bootstrap mean difference in PSS; 95% CI −0.039 to +0.102, so not significant</span></div>
+  <div><b>0.21</b><span><Term id="pss">Peirce Skill Score</Term> of the ONI-plus-drought rule (nested leave-one-year-out)</span></div>
+  <div><b>0.16</b><span><Term id="pss">Peirce Skill Score</Term> of the baseline: an alarm in every fire month</span></div>
+  <div><b>+0.034</b><span>bootstrap mean difference in <Term id="pss">PSS</Term>; 95% CI −0.039 to +0.102, so not significant</span></div>
   <div><b>0</b><span>folds in which the drought condition was switched on by the rule's own tuning</span></div>
 </div>
 
@@ -39,18 +40,33 @@ The candidate rule raises an alarm for a sub-district in a given month if three 
 
 The reference is an alarm in every fire month. That sounds naive, but it is close to what already happens: provincial alert periods in Riau typically open in February and close at the end of the second dry season. In 2019 the governor declared an alert status from 19 February to 31 October; in 2026 the provincial status runs from 13 February to 30 November. That matches the two fire seasons the thesis documents, so in practice the status already works as a seasonal-calendar rule.
 
-Skill is scored with the standard yes/no forecast measures: probability of detection (POD, the share of fire months caught), false alarm ratio (FAR, the share of alarms that were wrong), probability of false detection (POFD) and the Critical Success Index (CSI). The headline measure is the Peirce Skill Score, PSS = POD − POFD, because it does not reward simply forecasting the more common category and does not depend on the base rate.[^hanssen65]
+Skill is scored with the standard yes/no forecast measures: probability of detection (<Term id="pss">POD</Term>, the share of fire months caught), false alarm ratio (<Term id="pss">FAR</Term>, the share of alarms that were wrong), probability of false detection (<Term id="pss">POFD</Term>) and the Critical Success Index (<Term id="pss">CSI</Term>). The headline measure is the <Term id="pss">Peirce Skill Score</Term>, PSS = POD − POFD, because it does not reward simply forecasting the more common category and does not depend on the base rate.[^hanssen65]
 
 <SeasonCalendar
   client:visible
   caption="Share of all 3,402 hotspots by calendar month, 2015–2024. The five months drawn in teal (February, March, April, July, August) are the empirical fire months that the rule and the calendar baseline both use; they group into the two preparedness windows."
 />
 
+### How the Peirce Skill Score is computed
+
+Every sub-district-month in the evaluation set is one yes/no forecast: the rule either raises an alarm or it does not, and fire either occurred in that sub-district-month or it did not. That gives four counts, hits (alarm, fire), false alarms (alarm, no fire), misses (no alarm, fire) and correct negatives (no alarm, no fire), and every score in the table below is a ratio of them. Switch the rule and hover a score to see which cells it uses.
+
+<PssMatrix
+  client:visible
+  caption="Counts for the 1,309 sub-district-months of the nested leave-one-year-out evaluation. Hits and alarms are published (Table 4.27); misses and correct negatives are worked back from the published POD and the size of the evaluation set, and recomputing the five scores from the four counts reproduces the table to three decimals."
+/>
+
+The score itself is a difference of two rates: the share of fire months that got an alarm (<Term id="pss">POD</Term>) minus the share of fire-free months that also got one (<Term id="pss">POFD</Term>). For the climate rule that is 0.416 − 0.211 = 0.205, and for the calendar 0.527 − 0.364 = 0.163. A rule that alarms in every month, or in none, scores exactly 0, so the calendar's 0.163 is real but modest skill: it rings only in the empirical fire months (five in most folds), not in all twelve.
+
+The <Term id="pss">CSI</Term> behaves differently because it leaves out the correct negatives, and that is why the two rules look alike on it (0.250 against 0.245). The difference sits in the 994 months without fire: the calendar raised 362 alarms there against 210 for the climate rule. POFD and PSS register that, CSI does not.
+
+Two cautions on reading it. PSS counts one point of POD as worth exactly one point of POFD, which is a convention and not the agency's own trade-off between a missed fire and a wasted mobilisation (see "What to make of it" below). And because all sub-districts in a given year share one ONI value, the 1,309 months are not independent, which is why the comparison between the rules rests on a year-level bootstrap, not on a test across months.
+
 ## The result
 
 <div class="pp-table"><table>
 <caption>Early-warning skill under nested leave-one-year-out evaluation (1,309 sub-district-months: the 1,320 panel rows minus the first month of each of the 11 sub-districts, which is lost to the one-month lag).</caption>
-<thead><tr><th>Rule</th><th>POD</th><th>FAR</th><th>POFD</th><th>CSI</th><th>PSS</th><th>Alarms</th><th>Hits</th></tr></thead>
+<thead><tr><th>Rule</th><th><Term id="pss">POD</Term></th><th><Term id="pss">FAR</Term></th><th><Term id="pss">POFD</Term></th><th><Term id="pss">CSI</Term></th><th><Term id="pss">PSS</Term></th><th>Alarms</th><th>Hits</th></tr></thead>
 <tbody>
 <tr><td>ONI + drought (nested)</td><td>0.416</td><td>0.616</td><td>0.211</td><td>0.250</td><td>0.205</td><td>341</td><td>131</td></tr>
 <tr><td>Alarm every fire month</td><td>0.527</td><td>0.686</td><td>0.364</td><td>0.245</td><td>0.163</td><td>528</td><td>166</td></tr>
@@ -70,7 +86,7 @@ The fire-month definition itself is slightly unstable at the edges. When 2015 is
 
 <SkillBars client:visible />
 
-PSS is positive everywhere, from 0.13 in Bukit Batu to 0.35 in Rupat Utara, but the false-alarm ratio swings widely: 0.16 in Bandar Laksamana against 0.90 in Mandau. Every sub-district received the same number of alarms (31) because the rule is applied uniformly in time, so the differences come from where fire occurred, not from how often the alarm sounded. Rupat, the sub-district with the most hotspots, has one of the lowest scores (POD 0.35), which fits its fires occurring in many months beyond those the rule flags.
+<Term id="pss">PSS</Term> is positive everywhere, from 0.13 in Bukit Batu to 0.35 in Rupat Utara, but the <Term id="pss">false-alarm ratio</Term> swings widely: 0.16 in Bandar Laksamana against 0.90 in Mandau. Every sub-district received the same number of alarms (31) because the rule is applied uniformly in time, so the differences come from where fire occurred, not from how often the alarm sounded. Rupat, the sub-district with the most hotspots, has one of the lowest scores (POD 0.35), which fits its fires occurring in many months beyond those the rule flags.
 
 ### A check on 2025
 
