@@ -14,6 +14,7 @@ import PairedBars from '../../components/thesis/PairedBars.jsx';
 import FireLandscapeMap from '../../components/thesis/FireLandscapeMap.jsx';
 import CanalDistanceChart from '../../components/thesis/CanalDistanceChart.jsx';
 import OddsForest from '../../components/thesis/OddsForest.jsx';
+import CanalCdf from '../../components/thesis/CanalCdf.jsx';
 import Term from '../../components/Term.astro';
 
 Climate decides *when* peat can burn. Drainage is one of the things that decides *where*. A canal lowers the water table around it, the surface layers dry out, and dry peat ignites. That story is well established across Southeast Asia.[^dadap21] This post asks a narrower question, in a landscape that is already heavily drained: inside Bengkalis, are fires closer to canals than a random spot on the same peat?
@@ -63,10 +64,10 @@ The layer below colours the peat by distance to the nearest mapped canal (teal i
   caption="Share of hotspots (red) and of peat area (grey, from the 30,001 null points) by distance to the nearest canal. A ratio above 1 means over-representation. The goodness-of-fit test gives Cramér's V = 0.212."
 />
 
-<figure class="pp-fig">
-  <img class="th-img" src="/blog/image/thesis/hotspot-vs-canal-distance.webp" alt="Left: cumulative distance to the nearest canal for hotspots and random points. Right: ratio of hotspot share to area share by distance class." loading="lazy" />
-  <figcaption>Left: cumulative share of hotspots (red) and random null points (grey) by distance to the nearest canal. The hotspot curve rises faster and stops near 3 km. Right: ratio of hotspot share to area share by distance class. Figure from the thesis analysis; labels are in Indonesian.</figcaption>
-</figure>
+<CanalCdf
+  client:visible
+  caption="Cumulative share of hotspots (red) by distance to the nearest canal, drawn from the 3,100 filtered hotspots on peat; the curve stops near 3 km. Grey markers are the random burnable-peat points: only their binned shares are published, so they are shown as points at the class edges, not as a curve. The right-hand panel of the thesis figure, the ratio by distance class, is the paired-bar chart above."
+/>
 
 Two things stand out. The excess is largest in the 0.5–1 km class (ratio 1.40), not right next to the canal. And the deficit far from canals is stark: nothing burns beyond 4 km, and the 2–4 km class holds 7.7% of the peat but under 1% of the hotspots. The map in the thesis makes the geography clear: the canal network is very dense on the deep peat dome of Bukit Batu and Bandar Laksamana and on Rupat, while the core of the dome between Talang Muandau and Siak Kecil lies more than 3 km from any canal and has almost no hotspots. Fire accumulates on the canalised margins of the dome, not in its interior.
 

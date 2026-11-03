@@ -14,6 +14,8 @@ import FireLandscapeMap from '../../components/thesis/FireLandscapeMap.jsx';
 import DataTable from '../../components/thesis/DataTable.jsx';
 import REPORT from '../../data/thesis-report.json';
 import PairedBars from '../../components/thesis/PairedBars.jsx';
+import PeatDepthExplorer from '../../components/thesis/PeatDepthExplorer.jsx';
+import OilPalmByDepth from '../../components/thesis/OilPalmByDepth.jsx';
 import Term from '../../components/Term.astro';
 
 Climate sets the clock; the land sets the map. This post looks at the land side of the thesis: how fire relates to peat depth, and whether oil palm, forest loss and other land-use variables explain where hotspots fall. The first question gets a clear answer. The second gets an honest "not with this design".
@@ -80,10 +82,10 @@ Hotspot counts are not proportional to peat area. Rupat holds 15% of the peat bu
 
 Comparing each sub-district's mean peat depth with the depth at which its fires occurred shows who burns deeper than their landscape average. Bantan, Bengkalis, Pinggir, Mandau, Bathin Solapan and Rupat Utara sit above the 1:1 line; Rupat, Bandar Laksamana, Siak Kecil and Talang Muandau sit below it, and Bukit Batu close to it. Rupat, with by far the most hotspots, burns mainly on peat that is relatively shallow for its own landscape. The thesis also notes that more than 90% of hotspots fall on mapped peat in eight sub-districts; the lowest shares are in Talang Muandau (56%), Bandar Laksamana (82%) and Rupat Utara (85%), and the data do not identify the land cover of the off-peat hotspots.
 
-<figure class="pp-fig pp-wide">
-  <img class="th-img" src="/blog/image/thesis/hotspot-peat-depth-analysis.webp" alt="Three panels: hotspot share against peat area share by depth class; hotspot density per hectare by depth class; fire-weighted depth against area-weighted depth by sub-district." loading="lazy" />
-  <figcaption>The three views of the depth result as drawn in the thesis analysis: hotspot share against peat-area share with the ratio above each pair (left), hotspots per hectare by class (centre), and for each sub-district the depth at which fires occur against the mean depth of its peat, bubble size showing hotspot count (right). Labels are in Indonesian.</figcaption>
-</figure>
+<PeatDepthExplorer
+  client:visible
+  caption="The three views of the depth result from the thesis analysis, now interactive: hotspot share against peat-area share with the ratio above each pair, hotspots per hectare by class, and for each sub-district the depth at which fires occur against the mean depth of its peat, bubble area showing hotspot count."
+/>
 
 <DataTable
   client:visible
@@ -149,15 +151,10 @@ The static layers are also tangled with each other: oil palm fraction with NDVI 
 
 At polygon level (n = 208 peat polygons), the median oil palm fraction is highest on intermediate peat, about 0.32 at 100–200 cm and 0.31 at 200–300 cm, low at 300–500 cm (about 0.03) and 500–700 cm (about 0.05), and zero on peat deeper than 7 m. So oil palm sits on moderately deep peat and is nearly absent from the deepest, which means it cannot be treated as an independent driver alongside depth. The WorldCover cropland class turns out nearly empty in every class (medians near 0, maxima below 0.07), so the oil palm map is the more informative plantation layer here.[^descals24]
 
-<figure class="pp-fig">
-  <img class="th-img" src="/blog/image/thesis/oilpalm-by-depth.webp" alt="Box plots of oil palm fraction per peat polygon by depth class." loading="lazy" />
-  <figcaption>Oil palm fraction per peat polygon (Descals et al. 2024 map; n = 208 polygons) by depth class. Oil palm is concentrated on intermediate peat and absent from peat deeper than 7 m. Labels are in Indonesian.</figcaption>
-</figure>
-
-<figure class="pp-fig">
-  <img class="th-img" src="/blog/image/thesis/cropland-by-depth.webp" alt="Box plots of ESA WorldCover cropland fraction per peat polygon by depth class." loading="lazy" />
-  <figcaption>The same view for the ESA WorldCover cropland class. Note the axis: no polygon exceeds 0.07, so this layer carries almost no information here.</figcaption>
-</figure>
+<OilPalmByDepth
+  client:visible
+  caption="Oil palm fraction per peat polygon (Descals et al. 2024 map; n = 208 polygons) by depth class. Oil palm is concentrated on intermediate peat and absent from peat deeper than 7 m. The chart shows the median, mean and share of zero polygons from the thesis table; polygon-level spread is not published, so no quartiles are drawn."
+/>
 
 ## What this changes, and what it leaves open
 
