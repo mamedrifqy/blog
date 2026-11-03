@@ -248,10 +248,11 @@ export const GLOSSARY: Entry[] = [
 
   // ───────── Early warning and validation ─────────
   {
-    id: 'pss', name: 'POD, FAR, POFD, CSI and the Peirce Skill Score', group: 'Early warning and validation', aliases: ['Peirce Skill Score', 'PSS', 'POD', 'FAR'],
+    id: 'pss', name: 'POD, FAR, POFD, CSI and the Peirce Skill Score', group: 'Early warning and validation', aliases: ['Peirce Skill Score', 'PSS', 'POD', 'FAR', 'POFD', 'CSI', 'Critical Success Index', 'Hanssen–Kuipers'],
     what: 'Yes/no forecast scores built from hits, false alarms, misses and correct negatives. The Peirce Skill Score rewards catching fires and penalises false alarms in one number; 0 means no skill over chance.',
     math: ['\\mathrm{POD}=\\frac{TP}{TP+FN}\\qquad \\mathrm{FAR}=\\frac{FP}{TP+FP}\\qquad \\mathrm{POFD}=\\frac{FP}{FP+TN}', '\\mathrm{CSI}=\\frac{TP}{TP+FN+FP}\\qquad \\mathrm{PSS}=\\mathrm{POD}-\\mathrm{POFD}'],
     where: [['TP,\\ FP', 'hits and false alarms'], ['FN,\\ TN', 'misses and correct negatives']],
+    note: 'Standard definitions (Hanssen & Kuipers 1965; Wilks 2011, as cited in the post). The properties follow from the formulas: PSS runs from −1 to 1, and a forecast that alarms in every month, or in none, scores exactly 0 because POD and POFD then move together.',
     thesis: 'The nested ONI-plus-drought rule scores PSS 0.205 against 0.163 for alarming in every fire month; the difference (+0.034, 95% CI −0.039 to +0.102) is not significant.',
     ref: 'Section 3.13; Table 4.27',
   },

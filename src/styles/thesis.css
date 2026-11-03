@@ -312,3 +312,25 @@
 .sx-kv.cols div { grid-template-columns: 1fr auto; align-items: start; }
 .sx-kv.cols dt code { display: block; width: fit-content; margin-top: .2rem; font-size: .66rem; color: var(--text-muted); }
 .sx-kv.cols dd { text-align: right; font: 600 .86rem var(--font-mono); }
+
+/* Peirce Skill Score 2x2 (PssMatrix) */
+.th-pss { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 1.4rem; align-items: stretch; }
+.th-pss-grid { display: grid; grid-template-columns: 6.5rem 1fr 1fr; gap: .4rem; align-items: stretch; }
+.th-pss-h { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); font-weight: 700; align-self: end; padding-bottom: .2rem; text-align: center; }
+.th-pss-h.th-pss-r { align-self: center; text-align: right; padding: 0 .4rem 0 0; }
+.th-pss-cell { display: flex; flex-direction: column; justify-content: center; gap: .1rem; padding: .9rem 1rem; min-height: 92px; border-radius: 3px; background: var(--bg-subtle); border-left: 4px solid var(--c); outline: none; transition: opacity .2s, background .2s; }
+.th-pss-cell b { font-family: var(--font-display); font-size: 1.5rem; line-height: 1.1; color: var(--text-bright); font-variant-numeric: tabular-nums; }
+.th-pss-cell span { font-size: .8rem; color: var(--text); font-weight: 600; }
+.th-pss-cell small { font-size: .7rem; color: var(--text-muted); }
+.th-pss-cell.num { background: color-mix(in srgb, var(--c) 34%, var(--bg-subtle)); }
+.th-pss-cell.den { background: color-mix(in srgb, var(--c) 14%, var(--bg-subtle)); }
+.th-pss-cell.off { opacity: .32; }
+.th-pss-cell:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.th-pss-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; align-content: stretch; }
+.th-pss-tile { font: inherit; text-align: left; cursor: default; display: flex; flex-direction: column; justify-content: center; gap: .15rem; padding: .7rem .9rem; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 3px; color: var(--text); }
+.th-pss-tile small { font-size: .68rem; letter-spacing: .08em; font-weight: 700; color: var(--text-muted); }
+.th-pss-tile b { font-family: var(--font-display); font-size: 1.3rem; color: var(--text-bright); font-variant-numeric: tabular-nums; }
+.th-pss-tile.head { grid-column: 1 / -1; border-color: var(--teal); }
+.th-pss-tile.head b { color: var(--teal); }
+.th-pss-tile.on, .th-pss-tile:focus-visible { border-color: var(--gold); outline: none; background: var(--bg-card); }
+@media (max-width: 760px) { .th-pss { grid-template-columns: 1fr; } .th-pss-grid { grid-template-columns: 4.6rem 1fr 1fr; } .th-pss-cell { padding: .7rem .7rem; } .th-pss-cell b { font-size: 1.2rem; } .th-pss-tiles { grid-template-columns: repeat(3, 1fr); } .th-pss-tile.head { grid-column: auto; } }
