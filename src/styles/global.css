@@ -4,39 +4,159 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
 /* ── Design tokens ──────────────────────────────────────────────
-   Source of truth: @ttdk-design-system/library-react@1.0.1
-   (src/core/theme/tokens.css, MIT, DTO Kemenkes RI), imported in
-   BaseLayout. The blog's own variable names are kept so every page,
-   stylesheet and chart that reads them follows the TTDK tokens.
-   Light is TTDK's default; dark is TTDK's [data-theme="dark"] mode. */
+   Structure, type, spacing, radius, shadows and component CSS come from the
+   TTDK Design System (@ttdk-design-system/library-react@1.0.1, MIT, DTO
+   Kemenkes RI). Colour is the blog's own palette (teal / gold / coral on a
+   warm near-black), written into both the blog variables and the TTDK
+   semantic tokens so TTDK components follow it.
+   Dark is the default; light uses the same hues with text shades darkened
+   until every text colour reaches at least 4.5:1 on its background.
+   Selectors are :root[...] / :root:not(...) so they outrank tokens.css. */
+
+/* Dark (default; also used before the theme script runs).
+   .dark-scope applies the same palette to one block in any theme, for the
+   legacy explorers whose canvas colours are drawn for a dark ground. */
+:root:not([data-theme="light"]),
+.dark-scope,
+.pp-map-grid > svg, .pp-db-map, .flm-mapwrap, .fd-map {
+  /* palette */
+  --bg:          #0d0e0f;
+  --bg-card:     #141618;
+  --bg-hover:    #1c1f22;
+  --bg-subtle:   #191c1f;
+  --border:      #24282c;
+  --border-md:   #30353a;
+  --text:        #d4cfc6;   /* 12.5:1 on --bg */
+  --text-bright: #f2ede4;   /* 16.6:1 */
+  --text-muted:  #9ba1a8;   /*  7.4:1 */
+  --text-dim:    #828890;   /*  5.4:1 (was #3e4349, 1.9:1) */
+
+  --teal:        #1cc8aa;   /* fills, rules, active marks */
+  --teal-hover:  #19b398;
+  --teal-text:   #1cc8aa;   /*  9.1:1 */
+  --teal-dim:    rgba(28,200,170,.12);
+  --gold:        #f0bc2e;
+  --gold-text:   #f0bc2e;   /* 11.0:1 */
+  --gold-dim:    rgba(240,188,46,.12);
+  --coral:       #e8533a;
+  --coral-text:  #f06a52;   /*  6.3:1 */
+  --coral-dim:   rgba(232,83,58,.13);
+  --blue:        #4f9be8;
+  --blue-text:   #4f9be8;   /*  6.6:1 */
+  --blue-dim:    rgba(79,155,232,.13);
+  --violet-text: #9b7fff;
+  --violet-dim:  rgba(130,100,255,.12);
+  --on-accent:   #0d0e0f;   /* text on teal/gold fills: 9.1:1 / 11.0:1 */
+
+  /* chart/map ink */
+  --viz-bg:      #141618;
+  --viz-bg-deep: #0d0e0f;
+  --viz-border:  #24282c;
+  --viz-text:    #e6e2da;
+  --viz-muted:   #9ba1a8;
+  --viz-dim:     #828890;
+
+  --nav-bg:      rgba(13,14,15,.9);
+  --hero-gradient: radial-gradient(ellipse 70% 80% at 10% 90%, rgba(28,200,170,.10) 0%, transparent 60%), var(--bg);
+  --banner-bg:   linear-gradient(133.41deg, rgba(28,200,170,.14) 15.99%, var(--bg-card) 91.99%);
+  --shadow-card: none;
+  color-scheme: dark;
+
+  /* TTDK semantic tokens -> palette */
+  --ttdk-bg-base-primary: var(--bg);
+  --ttdk-bg-card: var(--bg-card);
+  --ttdk-bg-secondary-disabled: var(--bg-hover);
+  --ttdk-stroke-subtle: var(--border);
+  --ttdk-stroke-divider: var(--border-md);
+  --ttdk-stroke-border-focus: var(--teal);
+  --ttdk-text-icon-primary: var(--text-bright);
+  --ttdk-text-icon-secondary: var(--text-muted);
+  --ttdk-text-icon-disabled: var(--text-dim);
+  --ttdk-brand-default: var(--teal);
+  --ttdk-brand-strong: var(--teal-hover);
+  --ttdk-brand-subtle: var(--teal-dim);
+  --ttdk-brand-subtle-dark: var(--teal-dim);
+  --ttdk-text-icon-status-warning: var(--gold-text);
+  --ttdk-bg-status-warning-subtle: var(--gold-dim);
+  --ttdk-stroke-status-warning: var(--gold);
+  --ttdk-text-icon-status-error: var(--coral-text);
+  --ttdk-bg-status-error-subtle: var(--coral-dim);
+  --ttdk-stroke-status-error: var(--coral);
+  --ttdk-text-icon-status-info: var(--blue-text);
+  --ttdk-bg-status-info-subtle: var(--blue-dim);
+  --ttdk-stroke-status-info: var(--blue);
+}
+
+/* Light: same hues, text shades darkened (ratios on #ffffff) */
+:root[data-theme="light"] {
+  --bg:          #ffffff;
+  --bg-card:     #ffffff;
+  --bg-hover:    #f3f4f4;
+  --bg-subtle:   #f6f7f7;
+  --border:      #e4e6e7;
+  --border-md:   #cfd3d6;
+  --text:        #1f2326;   /* 15.8:1 */
+  --text-bright: #0d0e0f;
+  --text-muted:  #50565c;   /*  7.4:1 */
+  --text-dim:    #646a71;   /*  5.5:1 */
+
+  --teal:        #1cc8aa;
+  --teal-hover:  #17b398;
+  --teal-text:   #0b7d6b;   /*  5.0:1 */
+  --teal-dim:    #e3f7f3;
+  --gold:        #f0bc2e;
+  --gold-text:   #8a6100;   /*  5.5:1 */
+  --gold-dim:    #fdf3d6;
+  --coral:       #e8533a;
+  --coral-text:  #c03a22;   /*  5.4:1 */
+  --coral-dim:   #fde6e1;
+  --blue:        #4f9be8;
+  --blue-text:   #1f66b8;   /*  5.8:1 */
+  --blue-dim:    #e3eefb;
+  --violet-text: #6b4fd8;   /*  5.6:1 */
+  --violet-dim:  #eeeafd;
+  --on-accent:   #0d0e0f;
+
+  /* chart ink on the light page (maps keep their dark canvas, see above) */
+  --viz-bg:      #ffffff;
+  --viz-bg-deep: #ffffff;
+  --viz-border:  #e4e6e7;
+  --viz-text:    #1f2326;
+  --viz-muted:   #50565c;
+  --viz-dim:     #646a71;
+
+  --nav-bg:      rgba(255,255,255,.9);
+  --hero-gradient: linear-gradient(133.41deg, #e3f7f3 15.99%, #ffffff 91.99%);
+  --banner-bg:   linear-gradient(133.41deg, #e3f7f3 15.99%, #ffffff 91.99%);
+  --shadow-card: var(--ttdk-shadow-sm);
+  color-scheme: light;
+
+  --ttdk-bg-base-primary: var(--bg);
+  --ttdk-bg-card: var(--bg-card);
+  --ttdk-bg-secondary-disabled: var(--bg-hover);
+  --ttdk-stroke-subtle: var(--border);
+  --ttdk-stroke-divider: var(--border-md);
+  --ttdk-stroke-border-focus: var(--teal);
+  --ttdk-text-icon-primary: var(--text-bright);
+  --ttdk-text-icon-secondary: var(--text-muted);
+  --ttdk-text-icon-disabled: var(--text-dim);
+  --ttdk-brand-default: var(--teal);
+  --ttdk-brand-strong: var(--teal-text);
+  --ttdk-brand-subtle: var(--teal-dim);
+  --ttdk-brand-subtle-dark: var(--teal-dim);
+  --ttdk-text-icon-status-warning: var(--gold-text);
+  --ttdk-bg-status-warning-subtle: var(--gold-dim);
+  --ttdk-stroke-status-warning: var(--gold);
+  --ttdk-text-icon-status-error: var(--coral-text);
+  --ttdk-bg-status-error-subtle: var(--coral-dim);
+  --ttdk-stroke-status-error: var(--coral);
+  --ttdk-text-icon-status-info: var(--blue-text);
+  --ttdk-bg-status-info-subtle: var(--blue-dim);
+  --ttdk-stroke-status-info: var(--blue);
+}
+
 :root {
-  /* Backgrounds */
-  --bg:         var(--ttdk-bg-base-primary);
-  --bg-card:    var(--ttdk-bg-card);
-  --bg-hover:   var(--ttdk-bg-secondary-disabled);
-  --bg-subtle:  var(--ttdk-bg-secondary-disabled);
-
-  /* Borders */
-  --border:     var(--ttdk-stroke-subtle);
-  --border-md:  var(--ttdk-stroke-divider);
-
-  /* Text */
-  --text:        var(--ttdk-text-icon-primary);
-  --text-bright: var(--ttdk-text-icon-primary);
-  --text-muted:  var(--ttdk-text-icon-secondary);
-  --text-dim:    var(--ttdk-text-icon-disabled);
-
-  /* Brand + semantic accents (names kept from the old palette) */
-  --teal:       var(--ttdk-brand-default);           /* fills, rules, active state */
-  --teal-text:  var(--ttdk-brand-strong);            /* text on white */
-  --teal-dim:   var(--ttdk-brand-subtle);
-  --coral:      var(--ttdk-color-orange-500);        /* fire */
-  --coral-dim:  var(--ttdk-color-orange-100);
-  --gold:       var(--ttdk-text-icon-status-warning);
-  --gold-dim:   var(--ttdk-bg-status-warning-subtle);
-  --blue:       var(--ttdk-text-icon-status-info);
-  --blue-dim:   var(--ttdk-bg-status-info-subtle);
-  --accent:     var(--teal);
+  --accent: var(--teal);
 
   /* Typography — TTDK uses one family (Manrope) for everything */
   --font-display: var(--ttdk-font-sans);
@@ -48,33 +168,36 @@
   --col-text: 700px;
   --nav-h:    64px;
 
-  /* Data-viz canvas: charts and maps keep a dark panel in both themes
-     (their series colours and labels were drawn for a dark ground). */
-  --viz-bg:      var(--ttdk-color-neutral-900);
-  --viz-bg-deep: var(--ttdk-color-neutral-black);
-  --viz-border:  var(--ttdk-color-neutral-800);
-  --viz-text:    var(--ttdk-color-neutral-100);
-  --viz-muted:   var(--ttdk-color-neutral-400);
-  --viz-dim:     var(--ttdk-color-neutral-500);
-
-  /* = .ttdk-banner[data-appearance=gradient][data-variant=primary], light and dark */
-  --hero-gradient: linear-gradient(133.41deg, var(--ttdk-brand-subtle) 15.99%, var(--ttdk-bg-base-primary) 91.99%);
-
-  --nav-bg:   rgba(255,255,255,0.88);
-  --shadow-card: var(--ttdk-shadow-sm);
-  color-scheme: light;
+  /* Legacy chart components (draft posts only) draw light labels, so their
+     panels stay dark in both themes. */
+  --legacy-bg:     #141618;
+  --legacy-border: #24282c;
+  --legacy-dim:    #828890;
 }
 
-[data-theme="dark"] {
-  --teal-text:  var(--ttdk-brand-default);
-  --teal-dim:   var(--ttdk-brand-subtle-dark);
-  --coral:      var(--ttdk-color-orange-400);
-  --coral-dim:  var(--ttdk-color-orange-800);
-  --nav-bg:     rgba(20,19,19,0.88);
-  --hero-gradient: linear-gradient(133.41deg, #16b3ac38 15.99%, var(--ttdk-bg-card) 91.99%);
-  --shadow-card: none;
-  color-scheme: dark;
+/* ── TTDK components on the palette ─────────────────────────────
+   TTDK's solid fills carry white text; on the bright teal/gold that is
+   2.1:1, so they take the dark --on-accent instead. Soft badges and the
+   link-style text use the contrast-checked --*-text shades. */
+:root .ttdk-button.ttdk-button[data-variant="primary"][data-appearance="solid"],
+:root .ttdk-button.ttdk-button[data-variant="primary"]:not([data-appearance]) {
+  background-color: var(--teal); border-color: var(--teal); color: var(--on-accent);
 }
+:root .ttdk-button.ttdk-button[data-variant="primary"][data-appearance="solid"]:hover,
+:root .ttdk-button.ttdk-button[data-variant="primary"]:not([data-appearance]):hover {
+  background-color: var(--teal-hover); border-color: var(--teal-hover); color: var(--on-accent);
+}
+.ttdk-badge[data-appearance="solid"][data-variant="primary"] { background-color: var(--teal); border-color: var(--teal); color: var(--on-accent); }
+.ttdk-badge[data-appearance="soft"][data-variant="primary"] { color: var(--teal-text); }
+.ttdk-badge[data-appearance="soft"][data-variant="warning"] { color: var(--gold-text); }
+.ttdk-badge[data-appearance="soft"][data-variant="danger"]  { color: var(--coral-text); }
+.ttdk-badge[data-appearance="soft"][data-variant="neutral"],
+.ttdk-badge[data-appearance="outline"][data-variant="neutral"] { color: var(--text-muted); background-color: var(--bg-hover); border-color: var(--border-md); }
+.ttdk-banner[data-appearance="gradient"][data-variant="primary"],
+:root[data-theme] .ttdk-banner[data-appearance="gradient"][data-variant="primary"] {
+  background: var(--banner-bg); border: 1px solid var(--border); color: var(--text);
+}
+.ttdk-card { color: var(--text); }
 
 /* ── Reset ──────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -106,7 +229,7 @@ h3 { font-size: var(--ttdk-font-size-20); margin: 2rem 0 0.5rem; }
 
 p { margin-bottom: 1.2rem; }
 a { color: var(--teal-text); text-decoration: none; transition: color 0.15s; }
-a:hover { color: var(--teal); text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: var(--teal-text); text-decoration: underline; text-underline-offset: 3px; }
 strong { color: var(--text-bright); font-weight: var(--ttdk-font-weight-bold); }
 
 code {
@@ -163,8 +286,8 @@ blockquote p:last-child { margin-bottom: 0; }
   border-radius: var(--ttdk-radius-sm);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.nav-logo-mark svg { width: 18px; height: 18px; fill: var(--ttdk-text-icon-stay-white); }
-.nav-logo-mark svg line { stroke: var(--ttdk-text-icon-stay-white); }
+.nav-logo-mark svg { width: 18px; height: 18px; fill: var(--on-accent); }
+.nav-logo-mark svg line { stroke: var(--on-accent); }
 .nav-logo-word {
   font-family: var(--font-sans);
   font-weight: var(--ttdk-font-weight-extrabold);
@@ -173,7 +296,7 @@ blockquote p:last-child { margin-bottom: 0; }
   color: var(--text-bright);
   line-height: 1;
 }
-.nav-logo-word span { color: var(--teal); }
+.nav-logo-word span { color: var(--teal-text); }
 
 .nav-divider { width: 1px; height: 20px; background: var(--border-md); flex-shrink: 0; }
 .nav-tagline { font-size: var(--ttdk-font-size-12); font-weight: 500; color: var(--text-muted); white-space: nowrap; }
@@ -248,11 +371,11 @@ blockquote p:last-child { margin-bottom: 0; }
   color: var(--teal-text);
   white-space: nowrap;
 }
-.tag.fire           { background: var(--coral-dim); color: var(--coral); border-color: var(--coral); }
-.tag.ml             { background: var(--gold-dim);  color: var(--gold);  border-color: var(--ttdk-stroke-status-warning); }
-.tag.sar            { background: var(--ttdk-color-violet-100); color: var(--ttdk-color-violet-500); border-color: var(--ttdk-color-violet-300); }
-.tag.remote-sensing { background: var(--blue-dim); color: var(--blue); border-color: var(--ttdk-stroke-status-info); }
-[data-theme="dark"] .tag.sar { background: var(--ttdk-color-violet-800); color: var(--ttdk-color-violet-300); }
+.tag.fire           { background: var(--coral-dim); color: var(--coral-text); border-color: var(--coral); }
+.tag.ml             { background: var(--gold-dim);  color: var(--gold-text); border-color: var(--gold); }
+.tag.sar            { background: var(--violet-dim); color: var(--violet-text); border-color: var(--violet-text); }
+.tag.remote-sensing { background: var(--blue-dim); color: var(--blue-text); border-color: var(--blue); }
+
 
 /* ── MapLibre overrides ─────────────────────────────────────── */
 .maplibregl-ctrl-attrib { font-size: 10px !important; }
@@ -297,3 +420,17 @@ tr:last-child td { border-bottom: none; }
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 3px; }
+
+/* ── Light mode: series colours used as text ────────────────────
+   Several chart components colour numbers and headings with the series
+   hues inline (React style/fill). On white those hues are 1.2–3.7:1, so in
+   light mode text in those hues takes the contrast-checked shade. Only the
+   text colour changes; bars, lines and swatches keep the series hue. */
+:root[data-theme="light"] :not(svg *):is([style*="color: rgb(240, 188, 46)"], [style*="color:#f0bc2e" i], [style*="color: #f0bc2e" i]) { color: var(--gold-text) !important; }
+:root[data-theme="light"] :not(svg *):is([style*="color: rgb(28, 200, 170)"], [style*="color:#1cc8aa" i], [style*="color: #1cc8aa" i]) { color: var(--teal-text) !important; }
+:root[data-theme="light"] :not(svg *):is([style*="color: rgb(232, 83, 58)"], [style*="color:#e8533a" i], [style*="color: #e8533a" i]) { color: var(--coral-text) !important; }
+:root[data-theme="light"] :not(svg *):is([style*="color: rgb(242, 237, 228)"], [style*="color:#f2ede4" i], [style*="color: #f2ede4" i]) { color: var(--text-bright) !important; }
+:root[data-theme="light"] :is(text, tspan):is([fill="#f0bc2e" i], [style*="fill: rgb(240, 188, 46)"], [style*="fill:#f0bc2e" i]) { fill: var(--gold-text) !important; }
+:root[data-theme="light"] :is(text, tspan):is([fill="#1cc8aa" i], [style*="fill: rgb(28, 200, 170)"], [style*="fill:#1cc8aa" i]) { fill: var(--teal-text) !important; }
+:root[data-theme="light"] :is(text, tspan):is([fill="#e8533a" i], [style*="fill: rgb(232, 83, 58)"], [style*="fill:#e8533a" i]) { fill: var(--coral-text) !important; }
+:root[data-theme="light"] :is(text, tspan):is([fill="#8d897f" i], [style*="fill: rgb(141, 137, 127)"], [style*="fill:#8d897f" i]) { fill: var(--text-muted) !important; }

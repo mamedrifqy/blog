@@ -5,9 +5,9 @@
 .fd-scope { margin-bottom: .75rem; padding: .75rem .9rem; background: var(--bg-card); border: 1px solid var(--border-md); border-radius: 4px; }
 .fd-scope .pp-chips { margin-top: .5rem; }
 .fd-scope .pp-chips button { padding: .35rem .65rem; font-size: .78rem; }
-.fd-scope .pp-chips sup { color: var(--gold); font-size: .65em; }
+.fd-scope .pp-chips sup { color: var(--gold-text); font-size: .65em; }
 .fd-scope-note { font-size: .74rem !important; color: var(--text-muted) !important; line-height: 1.5 !important; margin: .7rem 0 0 !important; padding: 0 !important; max-width: none !important; }
-.fd-scope-note b { color: var(--gold); }
+.fd-scope-note b { color: var(--gold-text); }
 .fd-view-note { font-size: .78rem !important; color: var(--text-muted) !important; line-height: 1.5 !important; margin: 0 0 .9rem !important; padding: 0 !important; max-width: none !important; }
 .fd-bar { position: sticky; top: var(--nav-h); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; padding: .65rem .9rem; margin-bottom: 1rem; background: var(--nav-bg); border-bottom: 1px solid var(--border); box-shadow: var(--ttdk-shadow-bottom); backdrop-filter: blur(6px); border: 1px solid var(--border-md); border-radius: 4px; }
 .fd-bar-l { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--text-dim); }
@@ -77,10 +77,10 @@
 .fd-peat b small { font-weight: 400; color: var(--text-muted); font-size: .7rem; }
 .fd-empty { display: flex; flex-direction: column; }
 .fd-empty p { font-size: .86rem !important; line-height: 1.6 !important; color: var(--text) !important; margin: 0 0 1rem !important; padding: 0 !important; max-width: none !important; }
-.fd-go { align-self: flex-start; font: inherit; font-size: .82rem; font-weight: 700; color: var(--ttdk-text-icon-stay-white); background: var(--teal); border: 0; border-radius: 4px; padding: .6rem 1rem; cursor: pointer; margin-top: auto; }
+.fd-go { align-self: flex-start; font: inherit; font-size: .82rem; font-weight: 700; color: var(--on-accent); background: var(--teal); border: 0; border-radius: 4px; padding: .6rem 1rem; cursor: pointer; margin-top: auto; }
 .fd-go:hover { background: var(--gold); }
 .fd-go:focus-visible, .fd-link:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .fd-link { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: var(--text-dim); text-underline-offset: 3px; }
-.fd-link:hover, .fd-link[aria-pressed="true"] { color: var(--gold); text-decoration-color: var(--gold); }
+.fd-link:hover, .fd-link[aria-pressed="true"] { color: var(--gold-text); text-decoration-color: var(--gold); }
 .fd-reg-r.sel { background: var(--bg-hover); box-shadow: inset 2px 0 0 var(--gold); }
 @media (max-width: 900px) { .fd-peat > div { grid-template-columns: 5rem minmax(0, 1fr) 6.6rem; } }

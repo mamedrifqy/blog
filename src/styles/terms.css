@@ -2,7 +2,7 @@
 
 /* Inline methods term */
 a.term { color: inherit; text-decoration: underline dotted var(--teal); text-decoration-thickness: 1.5px; text-underline-offset: 3px; cursor: help; transition: color .15s, background .15s; border-radius: 2px; }
-a.term:hover, a.term[aria-expanded="true"] { color: var(--teal); background: color-mix(in srgb, var(--teal) 10%, transparent); }
+a.term:hover, a.term[aria-expanded="true"] { color: var(--teal-text); background: color-mix(in srgb, var(--teal) 10%, transparent); }
 a.term:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 /* Card (popup and glossary page share the .tc-* inner styles) */
@@ -21,7 +21,7 @@ a.term:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .tc-where dt { color: var(--text-bright); white-space: nowrap; }
 .tc-where dd { margin: 0; color: var(--text-muted); }
 .tc-thesis { padding-left: .7rem !important; border-left: 2px solid var(--teal); color: var(--text); }
-.tc-thesis b { color: var(--teal); font-weight: 700; }
+.tc-thesis b { color: var(--teal-text); font-weight: 700; }
 .tc-note { font-size: .76rem; font-style: italic; color: var(--text-dim); }
 .tc-ref { font-size: .72rem; letter-spacing: .02em; color: var(--text-dim); margin-bottom: 0 !important; }
 .tc-more { margin: .7rem 0 0 !important; padding-top: .6rem !important; border-top: 1px solid var(--border); font-size: .76rem; }

@@ -62,15 +62,16 @@ const fullTitle = `${title} — medrifmaps`;
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImage} />
 
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#141313" media="(prefers-color-scheme: dark)" />
-  <!-- Theme before first paint: saved choice, else the OS setting. -->
+  <meta name="theme-color" content="#0d0e0f" />
+  <!-- Theme before first paint: the saved choice, otherwise dark. -->
   <script is:inline>
     (function () {
       var t = null;
       try { t = localStorage.getItem('theme'); } catch (e) {}
-      if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      if (t !== 'light' && t !== 'dark') t = 'dark';
       document.documentElement.setAttribute('data-theme', t);
+      var m = document.querySelector('meta[name="theme-color"]');
+      if (m) m.setAttribute('content', t === 'light' ? '#ffffff' : '#0d0e0f');
     })();
   </script>
   <link rel="icon" type="image/svg+xml" href={`${BASE}/favicon.svg`} />
@@ -158,6 +159,7 @@ const fullTitle = `${title} — medrifmaps`;
       const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', next);
       try { localStorage.setItem('theme', next); } catch (e) {}
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'light' ? '#ffffff' : '#0d0e0f');
       window.dispatchEvent(new CustomEvent('themechange', { detail: next }));
     });
   </script>

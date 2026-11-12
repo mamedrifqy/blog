@@ -1,10 +1,35 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+
+// Where the reader last pressed, in page coordinates. Used only when the page
+// runs inside a frame that is sized to the whole document (some embedded
+// viewers do this): there `position: fixed` pins the dialog to the top of the
+// document, far from what the reader is looking at, so the dialog is placed
+// next to the control that opened it instead.
+let lastPressY = null;
+if (typeof document !== 'undefined') {
+  document.addEventListener('pointerdown', (e) => { lastPressY = e.pageY; }, true);
+}
+const frameIsDocumentTall = () => {
+  const screenH = (window.screen && window.screen.availHeight) || 900;
+  return window.innerHeight > screenH * 1.3;
+};
 
 // Accessible dialog: portal to <body>, Esc and backdrop close, focus moves in and returns, page scroll locked.
 export default function Modal({ open, onClose, title, kicker, children, wide = true, nav }) {
   const box = useRef(null);
   const prev = useRef(null);
+  const back = useRef(null);
+
+  useLayoutEffect(() => {
+    if (!open || !back.current || !frameIsDocumentTall()) return;
+    const screenH = (window.screen && window.screen.availHeight) || 900;
+    const anchor = lastPressY ?? (prev.current?.getBoundingClientRect?.().top ?? 0) + window.scrollY;
+    const h = Math.round(screenH * 0.85);
+    const top = Math.max(0, Math.min(anchor - h / 3, document.documentElement.scrollHeight - h));
+    Object.assign(back.current.style, { position: 'absolute', top: `${top}px`, bottom: 'auto', height: `${h}px`, padding: '12px' });
+    if (box.current) box.current.style.maxHeight = `${h - 24}px`;
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -12,7 +37,8 @@ export default function Modal({ open, onClose, title, kicker, children, wide = t
     const y = window.scrollY;
     const html = document.documentElement;
     const old = html.style.overflow;
-    html.style.overflow = 'hidden';
+    // locking scroll in a document-tall frame would do nothing useful
+    if (!frameIsDocumentTall()) html.style.overflow = 'hidden';
     const t = setTimeout(() => box.current?.querySelector('.sx-close')?.focus(), 30);
     const key = (e) => {
       if (e.key === 'Escape') { e.stopPropagation(); onClose(); }
@@ -29,14 +55,14 @@ export default function Modal({ open, onClose, title, kicker, children, wide = t
       clearTimeout(t);
       document.removeEventListener('keydown', key);
       html.style.overflow = old;
-      window.scrollTo(0, y);
+      if (!frameIsDocumentTall()) window.scrollTo(0, y);
       prev.current?.focus?.({ preventScroll: true });
     };
   }, [open]);
 
   if (!open || typeof document === 'undefined') return null;
   return createPortal(
-    <div className="sx-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div ref={back} className="sx-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div ref={box} className={`sx-dialog${wide ? ' wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby="sx-title">
         <header className="sx-head">
           <div>

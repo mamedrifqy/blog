@@ -16,7 +16,7 @@ export default function MonthlyBurn() {
       <div className="pp-controls">
         <div className="pp-chips" role="group" aria-label="Year">{[2015, 2019, 2023].map((v) => <button key={v} type="button" aria-pressed={yr === v} onClick={() => setYr(v)}>{v}</button>)}</div>
       </div>
-      <div className="pp-legend"><span><i style={{ background: '#e8533a' }} />MCD64A1 burned area (ha)</span><span><i className="pp-line" />DBSCAN hotspots (count)</span><span style={{ color: 'var(--viz-dim)' }}>Each series is scaled to its own peak</span></div>
+      <div className="pp-legend"><span><i style={{ background: '#e8533a' }} />MCD64A1 burned area (ha)</span><span><i className="pp-line" />DBSCAN hotspots (count)</span><span style={{ color: 'var(--text-dim)' }}>Each series is scaled to its own peak</span></div>
       <svg viewBox={`0 0 ${W} ${H}`} className="th-svg" role="img" aria-label={`Monthly burned hectares and hotspot counts in ${yr}`}>
         {mcd.map((v, i) => (
           <g key={i} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(null)}>

@@ -163,8 +163,8 @@ export default function EnsoChart({ data = [], title = 'ENSO vs Hotspot Count' }
 
   return (
     <div style={{
-      background:   'var(--viz-bg, #121f16)',
-      border:       '1px solid var(--viz-border, rgba(255,255,255,0.07))',
+      background:   'var(--legacy-bg, #121f16)',
+      border:       '1px solid var(--legacy-border, rgba(255,255,255,0.07))',
       borderRadius: '8px',
       padding:      '1.5rem',
       margin:       '2rem 0',

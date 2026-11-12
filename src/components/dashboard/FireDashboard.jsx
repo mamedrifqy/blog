@@ -109,7 +109,7 @@ function RegencyView({ scope, year, yi, setScope, setYear }) {
           <p className="th-readout" aria-live="polite">{active ? `${active}: ${fmt(vals[active])} hotspots (${riauTotal ? ((vals[active] / riauTotal) * 100).toFixed(1) : 0}% of Riau)` : 'Hover or click a regency.'}</p>
           <div className="pp-legend fd-leg">
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }}>0<i style={{ width: 90, background: `linear-gradient(90deg, ${mix(0, GOLD)}, ${mix(1, GOLD)})`, margin: 0 }} />{fmt(vmax)} hotspots</span>
-            <span style={{ color: 'var(--viz-dim)' }}>Boundaries: GADM v4.0, simplified</span>
+            <span style={{ color: 'var(--text-dim)' }}>Boundaries: GADM v4.0, simplified</span>
           </div>
         </section>
 
@@ -147,7 +147,7 @@ function RegencyView({ scope, year, yi, setScope, setYear }) {
         <div className="pp-legend fd-leg">
           <span><i style={{ background: C.peat }} />Hotspots per month</span>
           {Object.entries(PH).map(([n, c]) => <span key={n}><i style={{ background: c }} />{n}</span>)}
-          <span style={{ color: 'var(--viz-dim)' }}>Strip under the bars = ENSO phase of the month (thesis ONI series)</span>
+          <span style={{ color: 'var(--text-dim)' }}>Strip under the bars = ENSO phase of the month (thesis ONI series)</span>
         </div>
       </section>
 
@@ -266,7 +266,7 @@ function BengkalisView({ year, yi, setYear }) {
         <div className="pp-legend fd-leg">
           <span><i style={{ background: C.peat }} />Hotspots per month</span>
           {Object.entries(PH).map(([n, c]) => <span key={n}><i style={{ background: c }} />{n}</span>)}
-          <span style={{ color: 'var(--viz-dim)' }}>Strip under the bars = ENSO phase of the month</span>
+          <span style={{ color: 'var(--text-dim)' }}>Strip under the bars = ENSO phase of the month</span>
         </div>
       </section>
 
@@ -419,7 +419,7 @@ function BurnMonthly({ yr }) {
   const line = hs.map((v, i) => `${L + pw * (i + 0.5)},${y(v, hM)}`).join(' ');
   return (
     <>
-      <div className="pp-legend fd-leg"><span><i style={{ background: C.burn }} />MODIS burned area (ha)</span><span><i className="pp-line" />DBSCAN hotspots (count)</span><span style={{ color: 'var(--viz-dim)' }}>Each series is scaled to its own peak</span></div>
+      <div className="pp-legend fd-leg"><span><i style={{ background: C.burn }} />MODIS burned area (ha)</span><span><i className="pp-line" />DBSCAN hotspots (count)</span><span style={{ color: 'var(--text-dim)' }}>Each series is scaled to its own peak</span></div>
       <svg viewBox={`0 0 ${W} ${H}`} className="th-svg" role="img" aria-label={`Monthly MODIS burned hectares and hotspot counts in ${yr}`}>
         {mcd.map((v, i) => (
           <g key={i} onMouseEnter={() => setH(i)} onMouseLeave={() => setH(null)}>

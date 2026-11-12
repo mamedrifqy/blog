@@ -244,7 +244,7 @@ export default function DataStack({ base = '' }) {
           {LAYERS.map((l, i) => {
             const y = yOf(i), on = active == null || active === i;
             return (
-              <g key={l.key} style={{ transform: `translateY(${y}px)`, transition: tr, opacity: on ? 1 : 0.55, cursor: 'pointer' }} onClick={() => (active === i ? openLayer(i) : setActive(i))}>
+              <g key={l.key} style={{ transform: `translateY(${y}px)`, transition: tr, opacity: on ? 1 : 0.88, cursor: 'pointer' }} onClick={() => (active === i ? openLayer(i) : setActive(i))}>
                 <g transform={`matrix(${A / 1000},${B / 1000},${-A / 1000},${B / 1000},${CX},0)`}>
                   <rect x={0} y={0} width={1000} height={1000} fill="#121417" fillOpacity={0.62} stroke={active === i ? TEAL : 'rgba(255,255,255,.16)'} strokeWidth={active === i ? 1.5 : 1} vectorEffect="non-scaling-stroke" />
                   <rect x={0} y={0} width={1000} height={1000} fill="url(#ds-dots)" />
