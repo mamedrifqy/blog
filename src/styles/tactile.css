@@ -1,0 +1,383 @@
+/* ── Tactile layer ─────────────────────────────────────────────────
+   Recipes from the tactile-design skill (kosta4a/tactile-design, MIT),
+   mapped to the blog palette. Controls look like objects: raised by a fine
+   ring and a crisp 1px drop, squeezed when pressed. Every part takes its
+   fill, edge and drop from the surface it sits on.
+   Loaded last; selectors carry :root so they outrank the page stylesheets.
+
+   Neutral ladder used here
+     light  ink-1 #ffffff  2 #f6f7f7  3 #eef0f0  4 #e4e6e7  5 #dadddf  6 #cfd3d6
+     dark   ink-1 #0d0e0f  2 #141618  3 #1c1f22  4 #24282c  5 #2b3034  6 #30353a  7 #3b4147
+   ──────────────────────────────────────────────────────────────── */
+
+:root:not([data-theme="light"]), .dark-scope {
+  /* page ground */
+  --t-well:        #090a0b;              /* sunk into the page */
+  --t-ctl:         #1c1f22;              /* control on the page: ground + 2 */
+  --t-ctl-hover:   #24282c;              /*                 hover: + 3 */
+  --t-ctl-edge:    #30353a;              /* outline three steps above the fill */
+  --t-card:        #141618;              /* card: ground + 1 */
+  --t-card-hover:  #1c1f22;
+  --t-card-edge:   #30353a;
+  --t-line:        #2b3034;              /* 0.5px hairlines */
+  --t-row-hover:   #1c1f22;
+  --t-shadow-button:  0 0 0 0.5px var(--t-ctl-edge), 0 1px 2px 0 rgb(0 0 0 / .5);
+  --t-shadow-toggle:  var(--t-shadow-button);
+  --t-shadow-primary: 0 0 0 0.5px var(--teal), 0 1px 2px 0 rgb(0 0 0 / .5);
+  --t-shadow-card:    0 0 0 0.5px var(--t-card-edge), 0 1px 2px 0 rgb(0 0 0 / .5), 0 3px 4px -2px rgb(0 0 0 / .4);
+  --t-shadow-table:   0 1px 2px 0 rgb(0 0 0 / .5);
+  --t-shadow-menu:    0 0 0 0.5px #3b4147, 0 1px 2px 0 rgb(0 0 0 / .5), 0 4px 8px -4px rgb(0 0 0 / .5);
+  --t-shadow-modal:   0 0 0 0.5px #3b4147, 0 1px 2px 0 rgb(0 0 0 / .5), 0 6px 8px -4px rgb(0 0 0 / .5);
+  --t-backdrop:    rgb(0 0 0 / .8);
+  --t-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%239ba1a8' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+}
+:root[data-theme="light"] {
+  --t-well:        #eef0f0;
+  --t-ctl:         #ffffff;
+  --t-ctl-hover:   #f6f7f7;
+  --t-ctl-edge:    transparent;
+  --t-card:        #ffffff;
+  --t-card-hover:  #f6f7f7;
+  --t-card-edge:   transparent;
+  --t-line:        #cfd3d6;
+  --t-row-hover:   #f6f7f7;
+  --t-ink: 13 14 15;                     /* shadows drawn in the palette's ink, not pure black */
+  --t-shadow-button:  0 1px 2px 0 rgb(var(--t-ink) / .12), 0 0 0 1px rgb(var(--t-ink) / .08);
+  --t-shadow-toggle:  var(--t-shadow-button);
+  --t-shadow-primary: 0 0 0 1px #ffffff, 0 1px 2px 0 rgb(var(--t-ink) / .12);
+  --t-shadow-card:    0 0 0 1px rgb(var(--t-ink) / .07), 0 1px 2px 0 rgb(var(--t-ink) / .12), 0 3px 4px -2px rgb(var(--t-ink) / .08);
+  --t-shadow-table:   0 1px 2px 0 rgb(var(--t-ink) / .12);
+  --t-shadow-menu:    0 0 0 1px rgb(var(--t-ink) / .08), 0 1px 2px 0 rgb(var(--t-ink) / .12), 0 4px 8px -4px rgb(var(--t-ink) / .16);
+  --t-shadow-modal:   0 0 0 1px rgb(var(--t-ink) / .07), 0 1px 2px 0 rgb(var(--t-ink) / .14), 0 6px 8px -4px rgb(var(--t-ink) / .14);
+  --t-backdrop:    rgb(var(--t-ink) / .3);
+  --t-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2350565c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+}
+:root {
+  --t-ease: cubic-bezier(.23, 1, .32, 1);
+  --t-ease-drawer: cubic-bezier(.32, .72, 0, 1);
+  --t-dur: 150ms;
+}
+
+/* Borrow from the parent: on a card or in a sheet, controls sit one step
+   higher than on the page (dark); in light the white control keeps its ring. */
+:root:not([data-theme="light"]) :is(.ttdk-card, .fd-card, .sx-dialog, .mm-dialog, .ttdk-banner),
+.dark-scope :is(.fd-card, .sx-dialog) {
+  --t-ctl: #24282c;
+  --t-ctl-hover: #2b3034;
+  --t-ctl-edge: #3b4147;
+  --t-row-hover: #24282c;
+  --t-well: #0d0e0f;
+}
+
+/* ── 1. Buttons ─────────────────────────────────────────────────── */
+
+/* Every pressable control squeezes; smaller targets squeeze more. */
+:root :is(
+  .ttdk-button, .theme-toggle, .ds-ctl button, .ds-tabs button, .ds-files button, .ds-explore,
+  .sx-chips button, .sx-files button, .sx-head-ctl button, .pp-seg button, .pp-chips button,
+  .pp-db-zoom button, .pp-db-reset, .pp-db-steps button, .mm-tools button, .mm-switch,
+  .th-dl a, .th-datatable th button, .data-file, details > summary, .sx-select select,
+  .rpf .pills button, .rpf .seg button, .rpf .tabs button, .rpf .map-time button, .rpf .mi-open, .rpf .btn-read, .rpf select
+) {
+  transition: transform var(--t-dur) var(--t-ease), background-color var(--t-dur) var(--t-ease),
+              color var(--t-dur) var(--t-ease), box-shadow var(--t-dur) var(--t-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+:root :is(
+  .ttdk-button, .ds-ctl button, .ds-tabs button, .ds-files button, .sx-chips button, .sx-files button,
+  .pp-seg button, .pp-chips button, .pp-db-zoom button, .pp-db-reset, .mm-tools button, .mm-switch,
+  .th-dl a, details > summary, .sx-select select,
+  .rpf .pills button, .rpf .seg button, .rpf .tabs button, .rpf .map-time button, .rpf .mi-open, .rpf .btn-read, .rpf select
+):active:not(:disabled) { transform: scale(.97); }
+:root :is(.theme-toggle, .sx-head-ctl button):active:not(:disabled) { transform: scale(.94); }
+:root :is(.ds-explore, .pp-db-steps button):active:not(:disabled) { transform: scale(.99); }
+:root .th-datatable th button:active { transform: scale(.97); }
+
+/* Primary: the one accent action. Ring in the surface colour + crisp drop. */
+:root .ttdk-button.ttdk-button[data-variant="primary"][data-appearance="solid"] {
+  box-shadow: var(--t-shadow-primary);
+  border-color: transparent;
+  letter-spacing: -0.01em;
+}
+
+/* Secondary: raised control, the shadow is the edge (no border). */
+:root :is(.theme-toggle, .ds-ctl button, .sx-head-ctl button, .pp-db-reset, .mm-tools button, .th-dl a, details > summary) {
+  background: var(--t-ctl);
+  border: 0;
+  box-shadow: var(--t-shadow-button);
+  color: var(--text-bright);
+}
+:root .th-dl a { color: var(--teal-text); }
+:root .pp-db-reset:disabled { box-shadow: none; background: transparent; opacity: .6; }
+:root .sx-head-ctl button:disabled { box-shadow: none; background: transparent; opacity: .4; }
+
+/* Utility pills (file chips): round, raised, 28px. */
+:root :is(.ds-files button, .sx-files button) {
+  background: var(--t-ctl);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: var(--t-shadow-button);
+  min-height: 28px;
+  padding: 0 .7rem;
+}
+
+/* Toggle groups: the track is a well, options are flat, the chosen one is
+   lifted out of it (raised fill + ring + drop). Hue no longer marks the choice. */
+:root :is(.pp-seg, .ds-tabs, .sx-chips, .pp-chips, .pp-db-zoom) {
+  background: var(--t-well);
+  border: 0;
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  width: auto;
+  max-width: 100%;
+}
+:root :is(.pp-seg button, .ds-tabs button, .sx-chips button, .pp-chips button, .pp-db-zoom button) {
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  min-height: 30px;
+  padding: 0 .75rem;
+}
+:root .pp-seg button + button { border-left: 0; }
+:root :is(.pp-seg button[aria-pressed="true"], .ds-tabs button.on, .sx-chips button.on,
+          .pp-chips button[aria-pressed="true"], .pp-db-zoom button[aria-pressed="true"]) {
+  background: var(--t-ctl);
+  color: var(--text-bright);
+  box-shadow: var(--t-shadow-toggle);
+}
+:root .ds-tabs button span, :root .ds-tabs button.on span { color: var(--text-dim); }
+:root .ds-tabs button.on span { color: var(--teal-text); }
+
+/* Choice rows (DBSCAN steps): flat rows, the chosen one raised. */
+:root .pp-db-steps button { border: 0; background: transparent; border-radius: 8px; color: var(--text-muted); }
+:root .pp-db-steps button[aria-pressed="true"] {
+  background: var(--t-ctl); color: var(--text-bright); box-shadow: var(--t-shadow-button); font-weight: 600;
+}
+:root .pp-db-steps button[aria-pressed="true"] span { border-color: var(--teal); color: var(--teal-text); }
+
+/* Switch (mind map): pill raised like a secondary button. */
+:root .mm-switch { background: var(--t-ctl); border: 0; box-shadow: var(--t-shadow-button); }
+
+/* Explore call-out: a raised card-like button. */
+:root .ds-explore { background: var(--t-ctl); border: 0; box-shadow: var(--t-shadow-button); }
+
+/* Hover: colour only, fine pointer only. */
+@media (hover: hover) and (pointer: fine) {
+  :root :is(.theme-toggle, .ds-ctl button, .sx-head-ctl button:not(:disabled), .pp-db-reset:not(:disabled),
+            .mm-tools button, .th-dl a, details > summary, .ds-files button, .sx-files button, .mm-switch, .ds-explore):hover {
+    background: var(--t-ctl-hover); color: var(--text-bright); border-color: transparent;
+  }
+  :root .th-dl a:hover { color: var(--teal-text); }
+  :root :is(.pp-seg button, .ds-tabs button, .sx-chips button, .pp-chips button, .pp-db-zoom button, .pp-db-steps button):not([aria-pressed="true"]):not(.on):hover {
+    background: color-mix(in srgb, var(--t-ctl) 55%, transparent); color: var(--text-bright);
+  }
+  :root .ttdk-button.ttdk-button[data-variant="primary"][data-appearance="solid"]:hover {
+    background-color: var(--teal-hover);
+  }
+}
+
+/* ── 2. Cards ───────────────────────────────────────────────────── */
+
+/* Clickable cards: raised by ring + drops (no border, no lift, no glow);
+   hover deepens the fill one step; press squeezes to .99. */
+:root :is(.article-card, .feature-card, .topic-card).ttdk-card,
+:root:root .topic-card {
+  background: var(--t-card);
+  border: 0;
+  box-shadow: var(--t-shadow-card);
+  transition: transform var(--t-dur) var(--t-ease), background-color var(--t-dur) var(--t-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+:root .ttdk-card[data-hoverable="true"]:hover,
+:root:root .topic-card:hover {
+  transform: none;
+  box-shadow: var(--t-shadow-card);
+  border-color: transparent;
+}
+@media (hover: hover) and (pointer: fine) {
+  :root :is(.article-card, .feature-card).ttdk-card:hover,
+  :root:root .topic-card:hover { background: var(--t-card-hover); }
+}
+:root:root :is(.article-card, .feature-card, .topic-card):active { transform: scale(.99); }
+
+/* Non-clickable cards: raised, no hover. */
+:root :is(.fd-card, .fd-kpi, .pp-db-count > div) {
+  background: var(--t-card);
+  border: 0;
+  box-shadow: var(--t-shadow-card);
+  border-radius: 8px;
+}
+:root .fd-kpi { border-top: 0; position: relative; overflow: hidden; }
+:root .fd-kpis, :root .pp-db-count { gap: 12px; }
+
+/* ── 3. Tables ──────────────────────────────────────────────────── */
+
+/* One frame: 0.5px hairline, radius 8, a crisp drop under it; header and rows
+   share one fill; 0.5px rules; the frame is the only bottom line; each row
+   fades its own hover fill. */
+:root :is(.article-body > table, .pp-table table, .data-scroll, .sx-tablewrap) {
+  border: 0.5px solid var(--t-line);
+  border-radius: 8px;
+  box-shadow: var(--t-shadow-table);
+  background: var(--t-card);
+}
+:root :is(.article-body > table, .pp-table table) {
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+:root :is(.data-scroll, .sx-tablewrap) { overflow-x: auto; }
+:root :is(.data-scroll table, .sx-table) { border-collapse: separate; border-spacing: 0; }
+:root :is(.article-body > table, .pp-table table, .data-scroll, .sx-tablewrap) :is(th, td) {
+  border-bottom: 0.5px solid var(--t-line);
+  transition: background-color var(--t-dur) var(--t-ease);
+}
+:root :is(.article-body > table, .pp-table table, .data-scroll, .sx-tablewrap) th {
+  background: var(--t-card);
+  color: var(--text-bright);
+  font-size: .8125rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+:root :is(.article-body > table, .pp-table table, .data-scroll, .sx-tablewrap) tbody tr:last-child td { border-bottom: 0; }
+:root :is(.article-body > table, .pp-table table) caption { background: transparent; }
+@media (hover: hover) and (pointer: fine) {
+  :root :is(.article-body > table, .pp-table table, .data-scroll, .sx-tablewrap) tbody tr:hover td { background: var(--t-row-hover); }
+}
+/* sortable header buttons: a small pressable target with its own hover fill */
+:root .th-datatable th button { border-radius: 6px; padding: 2px 6px; margin: -2px -6px; }
+@media (hover: hover) and (pointer: fine) {
+  :root .th-datatable th button:hover { background: var(--t-row-hover); }
+}
+
+/* ── 4. Charts ──────────────────────────────────────────────────── */
+
+/* Chart cards are raised (above). Clickable marks: pointer, and hovering one
+   dims the others to .35 over 150ms so the target reads as the thing you will
+   press. Figures themselves never move. */
+:root .fd-card .th-svg > g { cursor: pointer; transition: opacity var(--t-dur) var(--t-ease); }
+:root .fd-card .th-svg:has(> g:hover) > g:not(:hover) { opacity: .35; }
+/* ranked rows filter on click: full-width rows, own hover fill, .99 press */
+:root .fd-rank { border-radius: 6px; transition: background-color var(--t-dur) var(--t-ease), transform var(--t-dur) var(--t-ease); -webkit-tap-highlight-color: transparent; }
+@media (hover: hover) and (pointer: fine) {
+  :root .fd-rank:hover { background: var(--t-row-hover); }
+}
+:root .fd-rank:active { transform: scale(.99); }
+/* light mode: chart ink that was drawn for a dark ground */
+:root[data-theme="light"] .th-svg text[fill="#f2ede4" i] { fill: var(--text-bright); }
+:root[data-theme="light"] .th-svg line[stroke="rgba(255,255,255,.2)"] { stroke: var(--border-md); }
+
+/* ── 5. Dropdowns ───────────────────────────────────────────────── */
+
+/* Select: the secondary button with a chevron. The open list is the browser's
+   own and cannot be styled. */
+:root :is(.sx-select select, .rpf select) {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--t-ctl);
+  background-image: var(--t-chevron);
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px 16px;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: var(--t-shadow-button);
+  color: var(--text-bright);
+  min-height: 32px;
+  padding: 0 32px 0 12px;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  :root :is(.sx-select select, .rpf select):hover { background-color: var(--t-ctl-hover); }
+}
+
+/* Disclosure trigger: the secondary button; its chevron turns over while open. */
+:root details > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  border-radius: 6px;
+  min-height: 32px;
+  padding: 0 10px 0 12px;
+  font-size: .8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+:root details > summary::-webkit-details-marker { display: none; }
+:root details > summary::after {
+  content: "";
+  width: 16px; height: 16px;
+  background: var(--t-chevron) center / 16px 16px no-repeat;
+  transition: transform var(--t-dur) var(--t-ease);
+}
+:root details[open] > summary::after { transform: rotate(180deg); }
+:root details[open] > .data-scroll { animation: t-disclose 200ms var(--t-ease); }
+@keyframes t-disclose { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* ── 6. Sheets ──────────────────────────────────────────────────── */
+
+/* Desktop dialog: an overlay whose shadow ring is its edge; crisp, not blurry;
+   rises 16px with a fade over 240ms. */
+:root .sx-backdrop { background: var(--t-backdrop); backdrop-filter: blur(2px); animation: t-fade 200ms var(--t-ease); }
+:root .sx-dialog {
+  border: 0;
+  border-radius: 8px;
+  box-shadow: var(--t-shadow-modal);
+  animation: t-rise 240ms var(--t-ease);
+}
+:root .sx-head { border-bottom: 0.5px solid var(--t-line); }
+:root[data-theme="light"] .sx-dialog { background: #ffffff; }
+:root .mm-dialog { border: 0; box-shadow: var(--t-shadow-modal); }
+:root .mm-dialog::backdrop { background: var(--t-backdrop); backdrop-filter: blur(2px); }
+@keyframes t-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes t-rise { from { opacity: 0; transform: translateY(16px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+
+/* Grab handle: only on a phone sheet (see below). */
+:root .sx-grab { display: none; }
+
+/* Phone and narrow screens: the dialog becomes a bottom sheet with a white,
+   tactile grab handle instead of the close button; tapping it closes. */
+@media (max-width: 900px) {
+  :root .sx-backdrop { padding: 0; align-items: flex-end; }
+  :root .sx-dialog, :root .sx-dialog.wide {
+    width: 100%;
+    height: auto;
+    max-height: 92dvh;
+    border-radius: 14px 14px 0 0;
+    box-shadow: 0 0 0 0.5px var(--t-line), 0 -4px 8px -4px rgb(0 0 0 / .2);
+    animation: t-sheet 320ms var(--t-ease-drawer);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  :root .sx-grab {
+    display: flex; justify-content: center; align-items: center;
+    width: 100%; height: 22px; padding: 0; margin: 0;
+    background: transparent; border: 0; cursor: pointer; flex: none; position: relative;
+    -webkit-tap-highlight-color: transparent;
+  }
+  :root .sx-grab span {
+    width: 36px; height: 5px; border-radius: 999px;
+    background: var(--t-ctl); box-shadow: var(--t-shadow-button);
+    transition: transform var(--t-dur) var(--t-ease);
+  }
+  :root .sx-grab:active span { transform: scale(.94); }
+  /* invisible 44pt hit area around the 36x5 handle */
+  :root .sx-grab::before { content: ""; position: absolute; left: 50%; top: 50%; width: 88px; height: 44px; transform: translate(-50%, -50%); }
+  :root .sx-head { padding-top: .25rem; }
+  :root .sx-close { display: none; }
+}
+@keyframes t-sheet { from { transform: translateY(100%); } to { transform: none; } }
+
+/* ── Reduced motion: travel, blur and scale become a short crossfade ─ */
+@media (prefers-reduced-motion: reduce) {
+  :root .sx-dialog, :root .sx-backdrop { animation: t-fade 150ms linear; }
+  :root details[open] > .data-scroll { animation: none; }
+}

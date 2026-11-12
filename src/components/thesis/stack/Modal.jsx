@@ -39,7 +39,10 @@ export default function Modal({ open, onClose, title, kicker, children, wide = t
     const old = html.style.overflow;
     // locking scroll in a document-tall frame would do nothing useful
     if (!frameIsDocumentTall()) html.style.overflow = 'hidden';
-    const t = setTimeout(() => box.current?.querySelector('.sx-close')?.focus(), 30);
+    const t = setTimeout(() => {
+      const c = box.current?.querySelector('.sx-close');
+      (c && c.offsetParent !== null ? c : box.current?.querySelector('.sx-grab'))?.focus();
+    }, 30);
     const key = (e) => {
       if (e.key === 'Escape') { e.stopPropagation(); onClose(); }
       if (e.key === 'Tab' && box.current) {
@@ -64,6 +67,8 @@ export default function Modal({ open, onClose, title, kicker, children, wide = t
   return createPortal(
     <div ref={back} className="sx-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div ref={box} className={`sx-dialog${wide ? ' wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby="sx-title">
+        {/* phone sheet: tactile grab handle in place of the close button (hidden on desktop) */}
+        <button type="button" className="sx-grab" onClick={onClose} aria-label="Close"><span /></button>
         <header className="sx-head">
           <div>
             {kicker && <p className="sx-kick">{kicker}</p>}
