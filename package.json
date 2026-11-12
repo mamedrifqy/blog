@@ -10,6 +10,7 @@
   "dependencies": {
     "@astrojs/mdx": "^3.0.0",
     "@astrojs/react": "^3.0.0",
+    "@ttdk-design-system/library-react": "1.0.1",
     "astro": "^4.0.0",
     "chart.js": "^4.4.0",
     "katex": "^0.16.11",

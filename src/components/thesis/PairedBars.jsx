@@ -14,7 +14,7 @@ export default function PairedBars({ rows, aLabel = 'Share of hotspots', bLabel 
         <span />
         <span className="th-pair-key">
           <span><i style={{ background: '#e8533a' }} />{aLabel}</span>
-          <span><i style={{ background: 'var(--text-dim)' }} />{bLabel}</span>
+          <span><i style={{ background: 'var(--viz-dim)' }} />{bLabel}</span>
         </span>
         <span style={{ textAlign: 'right' }}>Ratio</span>
       </div>

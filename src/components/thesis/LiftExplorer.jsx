@@ -21,7 +21,7 @@ export default function LiftExplorer() {
         <div className="pp-seg" role="group" aria-label="Buffer radius">{[500, 1000].map((v) => <button key={v} type="button" aria-pressed={buf === v} onClick={() => setBuf(v)}>{v} m buffer</button>)}</div>
         <div className="pp-seg" role="group" aria-label="Pre-fire reference window">{Object.entries(PRE).map(([k, v]) => <button key={k} type="button" aria-pressed={pre === k} onClick={() => setPre(k)}>{v}</button>)}</div>
       </div>
-      <div className="pp-legend"><span><i style={{ background: col.ATBI }} />dATBI</span><span><i style={{ background: col.NBR }} />dNBR</span><span style={{ color: 'var(--text-dim)' }}>Bars: hit-rate at hotspots minus hit-rate at matched peat control points</span></div>
+      <div className="pp-legend"><span><i style={{ background: col.ATBI }} />dATBI</span><span><i style={{ background: col.NBR }} />dNBR</span><span style={{ color: 'var(--viz-dim)' }}>Bars: hit-rate at hotspots minus hit-rate at matched peat control points</span></div>
       <svg viewBox={`0 0 ${W} ${H}`} className="th-svg" role="img" aria-label="Hit-rate difference between hotspots and control points for dATBI and dNBR at four thresholds">
         {[0, 0.2, 0.4, 0.6, 0.8].map((v) => <g key={v}><line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="rgba(255,255,255,.07)" /><text x={L - 6} y={y(v) + 4} textAnchor="end" className="th-ax">{v.toFixed(1)}</text></g>)}
         {T_LIST.map((t, g) => ['ATBI', 'NBR'].map((idx, j) => {

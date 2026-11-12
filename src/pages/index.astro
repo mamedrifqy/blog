@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import '@ttdk-design-system/library-react/web/banner/banner.css';
 import ThesisMindMap from '../components/ThesisMindMap.jsx';
 import { getCollection } from 'astro:content';
 import { clusters } from '../data/clusters';
@@ -49,11 +50,10 @@ const sections = clusters.map(c => {
 
   <!-- ── Intro ─────────────────────────────────────────────── -->
   <section class="home-top container">
-    <div class="top-eyebrow">
-      <span class="eyebrow-dot"></span>
-      <span>Geospatial Storytelling · Southeast Asia</span>
-    </div>
-    <h1 class="top-headline">Maps that <em>tell the story.</em></h1>
+    <span class="ttdk-badge top-eyebrow" data-variant="primary" data-appearance="soft" data-size="sm" data-rounded="full">
+      <span class="eyebrow-dot" aria-hidden="true"></span>Geospatial Storytelling · Southeast Asia
+    </span>
+    <h1 class="top-headline">Maps that <span class="hl">tell the story.</span></h1>
     <p class="top-body">
       Spatial analysis, remote sensing and data-driven narratives on fire, drought and disaster risk
       in Riau, Indonesia. Stories are grouped into clusters; start with the first.
@@ -63,9 +63,9 @@ const sections = clusters.map(c => {
   {sections.map(({ cluster, posts, featured, groups }) => (
     <section class="cluster container" id={`cluster-${cluster.id}`} aria-labelledby={`cluster-${cluster.id}-title`}>
 
-      <header class="cluster-head">
+      <header class="cluster-head ttdk-banner" data-variant="primary" data-appearance="gradient" data-size="xl" data-rounded="lg">
         <div class="cluster-kicker">
-          <span class="cluster-num">Cluster {cluster.number}</span>
+          <span class="ttdk-badge" data-variant="primary" data-appearance="solid" data-size="sm" data-rounded="full">Cluster {cluster.number}</span>
           <span class="cluster-label">{cluster.label}</span>
         </div>
         <h2 class="cluster-title" id={`cluster-${cluster.id}-title`}>{cluster.title}</h2>
@@ -85,16 +85,16 @@ const sections = clusters.map(c => {
       </header>
 
       {featured && (
-        <a href={`${BASE}/${featured.slug}`} class="feature-card">
+        <a href={`${BASE}/${featured.slug}`} class="feature-card ttdk-card" data-variant="elevated" data-rounded="lg" data-size="lg" data-hoverable="true">
           <div class="feature-meta">
-            <span class="start-here">Start here</span>
+            <span class="ttdk-badge" data-variant="warning" data-appearance="soft" data-size="sm" data-rounded="full">Start here</span>
             <time class="feature-date">
               {new Date(featured.data.date).toLocaleDateString('en-GB', {year:'numeric',month:'short',day:'numeric'})}
             </time>
           </div>
           <h3 class="feature-title">{featured.data.title}</h3>
           {featured.data.subtitle && <p class="feature-sub">{featured.data.subtitle}</p>}
-          <div class="feature-cta">Read the overview <span class="cta-arrow">→</span></div>
+          <span class="ttdk-button feature-cta" data-variant="primary" data-appearance="solid" data-size="sm" data-rounded="md">Read the overview <span class="cta-arrow">→</span></span>
         </a>
       )}
 
@@ -108,9 +108,9 @@ const sections = clusters.map(c => {
           )}
           <div class="articles-grid">
             {g.posts.map(article => (
-              <a href={`${BASE}/${article.slug}`} class="article-card">
+              <a href={`${BASE}/${article.slug}`} class="article-card ttdk-card" data-variant="bordered" data-rounded="md" data-hoverable="true">
                 <div class="card-top">
-                  {article.data.chapter && <span class="card-chapter">§ {article.data.chapter}</span>}
+                  {article.data.chapter && <span class="ttdk-badge card-chapter" data-variant="neutral" data-appearance="soft" data-size="sm" data-rounded="md">§ {article.data.chapter}</span>}
                   <div class="card-tags">
                     {article.data.tags.slice(0, 2).map(tag => (
                       <span class={`tag ${tagColorMap[tag] ?? ''}`}>{tag}</span>
@@ -135,10 +135,7 @@ const sections = clusters.map(c => {
   <section class="about-strip container">
     <div class="strip-inner">
       <div class="strip-text">
-        <div class="section-label">
-          <span class="label-line"></span>
-          <span>About this project</span>
-        </div>
+        <div class="section-label">About this project</div>
         <p>
           <strong>medrifmaps</strong> is the geospatial research portfolio of mamed/rifqy —
           a geospatial analyst based in Riau Province, Indonesia, pursuing an S2 in
@@ -152,7 +149,7 @@ const sections = clusters.map(c => {
         <div class="tools-label">Tools & data sources</div>
         <div class="tools-grid">
           {['Google Earth Engine','DBSCAN','Sentinel-1 SAR','Sentinel-2','CHIRPS v2.0','ERA5-Land','Hansen GFC','NASA FIRMS (MODIS)','MapLibre GL JS'].map(t => (
-            <div class="tool-chip">{t}</div>
+            <span class="ttdk-badge" data-variant="neutral" data-appearance="outline" data-size="sm" data-rounded="full">{t}</span>
           ))}
         </div>
       </div>
@@ -162,123 +159,82 @@ const sections = clusters.map(c => {
 </BaseLayout>
 
 <style>
+/* Styled with TTDK tokens; cards/badges/banner/button are TTDK component CSS. */
+
 /* ── Intro ─────────────────────────────────────────────────── */
-.home-top { padding-top: calc(var(--nav-h) + 3.5rem); padding-bottom: 2.5rem; }
-.top-eyebrow {
-  display: flex; align-items: center; gap: 0.6rem;
-  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--teal); margin-bottom: 1.25rem;
-}
-.eyebrow-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; box-shadow: 0 0 8px var(--teal); }
+.home-top { padding-top: calc(var(--nav-h) + var(--ttdk-spacing-xxl)); padding-bottom: var(--ttdk-spacing-xl); }
+.top-eyebrow { gap: var(--ttdk-spacing-xs); margin-bottom: var(--ttdk-spacing-md); }
+.eyebrow-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; }
 .top-headline {
-  font-size: clamp(2.2rem, 5.5vw, 3.8rem); font-weight: 900; letter-spacing: -0.03em;
-  line-height: 1.02; margin-bottom: 1rem; color: var(--text-bright);
+  font-size: clamp(2.2rem, 5.5vw, var(--ttdk-font-size-64)); font-weight: var(--ttdk-font-weight-extrabold);
+  letter-spacing: -0.03em; line-height: 1.05; margin-bottom: var(--ttdk-spacing-md); color: var(--text-bright);
 }
-.top-headline em { font-style: italic; color: var(--teal); }
-.top-body { font-size: 1rem; color: var(--text-muted); line-height: 1.65; max-width: 560px; margin: 0; }
+.top-headline .hl { color: var(--teal); }
+.top-body { font-size: var(--ttdk-font-size-18); color: var(--text-muted); line-height: var(--ttdk-line-height-body); max-width: 600px; margin: 0; }
 
-/* ── Cluster ───────────────────────────────────────────────── */
-.cluster { padding-bottom: 3rem; }
-.cluster-head {
-  padding: 2rem 2rem 1.75rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--teal);
-  border-radius: 6px;
-  margin-bottom: 1.5px;
-}
-.cluster-kicker { display: flex; align-items: center; gap: .9rem; flex-wrap: wrap; margin-bottom: 1rem; }
-.cluster-num { font-size: .7rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #0d0e0f; background: var(--teal); padding: .2rem .55rem; border-radius: 3px; }
-.cluster-label { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+/* ── Cluster (TTDK Banner, gradient/primary/xl) ─────────────── */
+.cluster { padding-bottom: var(--ttdk-spacing-xxl); }
+.cluster-head { display: block; margin-bottom: var(--ttdk-spacing-md); color: var(--text); }
+.cluster-kicker { display: flex; align-items: center; gap: var(--ttdk-spacing-sm); flex-wrap: wrap; margin-bottom: var(--ttdk-spacing-md); }
+.cluster-label { font-size: var(--ttdk-font-size-12); font-weight: var(--ttdk-font-weight-semibold); color: var(--text-muted); }
 .cluster-title {
-  font-family: var(--font-display); font-size: clamp(1.4rem, 3vw, 2.1rem); line-height: 1.2;
-  color: var(--text-bright); letter-spacing: -0.01em; margin: 0 0 .6rem; max-width: 880px;
+  font-size: clamp(1.4rem, 3vw, var(--ttdk-font-size-32)); line-height: var(--ttdk-line-height-heading);
+  color: var(--text-bright); margin: 0 0 var(--ttdk-spacing-xs); max-width: 880px;
 }
-.cluster-sub { font-size: 1rem; color: var(--gold); margin: 0 0 .9rem; font-style: italic; font-family: var(--font-display); }
-.cluster-blurb { font-size: .92rem; color: var(--text-muted); line-height: 1.65; max-width: 700px; margin: 0 0 1.5rem; }
-.cluster-foot { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem 2rem; flex-wrap: wrap; padding-top: 1.25rem; border-top: 1px solid var(--border); }
-.cluster-meta { display: flex; flex-wrap: wrap; gap: .4rem 1.75rem; list-style: none; margin: 0; padding: 0; font-size: .78rem; color: var(--text-muted); }
-.cluster-meta b { font-family: var(--font-display); font-size: 1.15rem; color: var(--text-bright); margin-right: .25rem; font-weight: 700; }
+.cluster-sub { font-size: var(--ttdk-font-size-16); font-weight: var(--ttdk-font-weight-semibold); color: var(--teal-text); margin: 0 0 var(--ttdk-spacing-sm); }
+.cluster-blurb { font-size: var(--ttdk-font-size-14); color: var(--text-muted); line-height: var(--ttdk-line-height-body); max-width: 700px; margin: 0 0 var(--ttdk-spacing-lg); }
+.cluster-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--ttdk-spacing-md) var(--ttdk-spacing-xl); flex-wrap: wrap; padding-top: var(--ttdk-spacing-md); border-top: 1px solid var(--border-md); }
+.cluster-meta { display: flex; flex-wrap: wrap; gap: var(--ttdk-spacing-xs) var(--ttdk-spacing-xl); list-style: none; margin: 0; padding: 0; font-size: var(--ttdk-font-size-12); color: var(--text-muted); }
+.cluster-meta b { font-size: var(--ttdk-font-size-20); font-weight: var(--ttdk-font-weight-extrabold); color: var(--text-bright); margin-right: var(--ttdk-spacing-xxs); }
 
-/* Feature card */
-.feature-card {
-  display: block; padding: 1.75rem 2rem;
-  background: var(--bg-card); border: 1px solid var(--border); border-left: 4px solid var(--gold);
-  border-radius: 6px; text-decoration: none; margin-bottom: 1.5px;
-  transition: background 0.2s, border-left-color 0.2s;
-}
-.feature-card:hover { background: var(--bg-hover); border-left-color: var(--teal); }
-.feature-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: .8rem; flex-wrap: wrap; gap: .5rem; }
-.start-here { font-size: .68rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
-.feature-date { font-size: 0.78rem; color: var(--text-dim); }
-.feature-title { font-family: var(--font-display); font-size: clamp(1.25rem, 2.6vw, 1.7rem); color: var(--text-bright); line-height: 1.2; margin: 0 0 .6rem; letter-spacing: -0.01em; }
-.feature-sub { font-size: 0.92rem; color: var(--text-muted); max-width: 680px; line-height: 1.6; margin: 0 0 1.1rem; }
-.feature-cta { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--teal); display: flex; align-items: center; gap: 0.4rem; }
+/* ── Feature card (TTDK Card elevated) ──────────────────────── */
+.feature-card { padding: var(--ttdk-spacing-lg) var(--ttdk-spacing-xl); text-decoration: none; color: inherit; margin-bottom: var(--ttdk-spacing-xs); }
+.feature-card:hover { text-decoration: none; }
+.feature-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--ttdk-spacing-sm); flex-wrap: wrap; gap: var(--ttdk-spacing-xs); }
+.feature-date { font-size: var(--ttdk-font-size-12); color: var(--text-muted); }
+.feature-title { font-size: clamp(1.25rem, 2.6vw, var(--ttdk-font-size-24)); color: var(--text-bright); margin: 0 0 var(--ttdk-spacing-xs); }
+.feature-sub { font-size: var(--ttdk-font-size-14); color: var(--text-muted); max-width: 680px; line-height: var(--ttdk-line-height-body); margin: 0 0 var(--ttdk-spacing-md); }
+.feature-cta { align-self: flex-start; width: max-content; }
 .cta-arrow { transition: transform 0.2s; }
 .feature-card:hover .cta-arrow { transform: translateX(4px); }
 
-/* Groups and cards */
-.group { margin-top: 2.25rem; }
-.group-head { display: flex; align-items: baseline; gap: .9rem 1.25rem; flex-wrap: wrap; margin-bottom: .9rem; }
-.group-head h3 { font-family: var(--font-display); font-size: 1.15rem; color: var(--text-bright); margin: 0; }
-.group-head span { font-size: .76rem; color: var(--text-dim); letter-spacing: .02em; }
-.articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 1.5px; }
-.article-card {
-  display: flex; flex-direction: column; padding: 1.5rem 1.6rem;
-  background: var(--bg-card); border: 1px solid var(--border); text-decoration: none;
-  transition: background 0.2s; border-radius: 4px;
-}
-.article-card:hover { background: var(--bg-hover); }
-.card-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; flex-wrap: wrap; margin-bottom: .75rem; }
-.card-chapter { font-size: .68rem; font-weight: 800; letter-spacing: .08em; color: var(--teal); text-transform: uppercase; font-variant-numeric: tabular-nums; }
-.card-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; }
-.card-title { font-family: var(--font-display); font-size: 1.1rem; color: var(--text-bright); line-height: 1.25; margin: 0 0 0.5rem; }
-.card-sub { font-size: 0.84rem; color: var(--text-muted); line-height: 1.55; flex: 1; margin: 0 0 1rem; }
+/* ── Groups and cards (TTDK Card bordered, 12-col grid gutter) ─ */
+.group { margin-top: var(--ttdk-spacing-xl); }
+.group-head { display: flex; align-items: baseline; gap: var(--ttdk-spacing-xs) var(--ttdk-spacing-md); flex-wrap: wrap; margin-bottom: var(--ttdk-spacing-md); }
+.group-head h3 { font-size: var(--ttdk-font-size-20); color: var(--text-bright); margin: 0; }
+.group-head span { font-size: var(--ttdk-font-size-12); color: var(--text-muted); }
+.articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(264px, 100%), 1fr)); gap: var(--ttdk-grid-desktop-gutter); }
+.article-card { padding: var(--ttdk-spacing-lg) var(--ttdk-spacing-lg) var(--ttdk-spacing-md); text-decoration: none; color: inherit; }
+.article-card:hover { text-decoration: none; }
+.card-top { display: flex; align-items: center; justify-content: space-between; gap: var(--ttdk-spacing-xs); flex-wrap: wrap; margin-bottom: var(--ttdk-spacing-sm); }
+.card-chapter { min-width: 0; font-variant-numeric: tabular-nums; }
+.card-tags { display: flex; gap: var(--ttdk-spacing-xxs); flex-wrap: wrap; }
+.card-title { font-size: var(--ttdk-font-size-16); font-weight: var(--ttdk-font-weight-bold); color: var(--text-bright); line-height: 1.35; margin: 0 0 var(--ttdk-spacing-xs); }
+.card-sub { font-size: var(--ttdk-font-size-14); color: var(--text-muted); line-height: var(--ttdk-line-height-body); flex: 1; margin: 0 0 var(--ttdk-spacing-md); }
 .card-footer {
-  display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-dim);
-  padding-top: 0.75rem; border-top: 1px solid var(--border); margin-top: auto;
+  display: flex; justify-content: space-between; align-items: center; font-size: var(--ttdk-font-size-12); color: var(--text-muted);
+  padding-top: var(--ttdk-spacing-sm); border-top: 1px solid var(--border); margin-top: auto;
 }
-.card-read { color: var(--teal); font-weight: 600; }
-.article-card:hover .card-read { color: var(--gold); }
+.card-read { color: var(--teal-text); font-weight: var(--ttdk-font-weight-semibold); }
 
-.section-label {
-  display: flex; align-items: center; gap: 0.75rem;
-  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim);
-}
-.label-line { width: 24px; height: 1px; background: var(--teal); }
+.section-label { font-size: var(--ttdk-font-size-12); font-weight: var(--ttdk-font-weight-bold); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
 
 @media (max-width: 640px) {
-  .cluster-head { padding: 1.4rem 1.2rem; }
-  .feature-card { padding: 1.4rem 1.2rem; }
-  .article-card { padding: 1.3rem 1.2rem; }
+  .cluster-head { padding: var(--ttdk-spacing-lg) var(--ttdk-spacing-md) !important; }
+  .feature-card { padding: var(--ttdk-spacing-lg) var(--ttdk-spacing-md); }
+  .articles-grid { gap: var(--ttdk-grid-mobile-gutter); }
 }
 
 /* ── About strip ───────────────────────────────────────────── */
-.about-strip { padding: 4rem 0 5rem; }
-.strip-inner {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;
-}
-.strip-text .section-label { margin-bottom: 1.25rem; }
-.strip-text p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1rem; }
-.strip-link { font-size: 0.85rem; font-weight: 700; color: var(--teal); letter-spacing: 0.02em; }
-.strip-link:hover { color: var(--gold); }
-
-.tools-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 1rem; }
-.tools-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.tool-chip {
-  font-size: 0.75rem; font-weight: 600;
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-  padding: 0.3em 0.75em; border-radius: 3px;
-  background: var(--bg-card);
-  transition: border-color 0.15s, color 0.15s;
-}
-.tool-chip:hover { border-color: var(--teal); color: var(--teal); }
+.about-strip { padding-top: var(--ttdk-spacing-3xl); padding-bottom: var(--ttdk-spacing-4xl); }
+.strip-inner { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ttdk-spacing-3xl); align-items: start; }
+.strip-text .section-label { margin-bottom: var(--ttdk-spacing-md); }
+.strip-text p { font-size: var(--ttdk-font-size-16); color: var(--text-muted); line-height: var(--ttdk-line-height-body); margin-bottom: var(--ttdk-spacing-md); }
+.strip-link { font-size: var(--ttdk-font-size-14); font-weight: var(--ttdk-font-weight-bold); }
+.tools-label { font-size: var(--ttdk-font-size-12); font-weight: var(--ttdk-font-weight-bold); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--ttdk-spacing-md); }
+.tools-grid { display: flex; flex-wrap: wrap; gap: var(--ttdk-spacing-xs); }
 
 @media (max-width: 768px) {
-  .strip-inner { grid-template-columns: 1fr; gap: 2rem; }
-  .hero-stats { gap: 1rem; }
-  .hstat-sep { display: none; }
-  .hstat { padding: 0 1rem 0 0; }
+  .strip-inner { grid-template-columns: 1fr; gap: var(--ttdk-spacing-xl); }
 }
 </style>

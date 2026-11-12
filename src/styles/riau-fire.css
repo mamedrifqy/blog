@@ -2,19 +2,19 @@
    Ported from mamedrifqy/riau-peatland-fire assets/style.css. Everything is scoped under .rpf.
    The :root variables below are read by public/riau-peatland-fire/assets/app.js for chart colours. */
 :root {
-  --haze: #0d0e0f;
+  --haze: var(--ttdk-text-icon-stay-white);
   --haze-2: #141618;
   --haze-3: #1c1f22;
   --ash: #2c3136;
-  --char: #f2ede4;
+  --char: var(--viz-text);
   --char-2: #8d949d;
-  --ember: #e8533a;
+  --ember: var(--coral);
   --ember-deep: #f0a43a;
-  --elnino: #e8533a;
+  --elnino: var(--coral);
   --neutral: #8d949d;
   --tarn: #4aa8d0;
   --peat: #b08a5a;
-  --focus: #1cc8aa;
+  --focus: var(--teal);
   --display: "Plus Jakarta Sans", system-ui, sans-serif;
 }
 html { scroll-padding-top: 124px; }
@@ -156,11 +156,11 @@ html { scroll-padding-top: 124px; }
 .rpf.rpf .map-fig { margin: 0; }
 .rpf.rpf .map-fig figcaption { margin-top: 12px; max-width: 70ch; }
 .rpf.rpf #map-svg { display: block; width: 100%; height: auto; max-height: 78vh; background: var(--haze-2); border-radius: 4px; }
-.rpf.rpf #map-svg .reg { stroke: #0d0e0f; stroke-width: 1.6; stroke-linejoin: round; cursor: pointer; transition: stroke-width .12s; }
+.rpf.rpf #map-svg .reg { stroke: var(--ttdk-text-icon-stay-white); stroke-width: 1.6; stroke-linejoin: round; cursor: pointer; transition: stroke-width .12s; }
 .rpf.rpf #map-svg .reg:hover { stroke: var(--char); stroke-width: 2.6; }
 .rpf.rpf #map-svg .reg.on { stroke: var(--char); stroke-width: 4; }
 .rpf.rpf #map-svg .reg:focus-visible { outline: none; stroke: var(--focus); stroke-width: 5; }
-.rpf.rpf #map-svg .lab { font-family: var(--display); font-size: 17px; font-weight: 700; fill: var(--char); paint-order: stroke; stroke: rgba(13,14,15,.85); stroke-width: 4px; }
+.rpf.rpf #map-svg .lab { font-family: var(--display); font-size: 17px; font-weight: 700; fill: var(--char); paint-order: stroke; stroke: rgba(20,19,19,.85); stroke-width: 4px; }
 .rpf.rpf .map-time { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 0 0 14px; }
 .rpf.rpf .map-time[hidden] { display: none; }
 .rpf.rpf .map-time button { font-family: var(--display); font-size: 14px; font-weight: 700; min-width: 92px; padding: 8px 14px; background: var(--char); color: var(--haze); border: 0; border-radius: 4px; cursor: pointer; }
@@ -187,11 +187,11 @@ html { scroll-padding-top: 124px; }
 .rpf.rpf .bk-map h3 { margin: 0 0 14px; }
 .rpf.rpf .bk-map .map-grid { margin-top: 18px; }
 .rpf.rpf #b-svg { display: block; width: 100%; height: auto; max-height: 70vh; background: var(--haze); border-radius: 4px; }
-.rpf.rpf #b-svg .reg { stroke: #0d0e0f; stroke-width: 1.6; stroke-linejoin: round; cursor: pointer; }
+.rpf.rpf #b-svg .reg { stroke: var(--ttdk-text-icon-stay-white); stroke-width: 1.6; stroke-linejoin: round; cursor: pointer; }
 .rpf.rpf #b-svg .reg:hover { stroke: var(--char); stroke-width: 2.6; }
 .rpf.rpf #b-svg .reg.on { stroke: var(--char); stroke-width: 4; }
 .rpf.rpf #b-svg .reg:focus-visible { outline: none; stroke: var(--focus); stroke-width: 5; }
-.rpf.rpf #b-svg .lab { font-family: var(--display); font-size: 20px; font-weight: 700; fill: var(--char); paint-order: stroke; stroke: rgba(13,14,15,.85); stroke-width: 5px; }
+.rpf.rpf #b-svg .lab { font-family: var(--display); font-size: 20px; font-weight: 700; fill: var(--char); paint-order: stroke; stroke: rgba(20,19,19,.85); stroke-width: 5px; }
 @media (max-width: 600px) {
   .rpf.rpf #b-svg .lab { font-size: 22px; stroke-width: 6px; }
   .rpf.rpf .seg button { padding: 8px 11px; font-size: 13px; }
@@ -226,7 +226,7 @@ html { scroll-padding-top: 124px; }
 .rpf.rpf .wrap { max-width: var(--max-w); margin: 0 auto; padding: 0; }
 .rpf.rpf :focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; border-radius: 2px; }
 
-.rpf.rpf .rpf-nav { position: sticky; top: 67px; z-index: 30; margin: 0 0 1.5rem; background: rgba(13,14,15,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.rpf.rpf .rpf-nav { position: sticky; top: 67px; z-index: 30; margin: 0 0 1.5rem; background: rgba(20,19,19,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
 .rpf.rpf .rpf-nav nav { display: flex; gap: clamp(14px, 2.4vw, 28px); overflow-x: auto; scrollbar-width: none; }
 .rpf.rpf .rpf-nav nav::-webkit-scrollbar { display: none; }
 .rpf.rpf .rpf-nav a { font-size: .76rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); padding: .75rem 0; border-bottom: 2px solid transparent; white-space: nowrap; }
@@ -254,15 +254,15 @@ html { scroll-padding-top: 124px; }
 /* controls: teal is the UI accent, ember stays for data */
 .rpf.rpf .pills button, .rpf.rpf .tabs button, .rpf.rpf .seg button { color: var(--text); }
 .rpf.rpf .pills button:hover, .rpf.rpf .seg button:hover { background: var(--bg-hover); }
-.rpf.rpf .pills button[aria-pressed="true"], .rpf.rpf .seg button[aria-pressed="true"] { background: var(--teal); color: #0d0e0f; border-color: var(--teal); }
+.rpf.rpf .pills button[aria-pressed="true"], .rpf.rpf .seg button[aria-pressed="true"] { background: var(--teal); color: var(--ttdk-text-icon-stay-white); border-color: var(--teal); }
 .rpf.rpf .tabs button[aria-selected="true"] { border-bottom-color: var(--teal); color: var(--text-bright); }
-.rpf.rpf .map-time button, .rpf.rpf .mi-open { background: var(--teal); color: #0d0e0f; }
+.rpf.rpf .map-time button, .rpf.rpf .mi-open { background: var(--teal); color: var(--ttdk-text-icon-stay-white); }
 .rpf.rpf .map-time button:hover, .rpf.rpf .mi-open:hover { background: var(--gold); }
 .rpf.rpf .map-time input[type=range] { accent-color: var(--teal); }
 .rpf.rpf .map-time output b { color: var(--text-bright); }
 
-.rpf.rpf .btn-read { background: var(--teal); color: #0d0e0f; border-radius: 4px; }
-.rpf.rpf .btn-read:hover, .rpf.rpf .btn-read:focus-visible { background: var(--gold); color: #0d0e0f; filter: none; outline-color: var(--teal); }
+.rpf.rpf .btn-read { background: var(--teal); color: var(--ttdk-text-icon-stay-white); border-radius: 4px; }
+.rpf.rpf .btn-read:hover, .rpf.rpf .btn-read:focus-visible { background: var(--gold); color: var(--ttdk-text-icon-stay-white); filter: none; outline-color: var(--teal); }
 .rpf.rpf .read-note { color: var(--text-muted); opacity: 1; }
 .rpf.rpf .conf-pct { color: var(--text-muted); }
 
@@ -277,6 +277,6 @@ html { scroll-padding-top: 124px; }
 .rpf.rpf #data h2, .rpf.rpf #data h3 { color: var(--text-bright); }
 .rpf.rpf #data code { background: var(--bg-hover); color: var(--gold); }
 .rpf.rpf #data .downloads a { color: var(--text); border-color: var(--border-md); border-radius: 4px; }
-.rpf.rpf #data .downloads a:hover { background: var(--teal); border-color: var(--teal); color: #0d0e0f; }
+.rpf.rpf #data .downloads a:hover { background: var(--teal); border-color: var(--teal); color: var(--ttdk-text-icon-stay-white); }
 
 .rpf.rpf .rpf-source { margin: 0; padding-top: 1.5rem; border-top: 1px solid var(--border-md); font-size: .8rem; line-height: 1.6; color: var(--text-muted); max-width: 90ch; }

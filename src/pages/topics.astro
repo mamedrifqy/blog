@@ -33,19 +33,20 @@ const topics = [
 </BaseLayout>
 
 <style>
-  .topics-wrap { padding: calc(var(--nav-h) + 4rem) 0 5rem; }
+  .topics-wrap { padding-top: calc(var(--nav-h) + 4rem); padding-bottom: 5rem; }
   .topics-hero { margin-bottom: 3rem; }
-  .section-label { display:flex;align-items:center;gap:0.75rem;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:1.5rem; }
+  .section-label { display:flex;align-items:center;gap:0.75rem;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.5rem; }
   .label-line { width:24px;height:1px;background:var(--teal); }
   h1 { margin-bottom: 0.5rem; }
-  .lead { font-size:1rem;color:var(--text-muted);font-weight:300; }
-  .topics-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;border:1px solid var(--border); }
-  .topic-card { padding:2rem;background:var(--bg-card);transition:background 0.2s; }
-  .topic-card:hover { background:var(--bg-hover); }
-  .topic-count { font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.5rem; }
+  .lead { font-size:1rem;color:var(--text-muted);font-weight:400; }
+  /* TTDK Card (bordered, radius md, hover lift) */
+  .topics-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(min(264px,100%),1fr));gap:var(--ttdk-grid-desktop-gutter); }
+  .topic-card { padding:var(--ttdk-spacing-lg);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--ttdk-radius-md);box-shadow:0 1px 3px #1413130a;transition:transform .2s,box-shadow .2s,border-color .2s; }
+  .topic-card:hover { border-color:var(--ttdk-stroke-border-focus);transform:translateY(-2px);box-shadow:0 8px 24px #128f8a1f,0 2px 8px #0000000f; }
+  .topic-count { font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem; }
   .topic-card h3 { font-family:var(--font-display);font-size:1.3rem;color:var(--text-bright);margin:0 0 0.5rem; }
   .topic-card p { font-size:0.85rem;color:var(--text-muted);line-height:1.55;margin:0; }
   .tag-fire .topic-card h3, .topic-card.tag-fire h3 { color: var(--coral); }
   .tag-ml h3 { color: var(--gold); }
-  .tag-sar h3 { color: #9b7fff; }
+  .tag-sar h3 { color: var(--ttdk-color-violet-400); }
 </style>

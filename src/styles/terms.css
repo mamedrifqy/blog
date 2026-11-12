@@ -2,7 +2,7 @@
 
 /* Inline methods term */
 a.term { color: inherit; text-decoration: underline dotted var(--teal); text-decoration-thickness: 1.5px; text-underline-offset: 3px; cursor: help; transition: color .15s, background .15s; border-radius: 2px; }
-a.term:hover, a.term[aria-expanded="true"] { color: var(--teal); background: rgba(28, 200, 170, .1); }
+a.term:hover, a.term[aria-expanded="true"] { color: var(--teal); background: color-mix(in srgb, var(--teal) 10%, transparent); }
 a.term:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 /* Card (popup and glossary page share the .tc-* inner styles) */

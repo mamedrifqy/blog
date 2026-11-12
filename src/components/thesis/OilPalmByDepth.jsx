@@ -45,7 +45,7 @@ export default function OilPalmByDepth({ caption }) {
               {v === 0 && <line x1={x0} x2={x0 + bw} y1={y(0) - 1} y2={y(0) - 1} stroke={M.color} strokeWidth="3" />}
               <text x={PL + pw * (i + 0.5)} y={y(v) - 8} textAnchor="middle" className="th-val">{M.f(v)}</text>
               <text x={PL + pw * (i + 0.5)} y={H - PB + 18} textAnchor="middle" className="th-ax">{SHORT[i]}</text>
-              <text x={PL + pw * (i + 0.5)} y={H - PB + 34} textAnchor="middle" className="th-ax" style={{ fill: 'var(--text-dim)' }}>n = {d.polygons}</text>
+              <text x={PL + pw * (i + 0.5)} y={H - PB + 34} textAnchor="middle" className="th-ax" style={{ fill: 'var(--viz-dim)' }}>n = {d.polygons}</text>
             </g>
           );
         })}
